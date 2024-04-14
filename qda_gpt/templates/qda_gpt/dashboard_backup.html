@@ -1,0 +1,106 @@
+<!-- dashboard.html -->
+{% load static %}
+<html>
+<head>
+    <title>Qualitative Data Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            text-align: center; /* Center text alignment for all content */
+            font-family: 'Open Sans', sans-serif; /* Setting the font to Open Sans */
+        }
+        .form-container {
+            margin: 20px auto; /* Adds top and bottom margin, auto centers horizontally */
+            width: 50%; /* Adjust width to fit your design, can reduce if necessary */
+            padding: 20px; /* Adds padding inside the forms */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds subtle shadow to forms */
+            border-radius: 10px; /* Rounds corners of the form */
+            background: #f8f8f8; /* Light grey background for the form */
+        }
+        .form-section {
+            margin-bottom: 20px; /* Adds space between sections within the form */
+        }
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>QDA-GPT</h1>
+    <div class="form-container">
+        <h2>Setup OpenAI Assistant</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-section">
+                {{ setup_form.file }}  <!-- Render only the file field from the setup_form -->
+            </div>
+            <div class="form-section">
+                {{ setup_form.model_choice }}  <!-- Render only the model_choice field from the setup_form -->
+            </div>
+            <div class="form-section">
+                <!-- Button for setting up the OpenAI Assistant -->
+                <button type="submit" name="action" value="setup">Setup Assistant</button>
+            </div>
+        </form>
+        {% if response_message %}
+            <div><strong>Status:</strong> {{ response_message }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-container">
+        <h2>Analyze Data</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-section">
+                <!-- Single input for user's prompt used for analysis -->
+                <input type="text" name="user_prompt" placeholder="Enter your prompt here..." required>
+            </div>
+            <div class="form-section">
+                <!-- Button for sending the analysis request -->
+                <button type="submit" name="action" value="analyze">Analyze Data</button>
+            </div>
+        </form>
+    </div>
+
+    {% if response %}
+        <div><strong>Response from the OpenAI Assistant:</strong> {{ response }}</div>
+    {% endif %}
+    {% if deletion_results %}
+        <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
+    {% endif %}
+    <div id="loader" class="loader"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var forms = document.querySelectorAll('form');
+        var loader = document.getElementById('loader');
+
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function() {
+                loader.style.display = 'block'; // Show the loader immediately on form submission
+            });
+        });
+    });
+
+    window.addEventListener('load', function() {
+        var loader = document.getElementById('loader');
+        loader.style.display = 'none'; // Hide the loader once everything is loaded
+    });
+    </script>
+</body>
+</html>
