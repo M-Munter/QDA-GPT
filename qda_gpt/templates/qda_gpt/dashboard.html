@@ -11,6 +11,12 @@
             padding-bottom: 55px; /* Adjust the padding to match the height of the footer + margin */
         }
 
+        .active-button {
+            background-color: #3498db; /* Light blue background for the active button */
+            color: white; /* White text color for better contrast */
+            border: 2px solid #2980b9; /* Slightly darker blue border for depth */
+        }
+
         .form-container {
             margin: 20px auto; /* Centers the form container horizontally with a top and bottom margin of 20px */
             width: 74%; /* Sets the width of the form container to 63% of its parent element */
@@ -100,6 +106,13 @@
                 {{ setup_form.model_choice }}  <!-- Renders model_choice field from setup_form -->
             </div>
             <div class="form-section">
+                <label for="analysis_type">Select Analysis Type:</label>
+                <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
+                <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
+                <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
+                <input type="hidden" name="analysis_type" id="analysis_type" value="thematic"> <!-- Default to thematic -->
+            </div>
+            <div class="form-section">
                 <button type="submit" name="action" value="setup" onclick="showLoader('setup')">Setup Assistant</button>
             </div>
             <div id="setup-status-container" class="form-section">
@@ -152,6 +165,17 @@
                 <div><strong>Phase 3 Response from OpenAI Assistant:</strong> {{ second_response }}</div>
             {% endif %}
             <br>
+            {% if third_response %}
+                <div><strong>Third User Prompt:</strong> {{ formatted_ta_prompt3 }}</div>
+                <br>
+                <div><strong>Phase 4 Response from OpenAI Assistant:</strong> {{ third_response }}</div>
+            {% endif %}
+            <br>
+            {% if fourth_response %}
+                <div><strong>Fourth User Prompt:</strong> {{ formatted_ta_prompt4 }}</div>
+                <br>
+                <div><strong>Phase 5 Response from OpenAI Assistant:</strong> {{ fourth_response }}</div>
+            {% endif %}
             <br>
             {% if deletion_results %}
                 <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
@@ -179,6 +203,21 @@
             }
         }, 5000); // Simulate 2 seconds delay, adjust as needed
     }
+
+    function selectAnalysisType(type) {
+        // Set the value of the hidden input to the selected analysis type
+        document.getElementById('analysis_type').value = type;
+
+        // Remove active class from all buttons
+        var buttons = document.querySelectorAll('.analysis-button');
+        buttons.forEach(function(button) {
+            button.classList.remove('active-button');
+        });
+
+        // Add active class to the clicked button
+        document.getElementById(type + '-button').classList.add('active-button');
+    }
+
     </script>
 
 </body>

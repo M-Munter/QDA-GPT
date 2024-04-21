@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .forms import SetupForm
 from .openai_api import initialize_openai_resources, get_openai_response, delete_openai_resources
 from .__version__ import __version__  # Import the version number
-from .prompts_ta import ta_prompt1, ta_prompt2
+from .prompts_ta import ta_prompt1, ta_prompt2, ta_prompt3, ta_prompt4
 from .utils import parse_response_to_table
 import os
 import time
@@ -12,7 +12,8 @@ import json
 
 def clear_session_data(request):
     # Clears data for a session
-    session_keys = ['response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status', 'second_response']
+    session_keys = ['response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
+                    'second_response', 'third_response', 'fourth_response']
     for key in session_keys:
         request.session.pop(key, None)
 
@@ -53,17 +54,44 @@ def handle_second_prompt_analysis(request, response_json):
             response2_json = get_openai_response(formatted_ta_prompt2, request.session['assistant_id'], request.session['thread_id'])
             request.session['second_response'] = response2_json
 
-            deletion_results = handle_deletion(request)  # Ensure deletion_results are fetched from the correct place
-            request.session['deletion_results'] = deletion_results
-
-            request.session['analysis_status'] = "Analysis completed successfully. Assistant thread deleted successfully."
-
-            return response2_json, formatted_ta_prompt2, "Analysis completed successfully.", deletion_results
+            return response2_json, formatted_ta_prompt2
         except Exception as e:
             request.session['analysis_status'] = f"An error occurred: {str(e)}"
             return f"An error occurred: {str(e)}"
     return "No analysis performed as assistant not initialized."
 
+def handle_ta_phase4(request, response_json):
+    formatted_ta_prompt3 = ta_prompt3.format(response_json=response_json)
+    if request.session.get('initialized', False):
+        try:
+            # ta_prompt2_with_topics = ta_prompt2.format(topic_list=", ".join(topic_list))
+            response3_json = get_openai_response(formatted_ta_prompt3, request.session['assistant_id'], request.session['thread_id'])
+            request.session['third_response'] = response3_json
+
+            return response3_json, formatted_ta_prompt3
+        except Exception as e:
+            request.session['analysis_status'] = f"An error occurred: {str(e)}"
+            return f"An error occurred: {str(e)}"
+    return "No analysis performed as assistant not initialized."
+
+def handle_ta_phase5(request, response2_json, response3_json):
+    formatted_ta_prompt4 = ta_prompt4.format(response2_json=response2_json, response3_json=response3_json)
+    if request.session.get('initialized', False):
+        try:
+            # ta_prompt2_with_topics = ta_prompt2.format(topic_list=", ".join(topic_list))
+            response4_json = get_openai_response(formatted_ta_prompt4, request.session['assistant_id'], request.session['thread_id'])
+            request.session['third_response'] = response4_json
+
+            deletion_results = handle_deletion(request)  # Ensure deletion_results are fetched from the correct place
+            request.session['deletion_results'] = deletion_results
+
+            request.session['analysis_status'] = "Analysis completed successfully. Assistant thread deleted successfully."
+
+            return response4_json, formatted_ta_prompt4, "Analysis completed successfully.", deletion_results
+        except Exception as e:
+            request.session['analysis_status'] = f"An error occurred: {str(e)}"
+            return None, formatted_ta_prompt4, f"An error occurred: {str(e)}", ""
+    return None, formatted_ta_prompt4, "No analysis performed as assistant not initialized.", ""
 
 def handle_deletion(request):
     # Simulated deletion results for demonstration purposes
@@ -94,6 +122,7 @@ def handle_deletion(request):
         deletion_message_parts.append("Thread Deletion: Failed or no data.")
 
     deletion_message = ", ".join(deletion_message_parts)
+    print(deletion_message)
     return deletion_message
 
 def dashboard(request):
@@ -103,6 +132,8 @@ def dashboard(request):
         'version': __version__,
         'response': request.session.get('response', ''),
         'second_response': request.session.get('second_response', ''),
+        'third_response': request.session.get('third_response', ''),
+        'fourth_response': request.session.get('fourth_response', ''),
         'setup_status': request.session.get('setup_status', ''),
         'analysis_status': request.session.get('analysis_status', ''),
         'deletion_results': request.session.get('deletion_results', '')
@@ -129,16 +160,32 @@ def dashboard(request):
             # topic_list = extract_topic_list(response_json)
 
             if response_json:  # Ensuring that there is a response before proceeding to the second prompt
-                response2_json, formatted_ta_prompt2, analysis_status, deletion_results = handle_second_prompt_analysis(request, response_json)
+                response2_json, formatted_ta_prompt2 = handle_second_prompt_analysis(request, response_json)
 
                 context.update({
                     'second_response': response2_json,
-                    'formatted_ta_prompt2': formatted_ta_prompt2,
-                    'analysis_status': analysis_status,  # This should update the context for the second analysis status
-                    'deletion_results': deletion_results
+                    'formatted_ta_prompt2': formatted_ta_prompt2
                 })
 
-                print(request.session.get('second_response'))
+                if response2_json:  # Ensuring that there is a response before proceeding to the second prompt
+                    response3_json, formatted_ta_prompt3 = handle_ta_phase4(request, response_json)
+
+                    context.update({
+                        'third_response': response3_json,
+                        'formatted_ta_prompt3': formatted_ta_prompt3
+                    })
+
+                    if response3_json:  # Ensuring that there is a response before proceeding to the second prompt
+                        response4_json, formatted_ta_prompt4, analysis_status, deletion_results = handle_ta_phase5(request, response2_json, response3_json)
+
+                        context.update({
+                            'fourth_response': response4_json,
+                            'formatted_ta_prompt4': formatted_ta_prompt4,
+                            'analysis_status': analysis_status,
+                            # This should update the context for the analysis status
+                            'deletion_results': deletion_results
+                        })
+
 
             print(f"Session after POST analyze: {request.session.items()}\n\n")  # Debugging line
 

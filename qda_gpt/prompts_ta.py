@@ -38,7 +38,37 @@ List of themes:
 {response_json}
 """
 
+# List of themes can be removed as it is supposed to be in the answer
 # {", ".join(topic_list)}
+
+ta_prompt3 = """
+Your task is to determine again how all the topics in the following list of topics can be grouped together.
+
+Topics can also be in more than one group.
+
+Group all the topics numbers only and provide for each group:
+- index number,
+- group name, and
+- description of the group.
+
+For thematic analysis, create proper amount of significant groups.
+
+Format the response in json format. Format the response in a structured table format suitable for conversion to a CSV file.
+
+Display the full list.
+
+List of groups:
+{response_json}
+"""
+
+
+ta_prompt4 = """
+Using all the topics in the list, give summary in two sentences and a name with max 5 words for summary.
+
+List of topics:
+{response2_json}
+{response3_json}
+"""
 
 
 
