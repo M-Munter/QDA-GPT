@@ -30,7 +30,7 @@ def initialize_openai_resources(file_path, model):
     - A dictionary containing the assistant and thread objects.
     """
     client = get_openai_client()
-    print("OpenAI API key loaded successfully.")
+    print("OpenAI API key loaded successfully. \n\n")
 
     # Upload a file
     with open(file_path, 'rb') as file_data:
@@ -38,21 +38,21 @@ def initialize_openai_resources(file_path, model):
             file=file_data,
             purpose="assistants"
         )
-    print(f"File ID: {my_files.id} \n")
+    print(f"File ID: {my_files.id} \n\n")
 
     # Create an Assistant
     my_assistant = client.beta.assistants.create(
         model=model,
-        instructions="You are a qualitative data analyst. Answer questions regarding the attached content.",
+        instructions="You are a qualitative data analyst. Your task is to analyze the provided dataset of transcribed interviews.",
         name="QDA-GPT",
         tools=[{"type": "retrieval"}],
         file_ids=[my_files.id]
     )
-    print(f"This is the assistant object: {my_assistant} \n")
+    print(f"This is the assistant object: {my_assistant} \n\n")
 
     # Create a Thread
     my_thread = client.beta.threads.create()
-    print(f"This is the thread object: {my_thread} \n")
+    print(f"This is the thread object: {my_thread} \n\n")
 
     return {'assistant': my_assistant, 'file':my_files, 'thread': my_thread}
 
@@ -80,7 +80,9 @@ def get_openai_response(content, assistant_id, thread_id):
     - The response from ChatGPT as a string, or "No response." if no response is retrieved.
     """
     client = get_openai_client()
-    print("OpenAI API key loaded successfully.")
+    print("OpenAI API key loaded successfully. \n\n")
+
+
 
     try:
         # Send message to the thread
@@ -89,15 +91,14 @@ def get_openai_response(content, assistant_id, thread_id):
             role="user",
             content=content
         )
-        print(f"This is the message object: {my_thread_message} \n")
+        print(f"This is the message object: {my_thread_message} \n\n")
 
         # Run the assistant
         my_run = client.beta.threads.runs.create(
             thread_id=thread_id,
             assistant_id=assistant_id,
-            instructions="Please address the user as my Lord."
         )
-        print(f"This is the run object: {my_run} \n")
+        print(f"This is the run object: {my_run} \n\n")
 
         # Retrieve the Run status
         # Periodically retrieve the Run to check on its status to see if it has moved to completed
@@ -121,19 +122,19 @@ def get_openai_response(content, assistant_id, thread_id):
                     thread_id=thread_id
                 )
                 response = "Assistant: " + all_messages.data[0].content[0].text.value
-                print("------------------------------------------------------------ \n")
-                print(f"User: {my_thread_message.content[0].text.value} \n")
-                print(f"Assistant: {all_messages.data[0].content[0].text.value}")
+                print("------------------------------------------------------------ \n\n")
+                print(f"User: {my_thread_message.content[0].text.value} \n\n")
+                print(f"Assistant: {all_messages.data[0].content[0].text.value} \n\n")
                 return response
             else:
-                print(f"\nRun status: {keep_retrieving_run.status}")
+                print(f"\nRun status: {keep_retrieving_run.status} \n\n")
                 break
 
-        return "Failed to retrieve a valid response from OpenAI."
+        return "Failed to retrieve a valid response from OpenAI. \n\n"
 
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return "Failed to retrieve a valid response from OpenAI."
+        print(f"An error occurred: {str(e)} \n\n")
+        return "Failed to retrieve a valid response from OpenAI. \n\n"
 
 
 # Here’s how you would use these functions together in your Django project:
@@ -164,26 +165,26 @@ def delete_openai_resources(assistant_id, file_id, thread_id):
     - A dictionary with the status of deletions for the assistant, file, and thread.
     """
     client = get_openai_client()
-    print("OpenAI API key loaded successfully.")
+    print("OpenAI API key loaded successfully. \n\n")
 
     results = {}
     try:
         results['file'] = client.files.delete(file_id)
-        print("File deleted.")
+        print("File deleted. \n\n")
     except Exception as e:
-        print(f"Failed to delete file: {e}")
+        print(f"Failed to delete file: {e} \n\n")
 
     try:
         results['assistant'] = client.beta.assistants.delete(assistant_id)
-        print("Assistant deleted.")
+        print("Assistant deleted. \n\n")
     except Exception as e:
-        print(f"Failed to delete assistant: {e}")
+        print(f"Failed to delete assistant: {e} \n\n")
 
     try:
         results['thread'] = client.beta.threads.delete(thread_id)
-        print("Thread deleted.")
+        print("Thread deleted. \n\n")
     except Exception as e:
-        print(f"Failed to delete thread: {e}")
+        print(f"Failed to delete thread: {e} \n\n")
 
     return results
 

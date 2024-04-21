@@ -1,106 +1,178 @@
 <!-- dashboard.html -->
-{% load static %}
+{% load static %}  <!-- Loads static files for use in this template -->
 <html>
 <head>
     <title>Qualitative Data Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"> <!-- Loads the Open Sans font from Google Fonts -->
     <style>
         body {
-            text-align: center; /* Center text alignment for all content */
-            font-family: 'Open Sans', sans-serif; /* Setting the font to Open Sans */
+            text-align: center; /* Centers text alignment for all content in the body */
+            font-family: 'Open Sans', sans-serif; /* Sets Open Sans as the font family for the body */
+            padding-bottom: 55px; /* Adjust the padding to match the height of the footer + margin */
         }
+
         .form-container {
-            margin: 20px auto; /* Adds top and bottom margin, auto centers horizontally */
-            width: 50%; /* Adjust width to fit your design, can reduce if necessary */
-            padding: 20px; /* Adds padding inside the forms */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds subtle shadow to forms */
-            border-radius: 10px; /* Rounds corners of the form */
-            background: #f8f8f8; /* Light grey background for the form */
+            margin: 20px auto; /* Centers the form container horizontally with a top and bottom margin of 20px */
+            width: 63%; /* Sets the width of the form container to 63% of its parent element */
+            padding: 20px; /* Adds padding inside the form container */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds a subtle shadow around the form container */
+            border-radius: 10px; /* Rounds the corners of the form container */
+            background: #f8f8f8; /* Sets a light grey background color for the form container */
         }
+
+        .form-container-setup {
+            min-height: 250px; /* Adjust the minimum height for the setup container as needed */
+        }
+
+        .form-container-analyze {
+            min-height: 307px; /* Adjust the minimum height for the analyze container as needed */
+        }
+
         .form-section {
-            margin-bottom: 20px; /* Adds space between sections within the form */
+            margin-bottom: 20px; /* Adds a bottom margin to each form section for spacing */
         }
+
+        .prompt-input {
+            width: 100%; /* Sets the width of the input fields to 100% of their parent element */
+            padding: 0px; /* Adds padding inside the input fields */
+            margin-bottom: 10px; /* Adds a bottom margin to the input fields */
+            box-sizing: border-box; /* Changes the box model to include padding and border in the element's width */
+            resize: vertical; /* Allows the textarea to be resized vertically */
+        }
+
         .loader {
-            border: 16px solid #f3f3f3; /* Light grey */
-            border-top: 16px solid #3498db; /* Blue */
+            border: 4px solid #f3f3f3;
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
+            border-top: 4px solid #3498db;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
             animation: spin 2s linear infinite;
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             display: none; /* Hidden by default */
+            margin: 20px auto; /* Center the loader horizontally */
+        }
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
         }
 
         @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer-margin {
+            height: 0px; /* Adjust the height of the margin as needed */
+        }
+
+        footer {
+            text-align: center; /* Aligns footer content to the left */
+            padding: 0px; /* Adds padding inside the footer */
+            position: fixed; /* Position is fixed */
+            bottom: 0; /* Positions the footer at the bottom of its parent */
+            box-sizing: border-box; /* Changes the box model to include padding and border in the element's width */
+            width: 100%;
+            height: 55px;
+            left: 0; /* Ensures the footer extends to the left border of the page */
+            background: #2c3e50; /* Dark blue background for a more professional look */
+            color: #ecf0f1; /* Light grey text for better readability */
         }
     </style>
 </head>
 <body>
     <h1>QDA-GPT</h1>
-    <div class="form-container">
+
+    <!-- Setup OpenAI Assistant Form -->
+    <div class="form-container form-container-setup">
         <h2>Setup OpenAI Assistant</h2>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="setup-form">
+            {% csrf_token %}  <!-- Adds CSRF token to form for security -->
+            <div class="form-section">
+                {{ setup_form.file }}  <!-- Renders file field from setup_form -->
+            </div>
+            <div class="form-section">
+                {{ setup_form.model_choice }}  <!-- Renders model_choice field from setup_form -->
+            </div>
+            <div class="form-section">
+                <button type="submit" name="action" value="setup" onclick="showLoader('setup')">Setup Assistant</button>
+            </div>
+            <div id="setup-status-container" class="form-section">
+                {% if setup_status %}
+                    <div><strong>Status:</strong> {{ setup_status }}</div>  <!-- Displays setup status if available -->
+                {% else %}
+                    <div><strong>Status:</strong> Waiting</div>  <!-- Default text if setup status is not available -->
+                {% endif %}
+            </div>
+            <div id="setup-loader" class="loader"></div> <!-- Loading animation -->
+        </form>
+    </div>
+
+    <!-- Analysis Data Form -->
+    <div class="form-container form-container-analyze">
+        <h2>Analyze Data</h2>
+        <form method="post" enctype="multipart/form-data" id="analysis-form">
             {% csrf_token %}
             <div class="form-section">
-                {{ setup_form.file }}  <!-- Render only the file field from the setup_form -->
+                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7"></textarea>  <!-- Textarea for user to enter analysis prompt -->
             </div>
             <div class="form-section">
-                {{ setup_form.model_choice }}  <!-- Render only the model_choice field from the setup_form -->
+                <button type="submit" name="action" value="analyze" onclick="showLoader('analyze')">Analyze Data</button>  <!-- Button to submit analysis request -->
             </div>
-            <div class="form-section">
-                <!-- Button for setting up the OpenAI Assistant -->
-                <button type="submit" name="action" value="setup">Setup Assistant</button>
+            <div id="analysis-status-container" class="form-section">
+                {% if analysis_status %}
+                    <div><strong>Status:</strong> {{ analysis_status }}</div>  <!-- Displays analysis status if available -->
+                {% else %}
+                    <div><strong>Status:</strong> Waiting</div>  <!-- Default text if setup status is not available -->
+                {% endif %}
             </div>
+            <div id="analyze-loader" class="loader"></div> <!-- Loading animation -->
         </form>
-        {% if response_message %}
-            <div><strong>Status:</strong> {{ response_message }}</div>
+    </div>
+
+
+    <!-- Results Display Section -->
+    <div class="form-container">
+        <h2>Results</h2>
+        {% if formatted_ta_prompt1 %}
+            <div><strong>User Prompt:</strong> {{ formatted_ta_prompt1 }}</div>
+        {% endif %}
+        <br>
+        {% if response %}
+            <div><strong>Response from OpenAI Assistant:</strong> {{ response }}</div>
+        {% endif %}
+        <br>
+        {% if deletion_results %}
+            <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
         {% endif %}
     </div>
 
-    <div class="form-container">
-        <h2>Analyze Data</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-section">
-                <!-- Single input for user's prompt used for analysis -->
-                <input type="text" name="user_prompt" placeholder="Enter your prompt here..." required>
-            </div>
-            <div class="form-section">
-                <!-- Button for sending the analysis request -->
-                <button type="submit" name="action" value="analyze">Analyze Data</button>
-            </div>
-        </form>
-    </div>
-
-    {% if response %}
-        <div><strong>Response from the OpenAI Assistant:</strong> {{ response }}</div>
-    {% endif %}
-    {% if deletion_results %}
-        <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
-    {% endif %}
-    <div id="loader" class="loader"></div>
-
+    <!-- JavaScript to Show Loader -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var forms = document.querySelectorAll('form');
-        var loader = document.getElementById('loader');
-
-        forms.forEach(function(form) {
-            form.addEventListener('submit', function() {
-                loader.style.display = 'block'; // Show the loader immediately on form submission
-            });
-        });
-    });
-
-    window.addEventListener('load', function() {
-        var loader = document.getElementById('loader');
-        loader.style.display = 'none'; // Hide the loader once everything is loaded
-    });
+    function showLoader(type) {
+        if (type === 'setup') {
+            document.getElementById("setup-loader").style.display = "block"; // Show setup loader
+            document.getElementById("setup-status").style.display = "none"; // Hide setup status
+        } else if (type === 'analyze') {
+            document.getElementById("analyze-loader").style.display = "block"; // Show analyze loader
+            document.getElementById("analysis-status").style.display = "none"; // Hide analysis status
+        }
+        setTimeout(function(){
+            if (type === 'setup') {
+                document.getElementById("setup-loader").style.display = "none"; // Hide setup loader
+                document.getElementById("setup-status").style.display = "block"; // Show setup status
+            } else if (type === 'analyze') {
+                document.getElementById("analyze-loader").style.display = "none"; // Hide analyze loader
+                document.getElementById("analysis-status").style.display = "block"; // Show analysis status
+            }
+        }, 2000); // Simulate 2 seconds delay, adjust as needed
+    }
     </script>
+
 </body>
+
+<footer>
+    <p>Version: {{ version }}</p>  <!-- Displays version of the application -->
+</footer>
+
 </html>
