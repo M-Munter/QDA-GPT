@@ -1,3 +1,4 @@
+# prompts_ta.py
 # This script contains the Thematic Analysis prompts sent to OpenAI Assistant.
 
 ta_prompt1 = """
@@ -7,10 +8,37 @@ In the analysis, take into account the following considerations to get relevant 
 
 You are requested to identify the most relevant themes in the following dataset of transcribed interviews.
         
-For each theme, provide a theme name (i.e. code) in no more than 3 words, a meaningful and compact description of the theme with one sentence, and a quote from the respondent.
+For each theme, provide:
+ - index number starting from 1,
+ - theme name (i.e. code) in no more than 3 words,
+ - a meaningful and compact description of the theme with one sentence, and
+ - a quote from the respondent.
 
-Format the response as a json file.
+Format the response in json format. Format the response in a structured table format suitable for conversion to a CSV file.
 """
+
+
+ta_prompt2 = """
+Determine how all the topics in the following list of topics can be grouped together.
+
+Topics can also be in more than one group.
+
+Group all the topics numbers only and provide for each group:
+- index number,
+- group name, and
+- description of the group.
+ 
+For thematic analysis, create proper amount of significant groups.
+
+Format the response in json format. Format the response in a structured table format suitable for conversion to a CSV file.
+
+Display the full list.
+
+List of themes:
+{response_json}
+"""
+
+# {", ".join(topic_list)}
 
 
 

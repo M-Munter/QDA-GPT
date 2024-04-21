@@ -4,13 +4,15 @@ from django.http import JsonResponse
 from .forms import SetupForm
 from .openai_api import initialize_openai_resources, get_openai_response, delete_openai_resources
 from .__version__ import __version__  # Import the version number
-from .prompts_ta import ta_prompt1
+from .prompts_ta import ta_prompt1, ta_prompt2
+from .utils import parse_response_to_table
 import os
 import time
+import json
 
 def clear_session_data(request):
     # Clears data for a session
-    session_keys = ['response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status']
+    session_keys = ['response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status', 'second_response']
     for key in session_keys:
         request.session.pop(key, None)
 
@@ -35,17 +37,32 @@ def handle_analysis(request, user_prompt):
     request.session['formatted_ta_prompt1'] = formatted_ta_prompt1
     if request.session.get('initialized', False) and user_prompt:
         try:
-            response = get_openai_response(formatted_ta_prompt1, request.session['assistant_id'], request.session['thread_id'])
-            deletion_results = handle_deletion(request)  # Ensure deletion_results are fetched from the correct place
-            request.session['response'] = response
-            request.session['analysis_status'] = "Analysis completed successfully."
-            request.session['deletion_results'] = deletion_results
-            return response, "Analysis completed successfully.", deletion_results, formatted_ta_prompt1  # Return formatted_ta_prompt1
+            response_json = get_openai_response(formatted_ta_prompt1, request.session['assistant_id'], request.session['thread_id'])
+            request.session['response'] = response_json
+            return response_json, formatted_ta_prompt1
         except Exception as e:
-            request.session['analysis_status'] = f"An error occurred: {str(e)}"
             return None, f"An error occurred: {str(e)}", None, formatted_ta_prompt1  # Return formatted_ta_prompt1 even on error
     return None, "No analysis performed.", None, formatted_ta_prompt1  # Return formatted_ta_prompt1 even if no analysis is performed
 
+
+def handle_second_prompt_analysis(request, response_json):
+    formatted_ta_prompt2 = ta_prompt2.format(response_json=response_json)
+    if request.session.get('initialized', False):
+        try:
+            # ta_prompt2_with_topics = ta_prompt2.format(topic_list=", ".join(topic_list))
+            response2_json = get_openai_response(formatted_ta_prompt2, request.session['assistant_id'], request.session['thread_id'])
+            request.session['second_response'] = response2_json
+
+            deletion_results = handle_deletion(request)  # Ensure deletion_results are fetched from the correct place
+            request.session['deletion_results'] = deletion_results
+
+            request.session['analysis_status'] = "Analysis completed successfully. Assistant thread deleted successfully."
+
+            return response2_json, formatted_ta_prompt2, "Analysis completed successfully.", deletion_results
+        except Exception as e:
+            request.session['analysis_status'] = f"An error occurred: {str(e)}"
+            return f"An error occurred: {str(e)}"
+    return "No analysis performed as assistant not initialized."
 
 
 def handle_deletion(request):
@@ -81,11 +98,19 @@ def handle_deletion(request):
 
 def dashboard(request):
     setup_form = SetupForm(request.POST or None, request.FILES or None)
-    context = {'setup_form': setup_form, 'version': __version__}
+    context = {
+        'setup_form': setup_form,
+        'version': __version__,
+        'response': request.session.get('response', ''),
+        'second_response': request.session.get('second_response', ''),
+        'setup_status': request.session.get('setup_status', ''),
+        'analysis_status': request.session.get('analysis_status', ''),
+        'deletion_results': request.session.get('deletion_results', '')
+    }
 
     if request.method == 'GET':
         clear_session_data(request)
-        print("Session cleared on GET request /n/n")
+        print("Session cleared on GET request\n\n")
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -93,23 +118,39 @@ def dashboard(request):
             context['setup_status'] = handle_setup(request, setup_form)
         elif action == 'analyze':
             user_prompt = request.POST.get('user_prompt', '')
-            response, analysis_status, deletion_results, formatted_ta_prompt1 = handle_analysis(request, user_prompt)
+            response_json, formatted_ta_prompt1 = handle_analysis(request, user_prompt)
+
             context.update({
-                'response': response,
-                'analysis_status': analysis_status,
-                'deletion_results': deletion_results,
+                'response': response_json,
                 'formatted_ta_prompt1': formatted_ta_prompt1
             })
-            print(f"Session after POST analyze: {request.session.items()} /n/n")  # Debugging line
+
+            # Extracting topic list from response and passing it to handle_second_prompt_analysis
+            # topic_list = extract_topic_list(response_json)
+
+            if response_json:  # Ensuring that there is a response before proceeding to the second prompt
+                response2_json, formatted_ta_prompt2, analysis_status, deletion_results = handle_second_prompt_analysis(request, response_json)
+
+                context.update({
+                    'second_response': response2_json,
+                    'formatted_ta_prompt2': formatted_ta_prompt2,
+                    'analysis_status': analysis_status,  # This should update the context for the second analysis status
+                    'deletion_results': deletion_results
+                })
+
+                print(request.session.get('second_response'))
+
+            print(f"Session after POST analyze: {request.session.items()}\n\n")  # Debugging line
 
     context.update({
         'response': request.session.get('response', ''),
+        'second_response': request.session.get('second_response', ''),
         'setup_status': request.session.get('setup_status', ''),
         'analysis_status': request.session.get('analysis_status', ''),
         'console_output': request.session.get('console_output', ''),
         'deletion_results': request.session.get('deletion_results', '')
     })
-    print(f"Final context: {context} /n/n")  # Debugging line
+    print(f"Final context: {context}\n\n")  # Debugging line
 
     return render(request, 'qda_gpt/dashboard.html', context)
 
@@ -122,4 +163,15 @@ def handle_uploaded_file(f):
             destination.write(chunk)
     return file_path
 
+def extract_topic_list(response):
+    try:
+        if isinstance(response, str):
+            json_response = json.loads(response)
+        else:
+            json_response = response
+        topic_list = json_response.get('topics', [])
+        return topic_list
+    except Exception as e:
+        print(f"Error extracting topic list: {str(e)}\n\n")
+        return []
 

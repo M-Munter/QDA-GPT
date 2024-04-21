@@ -11,7 +11,7 @@ def get_openai_client():
     """
     api_key = settings.OPENAI_API_KEY
     if not api_key:
-        raise ValueError("Failed to load the OPENAI_API_KEY from settings.")
+        raise ValueError("Failed to load the OPENAI_API_KEY from settings.\n\n")
     openai.api_key = api_key
     return openai.OpenAI(api_key=api_key)
 
@@ -30,7 +30,7 @@ def initialize_openai_resources(file_path, model):
     - A dictionary containing the assistant and thread objects.
     """
     client = get_openai_client()
-    print("OpenAI API key loaded successfully. \n\n")
+    print("OpenAI API key loaded successfully.\n")
 
     # Upload a file
     with open(file_path, 'rb') as file_data:
@@ -38,21 +38,24 @@ def initialize_openai_resources(file_path, model):
             file=file_data,
             purpose="assistants"
         )
-    print(f"File ID: {my_files.id} \n\n")
+    print(f"File uploaded successfully with ID: {my_files.id}\n")
 
     # Create an Assistant
     my_assistant = client.beta.assistants.create(
         model=model,
-        instructions="You are a qualitative data analyst. Your task is to analyze the provided dataset of transcribed interviews.",
+        instructions="You are a qualitative data analyst. Your task is to analyze the provided dataset of transcribed interviews. "
+                     "Respond always with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.",
         name="QDA-GPT",
         tools=[{"type": "retrieval"}],
         file_ids=[my_files.id]
     )
-    print(f"This is the assistant object: {my_assistant} \n\n")
+    print(f"Assistant created successfully with ID: {my_assistant.id}\n")
 
     # Create a Thread
     my_thread = client.beta.threads.create()
-    print(f"This is the thread object: {my_thread} \n\n")
+
+    # Validate that everything has been initialized successfully.
+    print(f"Thread created successfully with ID: {my_thread.id}\n")
 
     return {'assistant': my_assistant, 'file':my_files, 'thread': my_thread}
 
@@ -80,7 +83,7 @@ def get_openai_response(content, assistant_id, thread_id):
     - The response from ChatGPT as a string, or "No response." if no response is retrieved.
     """
     client = get_openai_client()
-    print("OpenAI API key loaded successfully. \n\n")
+    print("OpenAI API key loaded successfully. Sending content to OpenAi Assistant.\n")
 
 
 
@@ -91,14 +94,16 @@ def get_openai_response(content, assistant_id, thread_id):
             role="user",
             content=content
         )
-        print(f"This is the message object: {my_thread_message} \n\n")
+        if not my_thread_message or not my_thread_message.content:
+            return "Message creation failed.", "Failure"
+        print(f"Message sent to thread. Message ID: {my_thread_message.id}\n")
 
         # Run the assistant
         my_run = client.beta.threads.runs.create(
             thread_id=thread_id,
             assistant_id=assistant_id,
         )
-        print(f"This is the run object: {my_run} \n\n")
+        print(f"Assistant run initiated. Run ID: {my_run.id}\n")
 
         # Retrieve the Run status
         # Periodically retrieve the Run to check on its status to see if it has moved to completed
@@ -113,7 +118,7 @@ def get_openai_response(content, assistant_id, thread_id):
             if keep_retrieving_run.status == "in_progress":
                 print(".", end="")
                 sys.stdout.flush()  # Print each dot immediately
-                time.sleep(0.57)    # Increase/reduce this if necessary
+                time.sleep(0.5)    # Increase/reduce this if necessary
             elif keep_retrieving_run.status == "completed":
                 print("\nRun status: completed\n")
 
@@ -121,20 +126,24 @@ def get_openai_response(content, assistant_id, thread_id):
                 all_messages = client.beta.threads.messages.list(
                     thread_id=thread_id
                 )
-                response = "Assistant: " + all_messages.data[0].content[0].text.value
-                print("------------------------------------------------------------ \n\n")
-                print(f"User: {my_thread_message.content[0].text.value} \n\n")
-                print(f"Assistant: {all_messages.data[0].content[0].text.value} \n\n")
+                if not all_messages or not all_messages.data or not all_messages.data[0].content:
+                    return "Response retrieval failed.", "Failure"
+
+                response = all_messages.data[0].content[0].text.value
+
+                print("------------------------------------------------------------\n")
+                print("Response retrieved successfully.\n")
+                print("Assistant response processed successfully.\n")
                 return response
             else:
-                print(f"\nRun status: {keep_retrieving_run.status} \n\n")
+                print(f"\nRun status: {keep_retrieving_run.status}\n\n")
                 break
 
-        return "Failed to retrieve a valid response from OpenAI. \n\n"
+        return "Failed to retrieve a valid response from OpenAI.\n\n"
 
     except Exception as e:
-        print(f"An error occurred: {str(e)} \n\n")
-        return "Failed to retrieve a valid response from OpenAI. \n\n"
+        print(f"An error occurred: {str(e)} \n")
+        return "Failed to retrieve a valid response from OpenAI.\n"
 
 
 # Here’s how you would use these functions together in your Django project:
