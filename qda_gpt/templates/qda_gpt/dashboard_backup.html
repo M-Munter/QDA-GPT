@@ -37,8 +37,8 @@
             border: 4px solid #f3f3f3;
             border-radius: 50%;
             border-top: 4px solid #3498db;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
             display: none;
@@ -81,28 +81,26 @@
 </head>
 <body>
     <h1>QDA-GPT</h1>
-
     <div class="form-container form-container-setup">
         <h2>Setup and Analyze</h2>
         <form method="post" enctype="multipart/form-data" id="setup-form" action="{% url 'dashboard' %}" onsubmit="return handleSubmit(event)">
             {% csrf_token %}
             <div class="form-section">
+                <label for="file-input">Upload Qualitative Data File:</label>
                 <input type="file" name="file" id="file-input" {% if file_name %} disabled {% endif %}>
                 {% if file_name %}
                     <p>File selected: {{ file_name }}</p>
                 {% endif %}
             </div>
             <div class="form-section">
+                <label for="model_choice">Select OpenAI Language Model:</label>
                 {{ setup_form.model_choice }}
-            </div>
-            <div class="form-section">
-                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
             </div>
             <div class="form-section">
                 <label for="analysis_type">Select Analysis Type:</label>
                 <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
-                <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
                 <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
+                <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
                 <input type="hidden" name="analysis_type" id="analysis_type" value="{{ analysis_type }}">
                 <div id="selected-analysis-type" class="form-section">
                     {% if analysis_type %}
@@ -113,30 +111,26 @@
                 </div>
             </div>
             <div class="form-section">
-                <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Setup and Analyze</button>
+                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
             </div>
-            <div id="setup-status-container" class="form-section">
-                {% if setup_status %}
-                    <div><strong>Status:</strong> {{ setup_status }}</div>
-                {% else %}
-                    <div><strong>Status:</strong> Waiting...</div>
-                {% endif %}
+            <div class="form-section">
+                <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Analyze</button>
             </div>
-            <div id="analysis-status-container" class="form-section">
-                {% if analysis_status %}
-                    <div><strong>Status:</strong> {{ analysis_status }}</div>
-                {% else %}
-                    <div><strong>Status:</strong> Waiting...</div>
-                {% endif %}
+            <div id="status-container" class="form-section">
+                <div><strong>Analysis progress:</strong>
+                    Waiting
+                    {% if setup_status %} | {{ setup_status }}{% endif %}
+                    {% if analysis_status %} | {{ analysis_status }}{% endif %}
+                </div>
             </div>
-            <div id="setup-loader" class="loader"></div>
-            <div id="analyze-loader" class="loader"></div>
             <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
         </form>
     </div>
 
     <div class="form-container">
         <h2>Results</h2>
+        <div id="setup-loader" class="loader"></div>
+        <div id="analyze-loader" class="loader"></div>
         <div class="left-align">
             {% if response %}
                 <div><strong>User Prompt:</strong> {{ formatted_prompt1 }}</div>

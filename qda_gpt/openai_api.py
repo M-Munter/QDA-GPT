@@ -117,8 +117,6 @@ def get_openai_response(content, assistant_id, thread_id):
             print(f"Error with run: {e}")
 
         if run_status.status == 'completed':
-            print("\nRun status: completed\n")
-
             # Retrieve the Messages added by the Assistant to the Thread
             all_messages = client.beta.threads.messages.list(
                 thread_id=thread_id,
@@ -129,8 +127,8 @@ def get_openai_response(content, assistant_id, thread_id):
 
             response = all_messages.data[0].content[0].text.value
 
-            print("Response retrieved and processed successfully.\n")
-            print("------------------------------------------------------------\n")
+            print("Response retrieved and processed successfully.")
+            print("----------------------------------------------\n\n")
             return response
 
         elif run_status.status == 'failed':
