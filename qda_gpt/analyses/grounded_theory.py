@@ -3,7 +3,7 @@ from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
 
 def handle_analysis(request):
-    formatted_gt_prompt1 = gt_prompt1()
+    formatted_gt_prompt1 = gt_prompt1
     response_json = get_openai_response(formatted_gt_prompt1, request.session['assistant_id'], request.session['thread_id'])
     return response_json, formatted_gt_prompt1
 

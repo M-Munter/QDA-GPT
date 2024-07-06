@@ -37,12 +37,14 @@ def handle_setup(request, setup_form):
 
             resources = initialize_openai_resources(file_path, model_choice, request.session['analysis_type'], user_prompt)
 
-            # Add a 5-second wait to ensure indexing
-            for i in range(10, 0, -1):
-                print(f"Waiting for indexing: {i} seconds remaining...", end='\r')
-                sys.stdout.flush()
-                time.sleep(0.5)
-            print("Indexing complete.                            ")
+            print("Waiting for indexing: ", end='', flush=True)
+            for i in range(5, -1, -1):  # Adjusted range to include 0
+                print(f"{i} ", end='', flush=True)  # Print the countdown number with a space
+                time.sleep(0.9)
+                print('\rWaiting for indexing: ', end='',
+                      flush=True)  # Return to the beginning of the line and overwrite
+            print("0")
+            print("Indexing complete.")
 
             request.session['initialized'] = True
             request.session['vector_store_id'] = resources['vector_store'].id

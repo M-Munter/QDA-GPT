@@ -75,7 +75,7 @@ def initialize_openai_resources(file_path, model, analysis_type, user_prompt):
 
 def get_openai_response(content, assistant_id, thread_id):
     client = get_openai_client()
-    print("OpenAI API key loaded successfully. Sending content to OpenAi Assistant.\n")
+    print("OpenAI API key loaded successfully. Sending message to OpenAi Assistant.\n")
 
     try:
         # Send message to the thread
@@ -84,32 +84,27 @@ def get_openai_response(content, assistant_id, thread_id):
             role="user",
             content=content
         )
-        print(f"Message sent successfully. Message ID: {my_thread_message.id}")
 
         # Verification print statements for success and failure
         if not my_thread_message or not my_thread_message.content:
-            print("Message creation failed.")
+            print("Message creation failed.\n")
             return "Message creation failed.", "Failure"
         print(f"Message sent to thread. Message ID: {my_thread_message.id}\n")
 
-        # Display progress while waiting for response
-        print(f">>Running: {assistant_id} <> Thread: {thread_id} ", end="")
-
         # Just create_and_poll for get a terminal state
-        print(f">>Running: {assistant_id} <> Thread:", thread_id)
+        print(f"Run initiated with Assistant ID: {assistant_id} and Thread ID {thread_id}\n")
         try:
-            run = client.beta.threads.runs.create_and_poll(  # This method is a helper, so you dont need to use a While
+            # Checking when the run is completed.
+            run = client.beta.threads.runs.create_and_poll(
                 thread_id=thread_id,
                 assistant_id=assistant_id,
                 poll_interval_ms=5000,
                 timeout=60.0
-                # instructions="instructions just for this run if you want"
+                # instructions just for this run if needed
             )
-            print(f">>Run: {run.id}")
+            print(f"Run ID: {run.id}\n")
         except Exception as e:
             print(f"Error: {e}")
-
-        print("\nRun completed.")
 
         # Retrieve the Run status
         try:
@@ -117,7 +112,7 @@ def get_openai_response(content, assistant_id, thread_id):
                 thread_id=thread_id,
                 run_id=run.id
             )
-            print(">>Status: ", run_status.status)
+            print(f"Run status: {run_status.status}\n")
         except Exception as e:
             print(f"Error with run: {e}")
 
@@ -134,34 +129,14 @@ def get_openai_response(content, assistant_id, thread_id):
 
             response = all_messages.data[0].content[0].text.value
 
+            print("Response retrieved and processed successfully.\n")
             print("------------------------------------------------------------\n")
-            print("Response retrieved successfully.\n")
-            print("Assistant response processed successfully.\n")
             return response
 
-            """
-            reply_data = client.beta.threads.messages.list(
-                thread_id=thread_id,
-                run_id=run.id
-            )
-            # The assistants can return multiple responses in each run, with this code you can obtain multiple responses, within each response there can be different types of content, with this same logic you can obtain files, annotations, images, etc. ..
-            for reply in reversed(reply_data.data):
-                if reply.role == 'assistant':
-                    # Ensure only text responses are processed
-                    for reply_item in reply['content']:
-                        if reply_item['type'] == 'text':
-                            text_content = reply_item['text']
-                            if isinstance(text_content, dict):
-                                return text_content['value']
-                                print(">>>Answer: ", text_content['value'])
-                            else:
-                                return text_content
-                                print(">>>Answer: ", 'text_content')
-            """
         elif run_status.status == 'failed':
-            print(">>Failed")
+            print("Failed")
         elif run_status.status == 'requires_action':
-            print(">>Use tool submit actions..")
+            print("Run status: requires action")
 
     except Exception as e:
         print(f"An error occurred in getting the response from OpenAI: {str(e)} \n")
