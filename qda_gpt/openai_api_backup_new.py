@@ -74,13 +74,6 @@ def initialize_openai_resources(file_path, model, analysis_type, user_prompt):
     return {'assistant': my_assistant, 'file':my_file, 'thread': my_thread, 'vector_store': vector_store,}
 
 
-# Here’s how you would use these functions together in your Django project:
-# Calling the function
-# from .openai_api import initialize_openai_resources
-
-# result = initialize_openai_resources(file_path="data/Interviews.txt")
-# assistant = result['assistant']
-# thread = result['thread']
 
 
 
@@ -100,9 +93,7 @@ def get_openai_response(content, assistant_id, thread_id):
     print("OpenAI API key loaded successfully. Sending content to OpenAi Assistant.\n")
 
 
-
     try:
-
 
         # Send message to the thread
         my_thread_message = client.beta.threads.messages.create(
@@ -113,6 +104,7 @@ def get_openai_response(content, assistant_id, thread_id):
         if not my_thread_message or not my_thread_message.content:
             return "Message creation failed.", "Failure"
         print(f"Message sent to thread. Message ID: {my_thread_message.id}\n")
+
 
         # Run the assistant
         my_run = client.beta.threads.runs.create(

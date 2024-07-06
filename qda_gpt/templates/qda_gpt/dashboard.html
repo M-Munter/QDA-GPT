@@ -1,180 +1,177 @@
 <!-- dashboard.html -->
-{% load static %}  <!-- Loads static files for use in this template -->
+{% load static %}
 <html>
 <head>
     <title>Qualitative Data Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"> <!-- Loads the Open Sans font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            text-align: center; /* Centers text alignment for all content in the body */
-            font-family: 'Open Sans', sans-serif; /* Sets Open Sans as the font family for the body */
-            padding-bottom: 55px; /* Adjust the padding to match the height of the footer + margin */
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            padding-bottom: 55px;
         }
-
         .active-button {
-            background-color: #3498db; /* Light blue background for the active button */
-            color: white; /* White text color for better contrast */
-            border: 2px solid #2980b9; /* Slightly darker blue border for depth */
+            background-color: #3498db;
+            color: white;
+            border: 2px solid #2980b9;
         }
-
         .form-container {
-            margin: 20px auto; /* Centers the form container horizontally with a top and bottom margin of 20px */
-            width: 74%; /* Sets the width of the form container to 63% of its parent element */
-            padding: 20px; /* Adds padding inside the form container */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds a subtle shadow around the form container */
-            border-radius: 10px; /* Rounds the corners of the form container */
-            background: #f8f8f8; /* Sets a light grey background color for the form container */
+            margin: 20px auto;
+            width: 74%;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            background: #f8f8f8;
         }
-
-        .form-container-setup {
-            min-height: 250px; /* Adjust the minimum height for the setup container as needed */
-        }
-
-        .form-container-analyze {
-            min-height: 307px; /* Adjust the minimum height for the analyze container as needed */
-        }
-
         .form-section {
-            margin-bottom: 20px; /* Adds a bottom margin to each form section for spacing */
+            margin-bottom: 20px;
         }
-
         .prompt-input {
-            width: 100%; /* Sets the width of the input fields to 100% of their parent element */
-            padding: 0px; /* Adds padding inside the input fields */
-            margin-bottom: 10px; /* Adds a bottom margin to the input fields */
-            box-sizing: border-box; /* Changes the box model to include padding and border in the element's width */
-            resize: vertical; /* Allows the textarea to be resized vertically */
+            width: 100%;
+            padding: 0px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            resize: vertical;
         }
-
         .loader {
             border: 4px solid #f3f3f3;
             border-radius: 50%;
             border-top: 4px solid #3498db;
             width: 20px;
             height: 20px;
-            -webkit-animation: spin 2s linear infinite; /* Safari */
+            -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
-            display: none; /* Hidden by default */
-            margin: 20px auto; /* Center the loader horizontally */
+            display: none;
+            margin: 20px auto;
         }
-
         @-webkit-keyframes spin {
             0% { -webkit-transform: rotate(0deg); }
             100% { -webkit-transform: rotate(360deg); }
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
         .left-align {
-            text-align: left; /* Aligns text to the left */
-            margin-left: 20px; /* Adds some margin on the left if needed */
+            text-align: left;
+            margin-left: 20px;
         }
-
         .footer-margin {
-            height: 0px; /* Adjust the height of the margin as needed */
+            height: 0px;
         }
-
         footer {
-            text-align: center; /* Aligns footer content to the left */
-            padding: 0px; /* Adds padding inside the footer */
-            position: fixed; /* Position is fixed */
-            bottom: 0; /* Positions the footer at the bottom of its parent */
-            box-sizing: border-box; /* Changes the box model to include padding and border in the element's width */
+            text-align: center;
+            padding: 0px;
+            position: fixed;
+            bottom: 0;
+            box-sizing: border-box;
             width: 100%;
             height: 55px;
-            left: 0; /* Ensures the footer extends to the left border of the page */
-            background: #2c3e50; /* Dark blue background for a more professional look */
-            color: #ecf0f1; /* Light grey text for better readability */
+            left: 0;
+            background: #001f3f;
+            color: #ecf0f1;
+        }
+        .disabled-button {
+            background-color: #ccc;
+            color: #666;
+            border: 2px solid #aaa;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
     <h1>QDA-GPT</h1>
 
-    <!-- Setup OpenAI Assistant Form -->
     <div class="form-container form-container-setup">
-        <h2>Setup OpenAI Assistant</h2>
-        <form method="post" enctype="multipart/form-data" id="setup-form" action="{% url 'dashboard' %}">
-            {% csrf_token %}  <!-- Adds CSRF token to form for security -->
+        <h2>Setup and Analyze</h2>
+        <form method="post" enctype="multipart/form-data" id="setup-form" action="{% url 'dashboard' %}" onsubmit="return handleSubmit(event)">
+            {% csrf_token %}
             <div class="form-section">
-                {{ setup_form.file }}  <!-- Renders file field from setup_form -->
+                <input type="file" name="file" id="file-input" {% if file_name %} disabled {% endif %}>
+                {% if file_name %}
+                    <p>File selected: {{ file_name }}</p>
+                {% endif %}
             </div>
             <div class="form-section">
-                {{ setup_form.model_choice }}  <!-- Renders model_choice field from setup_form -->
+                {{ setup_form.model_choice }}
+            </div>
+            <div class="form-section">
+                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
             </div>
             <div class="form-section">
                 <label for="analysis_type">Select Analysis Type:</label>
                 <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
                 <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
                 <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
-                <input type="hidden" name="analysis_type" id="analysis_type" value="thematic"> <!-- Default to thematic -->
+                <input type="hidden" name="analysis_type" id="analysis_type" value="{{ analysis_type }}">
+                <div id="selected-analysis-type" class="form-section">
+                    {% if analysis_type %}
+                        Selected analysis type: {{ analysis_type|capfirst }} Analysis
+                    {% else %}
+                        No analysis type selected.
+                    {% endif %}
+                </div>
             </div>
             <div class="form-section">
-                <button type="submit" name="action" value="setup" onclick="showLoader('setup')">Setup Assistant</button>
+                <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Setup and Analyze</button>
             </div>
             <div id="setup-status-container" class="form-section">
                 {% if setup_status %}
-                    <div><strong>Status:</strong> {{ setup_status }}</div>  <!-- Displays setup status if available -->
+                    <div><strong>Status:</strong> {{ setup_status }}</div>
                 {% else %}
-                    <div><strong>Status:</strong> Waiting...</div>  <!-- Default text if setup status is not available -->
+                    <div><strong>Status:</strong> Waiting...</div>
                 {% endif %}
-            </div>
-            <div id="setup-loader" class="loader"></div> <!-- Loading animation -->
-        </form>
-    </div>
-
-    <!-- Analysis Data Form -->
-    <div class="form-container form-container-analyze">
-        <h2>Analyze Data</h2>
-        <form method="post" enctype="multipart/form-data" id="analysis-form" action="{% url 'dashboard' %}">
-            {% csrf_token %}
-            <div class="form-section">
-                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7"></textarea>  <!-- Textarea for user to enter analysis prompt -->
-            </div>
-            <div class="form-section">
-                <button type="submit" name="action" value="analyze" onclick="showLoader('analyze')">Analyze Data</button>  <!-- Button to submit analysis request -->
             </div>
             <div id="analysis-status-container" class="form-section">
                 {% if analysis_status %}
-                    <div><strong>Status:</strong> {{ analysis_status }}</div>  <!-- Displays analysis status if available -->
+                    <div><strong>Status:</strong> {{ analysis_status }}</div>
                 {% else %}
-                    <div><strong>Status:</strong> Waiting...</div>  <!-- Default text if setup status is not available -->
+                    <div><strong>Status:</strong> Waiting...</div>
                 {% endif %}
             </div>
-            <div id="analyze-loader" class="loader"></div> <!-- Loading animation -->
+            <div id="setup-loader" class="loader"></div>
+            <div id="analyze-loader" class="loader"></div>
+            <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
         </form>
     </div>
 
-
-    <!-- Results Display Section -->
     <div class="form-container">
-        <h2>Results</h2> <!-- This stays centered as it's inside the form-container but outside the left-aligned div -->
-        <div class="left-align"> <!-- Only content in this div will be left-aligned -->
+        <h2>Results</h2>
+        <div class="left-align">
             {% if response %}
-                <div><strong>User Prompt:</strong> {{ formatted_ta_prompt1 }}</div>
+                <div><strong>User Prompt:</strong> {{ formatted_prompt1 }}</div>
                 <br>
                 <div><strong>Response from OpenAI Assistant:</strong> {{ response }}</div>
             {% endif %}
             <br>
             {% if second_response %}
-                <div><strong>Second User Prompt:</strong> {{ formatted_ta_prompt2 }}</div>
+                <div><strong>Second User Prompt:</strong> {{ formatted_prompt2 }}</div>
                 <br>
                 <div><strong>Phase 3 Response from OpenAI Assistant:</strong> {{ second_response }}</div>
             {% endif %}
             <br>
             {% if third_response %}
-                <div><strong>Third User Prompt:</strong> {{ formatted_ta_prompt3 }}</div>
+                <div><strong>Third User Prompt:</strong> {{ formatted_prompt3 }}</div>
                 <br>
                 <div><strong>Phase 4 Response from OpenAI Assistant:</strong> {{ third_response }}</div>
             {% endif %}
             <br>
             {% if fourth_response %}
-                <div><strong>Fourth User Prompt:</strong> {{ formatted_ta_prompt4 }}</div>
+                <div><strong>Fourth User Prompt:</strong> {{ formatted_prompt4 }}</div>
                 <br>
                 <div><strong>Phase 5 Response from OpenAI Assistant:</strong> {{ fourth_response }}</div>
+            {% endif %}
+            <br>
+            {% if fifth_response %}
+                <div><strong>Fifth User Prompt:</strong> {{ formatted_prompt5 }}</div>
+                <br>
+                <div><strong>Phase 6 Response from OpenAI Assistant:</strong> {{ fifth_response }}</div>
+            {% endif %}
+            <br>
+            {% if sixth_response %}
+                <div><strong>Sixth User Prompt:</strong> {{ formatted_prompt6 }}</div>
+                <br>
+                <div><strong>Final Response from OpenAI Assistant:</strong> {{ sixth_response }}</div>
             {% endif %}
             <br>
             {% if deletion_results %}
@@ -183,47 +180,48 @@
         </div>
     </div>
 
-    <!-- JavaScript to Show Loader -->
     <script>
     function showLoader(type) {
-        if (type === 'setup') {
-            document.getElementById("setup-loader").style.display = "block"; // Show setup loader
-            document.getElementById("setup-status").style.display = "none"; // Hide setup status
-        } else if (type === 'analyze') {
-            document.getElementById("analyze-loader").style.display = "block"; // Show analyze loader
-            document.getElementById("analysis-status").style.display = "none"; // Hide analysis status
+        if (type === 'analyze') {
+            document.getElementById("analyze-loader").style.display = "block";
+            document.getElementById("analysis-status").style.display = "none";
         }
         setTimeout(function(){
-            if (type === 'setup') {
-                document.getElementById("setup-loader").style.display = "none"; // Hide setup loader
-                document.getElementById("setup-status").style.display = "block"; // Show setup status
-            } else if (type === 'analyze') {
-                document.getElementById("analyze-loader").style.display = "none"; // Hide analyze loader
-                document.getElementById("analysis-status").style.display = "block"; // Show analysis status
+            if (type === 'analyze') {
+                document.getElementById("analyze-loader").style.display = "none";
+                document.getElementById("analysis-status").style.display = "block";
             }
-        }, 5000); // Simulate 2 seconds delay, adjust as needed
+        }, 5000);
     }
 
     function selectAnalysisType(type) {
-        // Set the value of the hidden input to the selected analysis type
         document.getElementById('analysis_type').value = type;
-
-        // Remove active class from all buttons
+        document.getElementById('analysis_type_hidden').value = type;
         var buttons = document.querySelectorAll('.analysis-button');
         buttons.forEach(function(button) {
             button.classList.remove('active-button');
         });
-
-        // Add active class to the clicked button
         document.getElementById(type + '-button').classList.add('active-button');
+        document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
     }
 
+    function handleSubmit(event) {
+        var action = event.submitter.value;
+        if (action === 'analyze') {
+            var fileInput = document.querySelector('input[type="file"]');
+            if (!fileInput.files.length) {
+                alert("Please select a file.");
+                event.preventDefault();
+                return false;
+            }
+            showLoader('analyze');
+        }
+        return true;
+    }
     </script>
 
 </body>
-
 <footer>
-    <p>Version: {{ version }}</p>  <!-- Displays version of the application -->
+    <p>Version: {{ version }}</p>
 </footer>
-
 </html>

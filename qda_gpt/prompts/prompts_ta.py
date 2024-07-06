@@ -1,12 +1,19 @@
 # prompts_ta.py
-# This script contains the Thematic Analysis prompts sent to OpenAI Assistant.
+# This script contains the Thematic Analysis instruction and prompts sent to OpenAI Assistant.
 
-ta_prompt1 = """
+ta_instruction = """
+You are a qualitative data analyst performing Thematic Analysis. Your task is to analyze the provided dataset of transcribed interviews.
+
+Respond always with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
+
 In the analysis, take into account the following considerations to get relevant context and information for the analysis:
 
 {user_prompt}
+"""
 
-You are requested to identify the most relevant themes in the following dataset of transcribed interviews.
+
+ta_prompt1 = """
+You are requested to identify the most relevant themes in the attached dataset of transcribed interviews.
         
 For each theme, provide:
  - index number starting from 1,
@@ -80,4 +87,5 @@ The main topics discussed in the interviews were:
 - Economic Aspects: Looking at the gaming industry’s economic impact, including discussions on monetization strategies such as in-game purchases and subscription models.
 - Technological Trends: Examining advancements in gaming technology, including virtual reality, augmented reality, and the integration of artificial intelligence in games.
 - Ethical and Social Issues: Addressing concerns related to gaming, such as addiction, violence, and the social dynamics within gaming communities.
+
 """

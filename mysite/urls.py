@@ -19,5 +19,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('qda_gpt/', include('qda_gpt.urls')),  # Include the urls from the qda_gpt app
+    path('', include('qda_gpt.urls')),  # Include the urls from the qda_gpt app
 ]

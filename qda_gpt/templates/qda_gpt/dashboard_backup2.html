@@ -11,9 +11,15 @@
             padding-bottom: 55px; /* Adjust the padding to match the height of the footer + margin */
         }
 
+        .active-button {
+            background-color: #3498db; /* Light blue background for the active button */
+            color: white; /* White text color for better contrast */
+            border: 2px solid #2980b9; /* Slightly darker blue border for depth */
+        }
+
         .form-container {
             margin: 20px auto; /* Centers the form container horizontally with a top and bottom margin of 20px */
-            width: 70%; /* Sets the width of the form container to 63% of its parent element */
+            width: 74%; /* Sets the width of the form container to 63% of its parent element */
             padding: 20px; /* Adds padding inside the form container */
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds a subtle shadow around the form container */
             border-radius: 10px; /* Rounds the corners of the form container */
@@ -62,6 +68,11 @@
             100% { transform: rotate(360deg); }
         }
 
+        .left-align {
+            text-align: left; /* Aligns text to the left */
+            margin-left: 20px; /* Adds some margin on the left if needed */
+        }
+
         .footer-margin {
             height: 0px; /* Adjust the height of the margin as needed */
         }
@@ -93,6 +104,13 @@
             </div>
             <div class="form-section">
                 {{ setup_form.model_choice }}  <!-- Renders model_choice field from setup_form -->
+            </div>
+            <div class="form-section">
+                <label for="analysis_type">Select Analysis Type:</label>
+                <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
+                <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
+                <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
+                <input type="hidden" name="analysis_type" id="analysis_type" value="thematic"> <!-- Default to thematic -->
             </div>
             <div class="form-section">
                 <button type="submit" name="action" value="setup" onclick="showLoader('setup')">Setup Assistant</button>
@@ -133,30 +151,36 @@
 
     <!-- Results Display Section -->
     <div class="form-container">
-        <h2>Results</h2>
-        {% if response %}
-            <div><strong>User Prompt:</strong> {{ formatted_ta_prompt1 }}</div>
+        <h2>Results</h2> <!-- This stays centered as it's inside the form-container but outside the left-aligned div -->
+        <div class="left-align"> <!-- Only content in this div will be left-aligned -->
+            {% if response %}
+                <div><strong>User Prompt:</strong> {{ formatted_ta_prompt1 }}</div>
+                <br>
+                <div><strong>Response from OpenAI Assistant:</strong> {{ response }}</div>
+            {% endif %}
             <br>
-            <div><strong>Response from OpenAI Assistant:</strong> {{ response }}</div>
-        {% endif %}
-        <br>
-        {% if second_response %}
-            <div><strong>Second User Prompt:</strong> {{ formatted_ta_prompt2 }}</div>
+            {% if second_response %}
+                <div><strong>Second User Prompt:</strong> {{ formatted_ta_prompt2 }}</div>
+                <br>
+                <div><strong>Phase 3 Response from OpenAI Assistant:</strong> {{ second_response }}</div>
+            {% endif %}
             <br>
-            <div><strong>Phase 3 Response from OpenAI Assistant:</strong> {{ second_response }}</div>
-        {% endif %}
-        <br>
-        <br>
-        {% if deletion_results %}
-            <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
-        {% endif %}
-    </div>
-
-    <br>
-    <div>
-    Response JSON Available: {{ response }}
-    Formatted Prompt 2 Available: {{ formatted_ta_prompt2 }}
-    Second Response Available: {{ second_response }}
+            {% if third_response %}
+                <div><strong>Third User Prompt:</strong> {{ formatted_ta_prompt3 }}</div>
+                <br>
+                <div><strong>Phase 4 Response from OpenAI Assistant:</strong> {{ third_response }}</div>
+            {% endif %}
+            <br>
+            {% if fourth_response %}
+                <div><strong>Fourth User Prompt:</strong> {{ formatted_ta_prompt4 }}</div>
+                <br>
+                <div><strong>Phase 5 Response from OpenAI Assistant:</strong> {{ fourth_response }}</div>
+            {% endif %}
+            <br>
+            {% if deletion_results %}
+                <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
+            {% endif %}
+        </div>
     </div>
 
     <!-- JavaScript to Show Loader -->
@@ -179,6 +203,21 @@
             }
         }, 5000); // Simulate 2 seconds delay, adjust as needed
     }
+
+    function selectAnalysisType(type) {
+        // Set the value of the hidden input to the selected analysis type
+        document.getElementById('analysis_type').value = type;
+
+        // Remove active class from all buttons
+        var buttons = document.querySelectorAll('.analysis-button');
+        buttons.forEach(function(button) {
+            button.classList.remove('active-button');
+        });
+
+        // Add active class to the clicked button
+        document.getElementById(type + '-button').classList.add('active-button');
+    }
+
     </script>
 
 </body>

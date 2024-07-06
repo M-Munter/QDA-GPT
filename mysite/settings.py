@@ -129,7 +129,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # URL to access media through the web
 MEDIA_URL = '/media/'
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) ###tämän voi mahdollisesti poistaa
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
