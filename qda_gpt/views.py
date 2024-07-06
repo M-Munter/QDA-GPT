@@ -44,7 +44,7 @@ def handle_setup(request, setup_form):
                 print('\rWaiting for indexing: ', end='',
                       flush=True)  # Return to the beginning of the line and overwrite
             print("0")
-            print("Indexing complete.")
+            print("Indexing complete.\n")
 
             request.session['initialized'] = True
             request.session['vector_store_id'] = resources['vector_store'].id

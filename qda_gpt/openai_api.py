@@ -161,27 +161,35 @@ def delete_openai_resources(assistant_id, file_id, thread_id, vector_store_id):
 
     results = {}
     try:
-        results['file'] = client.files.delete(file_id)
+        client.files.delete(file_id)
+        results['file'] = {'deleted': True}
         print("File deleted. \n")
     except Exception as e:
+        results['file'] = {'deleted': False, 'error': str(e)}
         print(f"Failed to delete file: {e} \n")
 
     try:
         results['vector_store'] = client.beta.vector_stores.delete(vector_store_id)
+        results['vector_store'] = {'deleted': True}
         print("Vector store deleted. \n")
     except Exception as e:
+        results['vector_store'] = {'deleted': False, 'error': str(e)}
         print(f"Failed to delete vector store: {e} \n")
 
     try:
-        results['assistant'] = client.beta.assistants.delete(assistant_id)
+        client.beta.assistants.delete(assistant_id)
+        results['assistant'] = {'deleted': True}
         print("Assistant deleted. \n")
     except Exception as e:
         print(f"Failed to delete assistant: {e} \n")
+        results['assistant'] = {'deleted': False, 'error': str(e)}
 
     try:
-        results['thread'] = client.beta.threads.delete(thread_id)
+        client.beta.threads.delete(thread_id)
+        results['thread'] = {'deleted': True}
         print("Thread deleted. \n")
     except Exception as e:
+        results['thread'] = {'deleted': False, 'error': str(e)}
         print(f"Failed to delete thread: {e} \n")
 
     return results

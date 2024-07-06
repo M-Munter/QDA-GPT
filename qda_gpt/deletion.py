@@ -12,10 +12,12 @@ def handle_deletion(request):
             deletion_results = delete_openai_resources(assistant_id, file_id, thread_id, vector_store_id)
             request.session['deletion_results'] = deletion_results
 
-            all_deleted = all(result['deleted'] for result in deletion_results.values())
-            deletion_message = "All OpenAI elements deleted successfully." if all_deleted else "Not all OpenAI elements were deleted successfully."
-            print(deletion_message)
-            return deletion_message
+            try:
+                all_deleted = all(result['deleted'] for result in deletion_results.values())
+                deletion_message = "Deletion successful"
+                return deletion_message
+            except Exception as e:
+                return f"Deletion failed: {str(e)}"
         except Exception as e:
             return f"Deletion failed: {str(e)}"
     else:

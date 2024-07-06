@@ -1,4 +1,4 @@
-from qda_gpt.prompts.prompts_ca import ca_prompt1, ca_prompt2, ca_prompt3, ca_prompt4, ca_prompt5, ca_prompt6, ca_instruction
+from qda_gpt.prompts.prompts_ca import ca_prompt1, ca_prompt2, ca_prompt3, ca_prompt4, ca_prompt5, ca_prompt6
 from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
 
@@ -37,8 +37,10 @@ def handle_ca_phase6(request, response5_json):
             request.session['deletion_results'] = deletion_results
 
             analysis_status = "Analysis completed successfully."
-            if "Not all OpenAI elements were deleted successfully" in deletion_results:
-                analysis_status = "Analysis completed, but not all OpenAI elements were deleted successfully."
+            if "Deletion successful" in deletion_results:
+                analysis_status = "Analysis completed and all OpenAI elements deleted successfully."
+            else:
+                analysis_status = "Analysis completed successfully, but deletion of all OpenAI elements failed."
 
             request.session['analysis_status'] = analysis_status
             return response6_json, formatted_ca_prompt6, analysis_status, deletion_results

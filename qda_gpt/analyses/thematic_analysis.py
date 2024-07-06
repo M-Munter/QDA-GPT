@@ -1,4 +1,4 @@
-from qda_gpt.prompts.prompts_ta import ta_prompt1, ta_prompt2, ta_prompt3, ta_prompt4, ta_instruction
+from qda_gpt.prompts.prompts_ta import ta_prompt1, ta_prompt2, ta_prompt3, ta_prompt4
 from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
 
@@ -27,8 +27,10 @@ def handle_ta_phase4(request, response2_json, response3_json):
             request.session['deletion_results'] = deletion_results
 
             analysis_status = "Analysis completed successfully."
-            if "Not all OpenAI elements were deleted successfully" in deletion_results:
-                analysis_status = "Analysis completed, but not all OpenAI elements were deleted successfully."
+            if "Deletion successful" in deletion_results:
+                analysis_status = "Analysis completed and all OpenAI elements deleted successfully."
+            else:
+                analysis_status = "Analysis completed successfully, but deletion of all OpenAI elements failed."
 
             request.session['analysis_status'] = analysis_status
             return response4_json, formatted_ta_prompt4, analysis_status, deletion_results
