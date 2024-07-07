@@ -80,7 +80,6 @@
     </style>
 </head>
 <body>
-<body onload="fetchStatus()">
     <h1>QDA-GPT</h1>
     <div class="form-container form-container-setup">
         <h2>Setup and Analyze</h2>
@@ -116,11 +115,15 @@
             </div>
             <div class="form-section">
                 <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Analyze</button>
+                <button type="button" onclick="clearSessionData()">Clear Session</button>
             </div>
             <div id="status-container" class="form-section">
-                <div><strong>Analysis progress:</strong>
-                    <span id="setup-status">Waiting...</span>
-                    {% if analysis_status %} | {{ analysis_status }}{% endif %}
+                <div><strong>Analysis status:</strong>
+                    {% if analysis_status %}
+                        {{ analysis_status }}
+                    {% else %}
+                        <span id="setup-status">Waiting...</span>
+                    {% endif %}
                 </div>
             </div>
             <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
@@ -210,6 +213,7 @@
                 event.preventDefault();
                 return false;
             }
+            fetchStatus();  // Start polling when the form is submitted
             showLoader('analyze');
         }
         return true;
@@ -233,7 +237,20 @@
         });
     }
 
-    window.onload = fetchStatus;
+    function clearSessionData() {
+        console.log("[DEBUG] clearSessionData called");
+        fetch('{% url "clear_session" %}', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(response => {
+            console.log("[DEBUG] clearSessionData response received");
+            window.location.reload(); // Reload the page after clearing the session
+        }).catch(error => {
+            console.error("[DEBUG] clearSessionData error:", error);
+        });
+    }
     </script>
 
 </body>

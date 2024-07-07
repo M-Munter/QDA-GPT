@@ -50,7 +50,7 @@ def handle_setup(request, setup_form):
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully."
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
                 print(f"[DEBUG] setup_status: OpenAI resources Initialized Successfully", flush=True)
                 request.session.save()  # Explicitly save the session
 
@@ -115,12 +115,15 @@ def dashboard(request):
 
     if request.method == 'GET':
         clear_session_data(request)
+        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}")
 
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
+                print(
+                f"[DEBUG] POST request: setup_status after handle_setup: {request.session.get('setup_status', '')}")
                 if analysis_type == 'thematic':
                     response_json, formatted_prompt1 = thematic_analysis.handle_analysis(request)
                     response2_json, formatted_prompt2 = thematic_analysis.handle_second_prompt_analysis(request,
@@ -194,9 +197,13 @@ def dashboard(request):
                         'deletion_results': deletion_results
                     })
 
-                request.session.save()  # Explicitly save the session
+                # request.session.save()  # Explicitly save the session
+                print(
+                    f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}")
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
+                print(
+                    f"[DEBUG] POST request: setup_status after failed handle_setup: {request.session.get('setup_status', '')}")
 
     return render(request, 'qda_gpt/dashboard.html', context)
 

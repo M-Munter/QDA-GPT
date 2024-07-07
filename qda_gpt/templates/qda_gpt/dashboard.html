@@ -231,7 +231,7 @@
                 document.getElementById('setup-status').innerText = data.setup_status;
                 console.log("[DEBUG] Fetched setup_status:", data.setup_status);  // Debugging console log
             }
-            if (data.setup_status !== "OpenAI Assistant initialized successfully.") {
+            if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
                 setTimeout(fetchStatus, 500); // Poll half a second
             }
         });
@@ -245,8 +245,12 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         }).then(response => {
-            console.log("[DEBUG] clearSessionData response received");
-            window.location.reload(); // Reload the page after clearing the session
+            if (response.ok) {
+                console.log("[DEBUG] clearSessionData response received");
+                window.location.href = "{% url 'dashboard' %}"; // Redirect to dashboard without reloading the current state
+            } else {
+                console.error("[DEBUG] Failed to clear session data");
+            }
         }).catch(error => {
             console.error("[DEBUG] clearSessionData error:", error);
         });

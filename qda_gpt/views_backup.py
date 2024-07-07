@@ -1,6 +1,7 @@
 # views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import SetupForm
+from django.http import JsonResponse
 from .openai_api import initialize_openai_resources, create_thread
 from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
@@ -12,10 +13,22 @@ import json
 def clear_session_data(request):
     session_keys = [
         'response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
-        'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response', 'analysis_type', 'user_prompt', 'file_name'
+        'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response',
+        'analysis_type', 'user_prompt', 'file_name'
     ]
     for key in session_keys:
         request.session.pop(key, None)
+
+def clear_session(request):
+    clear_session_data(request)
+    return redirect('dashboard')
+
+
+def get_setup_status(request):
+    status = request.session.get('setup_status', '')
+    print(f"[DEBUG] Current setup_status: {status}", flush=True)  # Debugging print statement
+    return JsonResponse({'setup_status': status})
+
 
 def handle_setup(request, setup_form):
     if setup_form.is_valid():
@@ -27,13 +40,21 @@ def handle_setup(request, setup_form):
         file_path = handle_uploaded_file(file)
         try:
             # Create thread and assign correct thread ID
+            request.session['setup_status'] = "Initializing OpenAI Assistant."
+            print(f"[DEBUG] setup_status: Initializing OpenAI resources...", flush=True)
+            request.session.save()  # Explicitly save the session
+            time.sleep(0.25)
             thread_id = create_thread()
             if thread_id:
                 request.session['thread_id'] = thread_id
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully."
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
+                print(f"[DEBUG] setup_status: OpenAI resources Initialized Successfully", flush=True)
+                request.session.save()  # Explicitly save the session
+
+                time.sleep(0.55)
 
                 print("Waiting for indexing: ", end='', flush=True)
                 for i in range(5, -1, -1):  # Adjusted range to include 0
@@ -54,13 +75,14 @@ def handle_setup(request, setup_form):
                 return True  # Return early to immediately show the setup status. Indicate success immediately
             else:
                 request.session['setup_status'] = "Failed to create thread."
+                request.session.save()  # Explicitly save the session
                 return False # Indicate failure immediately
 
         except Exception as e:
             request.session['setup_status'] = f"Error initializing OpenAI resources: {str(e)}"
+            request.session.save()  # Explicitly save the session
             return False
     return False
-
 
 
 
@@ -93,12 +115,15 @@ def dashboard(request):
 
     if request.method == 'GET':
         clear_session_data(request)
+        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}")
 
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
+                print(
+                f"[DEBUG] POST request: setup_status after handle_setup: {request.session.get('setup_status', '')}")
                 if analysis_type == 'thematic':
                     response_json, formatted_prompt1 = thematic_analysis.handle_analysis(request)
                     response2_json, formatted_prompt2 = thematic_analysis.handle_second_prompt_analysis(request,
@@ -171,8 +196,14 @@ def dashboard(request):
                         'analysis_status': analysis_status,
                         'deletion_results': deletion_results
                     })
+
+                # request.session.save()  # Explicitly save the session
+                print(
+                    f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}")
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
+                print(
+                    f"[DEBUG] POST request: setup_status after failed handle_setup: {request.session.get('setup_status', '')}")
 
     return render(request, 'qda_gpt/dashboard.html', context)
 

@@ -18,6 +18,7 @@ def clear_session_data(request):
     ]
     for key in session_keys:
         request.session.pop(key, None)
+    request.session.save()  # Explicitly save the session after clearing
 
 def clear_session(request):
     clear_session_data(request)
@@ -87,6 +88,10 @@ def handle_setup(request, setup_form):
 
 
 def dashboard(request):
+    if request.method == 'GET':
+        clear_session(request)
+        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}")
+
     setup_form = SetupForm(request.POST or None, request.FILES or None)
     analysis_type = request.POST.get('analysis_type', request.session.get('analysis_type', ''))
     user_prompt = request.POST.get('user_prompt', request.session.get('user_prompt', ''))
@@ -112,10 +117,6 @@ def dashboard(request):
         'user_prompt': user_prompt,
         'file_name': file_name,
     }
-
-    if request.method == 'GET':
-        clear_session_data(request)
-        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}")
 
     if request.method == 'POST':
         action = request.POST.get('action')
