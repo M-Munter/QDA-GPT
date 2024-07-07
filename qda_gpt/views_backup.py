@@ -1,10 +1,13 @@
 # views.py
 from django.shortcuts import render
 from .forms import SetupForm
-from .openai_api import initialize_openai_resources
+from .openai_api import initialize_openai_resources, create_thread
 from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 import os
+import time  # Import time for sleep
+import sys  # Import sys to use sys.stdout for printing without new lines
+import json
 
 def clear_session_data(request):
     session_keys = [
@@ -23,20 +26,43 @@ def handle_setup(request, setup_form):
         user_prompt = request.POST.get('user_prompt', '')
         file_path = handle_uploaded_file(file)
         try:
-            resources = initialize_openai_resources(file_path, model_choice, request.session['analysis_type'], user_prompt)
-            request.session['initialized'] = True
-            request.session['thread_id'] = resources['thread'].id
-            request.session['vector_store_id'] = resources['vector_store'].id
-            request.session['assistant_id'] = resources['assistant'].id
-            request.session['file_id'] = resources['file'].id
-            request.session['file_name'] = file.name
-            request.session['setup_status'] = "OpenAI Assistant initialized successfully."
-            request.session['user_prompt'] = user_prompt  # Save user prompt to session
+            # Create thread and assign correct thread ID
+            thread_id = create_thread()
+            if thread_id:
+                request.session['thread_id'] = thread_id
+                resources = initialize_openai_resources(
+                    file_path, model_choice, request.session['analysis_type'], user_prompt
+                )
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully."
+
+                print("Waiting for indexing: ", end='', flush=True)
+                for i in range(5, -1, -1):  # Adjusted range to include 0
+                    print(f"{i} ", end='', flush=True)  # Print the countdown number with a space
+                    time.sleep(0.9)
+                    print('\rWaiting for indexing: ', end='',
+                          flush=True)  # Return to the beginning of the line and overwrite
+                print("0")
+                print("Indexing complete.\n")
+
+                request.session['initialized'] = True
+                request.session['vector_store_id'] = resources['vector_store'].id
+                request.session['assistant_id'] = resources['assistant'].id
+                request.session['file_id'] = resources['file'].id
+                request.session['file_name'] = file.name
+                request.session['user_prompt'] = user_prompt  # Save user prompt to session
+
+                return True  # Return early to immediately show the setup status. Indicate success immediately
+            else:
+                request.session['setup_status'] = "Failed to create thread."
+                return False # Indicate failure immediately
+
         except Exception as e:
             request.session['setup_status'] = f"Error initializing OpenAI resources: {str(e)}"
             return False
-        return True
     return False
+
+
+
 
 def dashboard(request):
     setup_form = SetupForm(request.POST or None, request.FILES or None)
@@ -75,9 +101,11 @@ def dashboard(request):
             if setup_success:
                 if analysis_type == 'thematic':
                     response_json, formatted_prompt1 = thematic_analysis.handle_analysis(request)
-                    response2_json, formatted_prompt2 = thematic_analysis.handle_second_prompt_analysis(request, response_json)
+                    response2_json, formatted_prompt2 = thematic_analysis.handle_second_prompt_analysis(request,
+                                                                                                        response_json)
                     response3_json, formatted_prompt3 = thematic_analysis.handle_ta_phase3(request, response_json)
-                    response4_json, formatted_prompt4, analysis_status, deletion_results = thematic_analysis.handle_ta_phase4(request, response2_json, response3_json)
+                    response4_json, formatted_prompt4, analysis_status, deletion_results = thematic_analysis.handle_ta_phase4(
+                        request, response2_json, response3_json)
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,
@@ -92,11 +120,13 @@ def dashboard(request):
                     })
                 elif analysis_type == 'content':
                     response_json, formatted_prompt1 = content_analysis.handle_analysis(request)
-                    response2_json, formatted_prompt2 = content_analysis.handle_second_prompt_analysis(request, response_json)
+                    response2_json, formatted_prompt2 = content_analysis.handle_second_prompt_analysis(request,
+                                                                                                       response_json)
                     response3_json, formatted_prompt3 = content_analysis.handle_ca_phase3(request, response2_json)
                     response4_json, formatted_prompt4 = content_analysis.handle_ca_phase4(request, response3_json)
                     response5_json, formatted_prompt5 = content_analysis.handle_ca_phase5(request, response4_json)
-                    response6_json, formatted_prompt6, analysis_status, deletion_results = content_analysis.handle_ca_phase6(request, response5_json)
+                    response6_json, formatted_prompt6, analysis_status, deletion_results = content_analysis.handle_ca_phase6(
+                        request, response5_json)
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,
@@ -115,12 +145,14 @@ def dashboard(request):
                     })
                 elif analysis_type == 'grounded':
                     response_json, formatted_prompt1 = grounded_theory.handle_analysis(request)
-                    response2_json, formatted_prompt2 = grounded_theory.handle_second_prompt_analysis(request, response_json)
+                    response2_json, formatted_prompt2 = grounded_theory.handle_second_prompt_analysis(request,
+                                                                                                      response_json)
                     response3_json, formatted_prompt3 = grounded_theory.handle_gt_phase3(request, response2_json)
                     response4_json, formatted_prompt4 = grounded_theory.handle_gt_phase4(request, response3_json)
                     response5_json, formatted_prompt5 = grounded_theory.handle_gt_phase5(request, response4_json)
                     response6_json, formatted_prompt6 = grounded_theory.handle_gt_phase6(request, response5_json)
-                    response7_json, formatted_prompt7, analysis_status, deletion_results = grounded_theory.handle_gt_phase7(request, response6_json)
+                    response7_json, formatted_prompt7, analysis_status, deletion_results = grounded_theory.handle_gt_phase7(
+                        request, response6_json)
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,

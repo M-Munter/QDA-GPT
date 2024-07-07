@@ -80,6 +80,7 @@
     </style>
 </head>
 <body>
+<body onload="fetchStatus()">
     <h1>QDA-GPT</h1>
     <div class="form-container form-container-setup">
         <h2>Setup and Analyze</h2>
@@ -118,8 +119,7 @@
             </div>
             <div id="status-container" class="form-section">
                 <div><strong>Analysis progress:</strong>
-                    Waiting
-                    {% if setup_status %} | {{ setup_status }}{% endif %}
+                    <span id="setup-status">Waiting...</span>
                     {% if analysis_status %} | {{ analysis_status }}{% endif %}
                 </div>
             </div>
@@ -129,7 +129,6 @@
 
     <div class="form-container">
         <h2>Results</h2>
-        <div id="setup-loader" class="loader"></div>
         <div id="analyze-loader" class="loader"></div>
         <div class="left-align">
             {% if response %}
@@ -176,6 +175,7 @@
 
     <script>
     function showLoader(type) {
+        console.log("[DEBUG] showLoader called with type:", type);
         if (type === 'analyze') {
             document.getElementById("analyze-loader").style.display = "block";
             document.getElementById("analysis-status").style.display = "none";
@@ -189,6 +189,7 @@
     }
 
     function selectAnalysisType(type) {
+        console.log("[DEBUG] selectAnalysisType called with type:", type);
         document.getElementById('analysis_type').value = type;
         document.getElementById('analysis_type_hidden').value = type;
         var buttons = document.querySelectorAll('.analysis-button');
@@ -200,6 +201,7 @@
     }
 
     function handleSubmit(event) {
+        console.log("[DEBUG] handleSubmit called");
         var action = event.submitter.value;
         if (action === 'analyze') {
             var fileInput = document.querySelector('input[type="file"]');
@@ -212,6 +214,26 @@
         }
         return true;
     }
+
+    function fetchStatus() {
+        console.log("[DEBUG] fetchStatus called");
+        fetch('{% url "setup_status" %}', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(response => response.json()).then(data => {
+            if (data.setup_status) {
+                document.getElementById('setup-status').innerText = data.setup_status;
+                console.log("[DEBUG] Fetched setup_status:", data.setup_status);  // Debugging console log
+            }
+            if (data.setup_status !== "OpenAI Assistant initialized successfully.") {
+                setTimeout(fetchStatus, 500); // Poll half a second
+            }
+        });
+    }
+
+    window.onload = fetchStatus;
     </script>
 
 </body>

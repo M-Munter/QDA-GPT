@@ -26,11 +26,10 @@ def handle_ta_phase4(request, response2_json, response3_json):
             deletion_results = handle_deletion(request)
             request.session['deletion_results'] = deletion_results
 
-            analysis_status = "Analysis completed successfully."
             if "Deletion successful" in deletion_results:
-                analysis_status = "Analysis completed and all OpenAI elements deleted successfully."
+                analysis_status = "Analysis completed. All OpenAI elements deleted successfully."
             else:
-                analysis_status = "Analysis completed successfully, but deletion of all OpenAI elements failed."
+                analysis_status = "Analysis completed successfully. Deletion of all OpenAI elements failed."
 
             request.session['analysis_status'] = analysis_status
             return response4_json, formatted_ta_prompt4, analysis_status, deletion_results
