@@ -1,0 +1,27 @@
+{% if response %}
+    <div><strong>User Prompt:</strong> {{ formatted_prompt1 }}</div>
+    <br>
+    <div><strong>Response from OpenAI Assistant:</strong></div>
+    {% if table %}
+        <div style="font-size: 18px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">{{ table.table_name }}</div>
+        <table class="generated-table">
+            <thead>
+                <tr>
+                    {% for column in table.columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table.data %}
+                    <tr>
+                        {% for cell in row %}
+                            <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endif %}
+<br>

@@ -133,4 +133,6 @@ MEDIA_URL = '/media/'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # Adjust this path if your 'static' directory is elsewhere
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Adjust this path if your 'static' directory is elsewhere
+]

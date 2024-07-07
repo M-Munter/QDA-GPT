@@ -41,6 +41,8 @@ def handle_gt_phase7(request, response6_json):
             deletion_results = handle_deletion(request)
             request.session['deletion_results'] = deletion_results
 
+            print(f"[DEBUG] Final response: {response7_json}\n")  # Debugging print statement
+
             if "Deletion successful" in deletion_results:
                 analysis_status = "Analysis completed. All OpenAI elements deleted successfully."
             else:

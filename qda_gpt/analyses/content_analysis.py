@@ -36,6 +36,8 @@ def handle_ca_phase6(request, response5_json):
             deletion_results = handle_deletion(request)
             request.session['deletion_results'] = deletion_results
 
+            print(f"[DEBUG] Final response: {response6_json}\n")  # Debugging print statement
+
             if "Deletion successful" in deletion_results:
                 analysis_status = "Analysis completed. All OpenAI elements deleted successfully."
             else:

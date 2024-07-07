@@ -22,6 +22,24 @@ For each theme, provide:
  - a quote from the respondent.
 
 Format the response in json format. Format the response in a structured table format suitable for conversion to a CSV file.
+
+Example JSON output:
+{{
+    "themes": [
+        {{
+            "index": 1,
+            "name": "Educational Benefits",
+            "description": "The role of video games in enhancing learning experiences.",
+            "quote": "Video games make learning more interactive and fun."
+        }},
+        {{
+            "index": 2,
+            "name": "Cultural Influence",
+            "description": "How video games reflect and shape cultural trends.",
+            "quote": "Games often mirror our society's values and challenges."
+        }}
+    ]
+}}
 """
 
 
@@ -40,6 +58,24 @@ For thematic analysis, create proper amount of significant groups.
 Format the response in json format. Format the response in a structured table format suitable for conversion to a CSV file.
 
 Display the full list.
+
+Example JSON output:
+{{
+    "groups": [
+        {{
+            "index": 1,
+            "name": "Educational and Cultural Impact",
+            "description": "Themes related to the educational uses and cultural influence of video games.",
+            "topics": [1, 2]
+        }},
+        {{
+            "index": 2,
+            "name": "Economic and Technological Trends",
+            "description": "Themes discussing the economic aspects and technological advancements in gaming.",
+            "topics": [3, 4]
+        }}
+    ]
+}}
 
 List of themes:
 {response_json}
@@ -64,6 +100,24 @@ Format the response in json format. Format the response in a structured table fo
 
 Display the full list.
 
+Example JSON output:
+{{
+    "groups": [
+        {{
+            "index": 1,
+            "name": "Social and Ethical Issues",
+            "description": "Themes covering the social dynamics and ethical concerns within the gaming community.",
+            "topics": [5, 6]
+        }},
+        {{
+            "index": 2,
+            "name": "Technological and Economic Impact",
+            "description": "Themes focusing on technological advancements and economic implications in gaming.",
+            "topics": [4, 3]
+        }}
+    ]
+}}
+
 List of groups:
 {response_json}
 """
@@ -71,6 +125,14 @@ List of groups:
 
 ta_prompt4 = """
 Using all the topics in the list, give summary in two sentences and a name with max 5 words for summary.
+
+Example JSON output:
+{{
+    "summary": {{
+        "name": "Gaming Impact Overview",
+        "description": "Video games have significant educational, cultural, economic, and technological impacts. They also raise important social and ethical issues."
+    }}
+}}
 
 List of topics:
 {response2_json}
