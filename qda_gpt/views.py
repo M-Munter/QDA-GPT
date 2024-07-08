@@ -95,36 +95,51 @@ def handle_setup(request, setup_form):
 
 def generate_tables_from_response(response_text):
     try:
-        # Parse the JSON response
         start = response_text.find('{')
         end = response_text.rfind('}') + 1
         if start == -1 or end == -1:
             raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
         response_text = response_text[start:end]
         response_json = json.loads(response_text)
-        # Prepare the table data
+
         tables = []
         if isinstance(response_json, dict):
             for table_name, records in response_json.items():
                 if isinstance(records, list):
-                    if records and all(isinstance(record, dict) for record in records):
-                        columns = list(records[0].keys())
-                        data = [list(record.values()) for record in records]
+                    flattened_data = []
+                    for record in records:
+                        flattened_record = flatten_dict(record)
+                        flattened_data.append(flattened_record)
+
+                    if flattened_data:
+                        columns = set(flattened_data[0].keys())
+                        data = [[record.get(col, None) for col in columns] for record in flattened_data]
                         tables.append({
                             'table_name': table_name,
-                            'columns': columns,
+                            'columns': list(columns),
                             'data': data
-                        })
-                    else:
-                        tables.append({
-                            'table_name': table_name,
-                            'columns': ["Expressions"],
-                            'data': [[expression] for expression in records]
                         })
         return tables
 
     except json.JSONDecodeError as e:
         return []
+
+
+def flatten_dict(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        elif isinstance(v, list):
+            if v and isinstance(v[0], dict):
+                for i, sub_v in enumerate(v):
+                    items.extend(flatten_dict(sub_v, f"{new_key}{sep}{i}", sep=sep).items())
+            else:
+                items.append((new_key, v))
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
 
 

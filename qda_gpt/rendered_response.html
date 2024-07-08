@@ -1,0 +1,485 @@
+<!-- response_table.html -->
+
+    <div><strong>User Prompt:</strong> Example User Prompt</div>
+    <br>
+    <div><strong>Response from OpenAI Assistant:</strong></div>
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Simple Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>value</th>
+                        
+                            <th>index</th>
+                        
+                            <th>name</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>Value A</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Item A</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>Value B</td>
+                            
+                                <td>2</td>
+                            
+                                <td>Item B</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Mediocre Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>details_subindex</th>
+                        
+                            <th>details_subvalue</th>
+                        
+                            <th>category</th>
+                        
+                            <th>index</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>1</td>
+                            
+                                <td>Subvalue A</td>
+                            
+                                <td>Category 1</td>
+                            
+                                <td>1</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>2</td>
+                            
+                                <td>Subvalue B</td>
+                            
+                                <td>Category 2</td>
+                            
+                                <td>2</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Complex Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>type</th>
+                        
+                            <th>attributes_1_attr_index</th>
+                        
+                            <th>attributes_0_attr_index</th>
+                        
+                            <th>attributes_0_attr_value</th>
+                        
+                            <th>index</th>
+                        
+                            <th>attributes_1_attr_value</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>Type A</td>
+                            
+                                <td>2</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Attribute A1</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Attribute A2</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>Type B</td>
+                            
+                                <td>None</td>
+                            
+                                <td>3</td>
+                            
+                                <td>Attribute B1</td>
+                            
+                                <td>2</td>
+                            
+                                <td>None</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Nested Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>details_subdetails_1_subsubindex</th>
+                        
+                            <th>details_subdetails_0_subsubvalue</th>
+                        
+                            <th>index</th>
+                        
+                            <th>theme</th>
+                        
+                            <th>details_subindex</th>
+                        
+                            <th>details_subdetails_1_subsubvalue</th>
+                        
+                            <th>details_subdetails_0_subsubindex</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>2</td>
+                            
+                                <td>SubSubValue A1</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Theme A</td>
+                            
+                                <td>1</td>
+                            
+                                <td>SubSubValue A2</td>
+                            
+                                <td>1</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>4</td>
+                            
+                                <td>SubSubValue B1</td>
+                            
+                                <td>2</td>
+                            
+                                <td>Theme B</td>
+                            
+                                <td>2</td>
+                            
+                                <td>SubSubValue B2</td>
+                            
+                                <td>3</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Mixed Types Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>value</th>
+                        
+                            <th>extra_extra_index</th>
+                        
+                            <th>extra_extra_value</th>
+                        
+                            <th>name</th>
+                        
+                            <th>extra_more_extra_nested_extra_value</th>
+                        
+                            <th>index</th>
+                        
+                            <th>extra_more_extra_nested_extra_index</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>Value A</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Extra Value A</td>
+                            
+                                <td>Mixed A</td>
+                            
+                                <td>Nested Extra Value A</td>
+                            
+                                <td>1</td>
+                            
+                                <td>1</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>Value B</td>
+                            
+                                <td>2</td>
+                            
+                                <td>Extra Value B</td>
+                            
+                                <td>Mixed B</td>
+                            
+                                <td>Nested Extra Value B</td>
+                            
+                                <td>2</td>
+                            
+                                <td>2</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Large Data Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>details_subdetails_1_subsubindex</th>
+                        
+                            <th>name</th>
+                        
+                            <th>details_subdetails_0_subsubvalue</th>
+                        
+                            <th>index</th>
+                        
+                            <th>details_subindex</th>
+                        
+                            <th>details_subdetails_1_subsubvalue</th>
+                        
+                            <th>details_subdetails_0_subsubindex</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>2</td>
+                            
+                                <td>Item A</td>
+                            
+                                <td>SubSubValue A1</td>
+                            
+                                <td>1</td>
+                            
+                                <td>1</td>
+                            
+                                <td>SubSubValue A2</td>
+                            
+                                <td>1</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>4</td>
+                            
+                                <td>Item B</td>
+                            
+                                <td>SubSubValue B1</td>
+                            
+                                <td>2</td>
+                            
+                                <td>2</td>
+                            
+                                <td>SubSubValue B2</td>
+                            
+                                <td>3</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>6</td>
+                            
+                                <td>Item C</td>
+                            
+                                <td>SubSubValue C1</td>
+                            
+                                <td>3</td>
+                            
+                                <td>3</td>
+                            
+                                <td>SubSubValue C2</td>
+                            
+                                <td>5</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>8</td>
+                            
+                                <td>Item D</td>
+                            
+                                <td>SubSubValue D1</td>
+                            
+                                <td>4</td>
+                            
+                                <td>4</td>
+                            
+                                <td>SubSubValue D2</td>
+                            
+                                <td>7</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+        
+            <div style="font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">Super Complex Table</div>
+            <table class="generated-table">
+                <thead>
+                    <tr>
+                        
+                            <th>type</th>
+                        
+                            <th>attributes_0_nested_attributes_0_nested_attr_index</th>
+                        
+                            <th>attributes_0_nested_attributes_1_nested_attr_value</th>
+                        
+                            <th>attributes_1_attr_index</th>
+                        
+                            <th>attributes_0_nested_attributes_1_nested_attr_index</th>
+                        
+                            <th>attributes_0_attr_index</th>
+                        
+                            <th>attributes_0_nested_attributes_0_nested_attr_value</th>
+                        
+                            <th>attributes_0_attr_value</th>
+                        
+                            <th>attributes_1_nested_attributes_1_nested_attr_value</th>
+                        
+                            <th>attributes_1_nested_attributes_0_nested_attr_index</th>
+                        
+                            <th>index</th>
+                        
+                            <th>attributes_1_nested_attributes_1_nested_attr_index</th>
+                        
+                            <th>attributes_1_nested_attributes_0_nested_attr_value</th>
+                        
+                            <th>attributes_1_attr_value</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            
+                                <td>Type A</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Nested Attribute A1-2</td>
+                            
+                                <td>2</td>
+                            
+                                <td>2</td>
+                            
+                                <td>1</td>
+                            
+                                <td>Nested Attribute A1-1</td>
+                            
+                                <td>Attribute A1</td>
+                            
+                                <td>Nested Attribute A2-2</td>
+                            
+                                <td>3</td>
+                            
+                                <td>1</td>
+                            
+                                <td>4</td>
+                            
+                                <td>Nested Attribute A2-1</td>
+                            
+                                <td>Attribute A2</td>
+                            
+                        </tr>
+                    
+                        <tr>
+                            
+                                <td>Type B</td>
+                            
+                                <td>5</td>
+                            
+                                <td>None</td>
+                            
+                                <td>None</td>
+                            
+                                <td>None</td>
+                            
+                                <td>3</td>
+                            
+                                <td>Nested Attribute B1-1</td>
+                            
+                                <td>Attribute B1</td>
+                            
+                                <td>None</td>
+                            
+                                <td>None</td>
+                            
+                                <td>2</td>
+                            
+                                <td>None</td>
+                            
+                                <td>None</td>
+                            
+                                <td>None</td>
+                            
+                        </tr>
+                    
+                </tbody>
+            </table>
+        
+    
+    <br>
