@@ -14,7 +14,7 @@ def clear_session_data(request):
     session_keys = [
         'response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
         'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response',
-        'analysis_type', 'user_prompt', 'file_name'
+        'analysis_type', 'user_prompt', 'file_name', 'tables'
     ]
     for key in session_keys:
         request.session.pop(key, None)
@@ -30,6 +30,15 @@ def get_setup_status(request):
     print(f"[DEBUG] Current setup_status: {status}", flush=True)  # Debugging print statement
     return JsonResponse({'setup_status': status})
 
+def handle_uploaded_file(f):
+    file_path = os.path.join('uploads', f.name)
+    if not os.path.exists('uploads'):
+        os.makedirs('uploads')
+    with open(file_path, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+    return file_path
+
 
 def handle_setup(request, setup_form):
     if setup_form.is_valid():
@@ -42,7 +51,6 @@ def handle_setup(request, setup_form):
         try:
             # Create thread and assign correct thread ID
             request.session['setup_status'] = "Initializing OpenAI Assistant."
-            print(f"[DEBUG] setup_status: Initializing OpenAI resources...", flush=True)
             request.session.save()  # Explicitly save the session
             time.sleep(0.25)
             thread_id = create_thread()
@@ -52,7 +60,6 @@ def handle_setup(request, setup_form):
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
                 request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
-                print(f"[DEBUG] setup_status: OpenAI resources Initialized Successfully", flush=True)
                 request.session.save()  # Explicitly save the session
 
                 time.sleep(0.55)
@@ -86,6 +93,40 @@ def handle_setup(request, setup_form):
     return False
 
 
+def generate_tables_from_response(response_text):
+    try:
+        # Parse the JSON response
+        start = response_text.find('{')
+        end = response_text.rfind('}') + 1
+        if start == -1 or end == -1:
+            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
+        response_text = response_text[start:end]
+        response_json = json.loads(response_text)
+        # Prepare the table data
+        tables = []
+        if isinstance(response_json, dict):
+            for table_name, records in response_json.items():
+                if isinstance(records, list):
+                    if records and all(isinstance(record, dict) for record in records):
+                        columns = list(records[0].keys())
+                        data = [list(record.values()) for record in records]
+                        tables.append({
+                            'table_name': table_name,
+                            'columns': columns,
+                            'data': data
+                        })
+                    else:
+                        tables.append({
+                            'table_name': table_name,
+                            'columns': ["Expressions"],
+                            'data': [[expression] for expression in records]
+                        })
+        return tables
+
+    except json.JSONDecodeError as e:
+        return []
+
+
 
 def dashboard(request):
     if request.method == 'GET':
@@ -116,6 +157,7 @@ def dashboard(request):
         'analysis_type': request.session.get('analysis_type', ''),
         'user_prompt': user_prompt,
         'file_name': file_name,
+        'tables': request.session.get('tables', []),  # Ensure tables are in the context
     }
 
     if request.method == 'POST':
@@ -123,8 +165,10 @@ def dashboard(request):
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
+                # Initializes empty list that ensures that any previous data in tables is cleared before new table data is added.
+                tables = []
                 print(
-                f"[DEBUG] POST request: setup_status after handle_setup: {request.session.get('setup_status', '')}")
+                f"[DEBUG] POST request: setup_status after handle_setup: {request.session.get('setup_status', '')}\n")
                 if analysis_type == 'thematic':
                     response_json, formatted_prompt1 = thematic_analysis.handle_analysis(request)
                     response2_json, formatted_prompt2 = thematic_analysis.handle_second_prompt_analysis(request,
@@ -132,6 +176,10 @@ def dashboard(request):
                     response3_json, formatted_prompt3 = thematic_analysis.handle_ta_phase3(request, response_json)
                     response4_json, formatted_prompt4, analysis_status, deletion_results = thematic_analysis.handle_ta_phase4(
                         request, response2_json, response3_json)
+                    tables.extend(generate_tables_from_response(response_json))
+                    tables.extend(generate_tables_from_response(response2_json))
+                    tables.extend(generate_tables_from_response(response3_json))
+                    tables.extend(generate_tables_from_response(response4_json))
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,
@@ -142,7 +190,8 @@ def dashboard(request):
                         'fourth_response': response4_json,
                         'formatted_prompt4': formatted_prompt4,
                         'analysis_status': analysis_status,
-                        'deletion_results': deletion_results
+                        'deletion_results': deletion_results,
+                        'tables': tables
                     })
                 elif analysis_type == 'content':
                     response_json, formatted_prompt1 = content_analysis.handle_analysis(request)
@@ -153,6 +202,12 @@ def dashboard(request):
                     response5_json, formatted_prompt5 = content_analysis.handle_ca_phase5(request, response4_json)
                     response6_json, formatted_prompt6, analysis_status, deletion_results = content_analysis.handle_ca_phase6(
                         request, response5_json)
+                    tables.extend(generate_tables_from_response(response_json))
+                    tables.extend(generate_tables_from_response(response2_json))
+                    tables.extend(generate_tables_from_response(response3_json))
+                    tables.extend(generate_tables_from_response(response4_json))
+                    tables.extend(generate_tables_from_response(response5_json))
+                    tables.extend(generate_tables_from_response(response6_json))
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,
@@ -167,7 +222,8 @@ def dashboard(request):
                         'sixth_response': response6_json,
                         'formatted_prompt6': formatted_prompt6,
                         'analysis_status': analysis_status,
-                        'deletion_results': deletion_results
+                        'deletion_results': deletion_results,
+                        'tables': tables
                     })
                 elif analysis_type == 'grounded':
                     response_json, formatted_prompt1 = grounded_theory.handle_analysis(request)
@@ -179,6 +235,13 @@ def dashboard(request):
                     response6_json, formatted_prompt6 = grounded_theory.handle_gt_phase6(request, response5_json)
                     response7_json, formatted_prompt7, analysis_status, deletion_results = grounded_theory.handle_gt_phase7(
                         request, response6_json)
+                    tables.extend(generate_tables_from_response(response_json))
+                    tables.extend(generate_tables_from_response(response2_json))
+                    tables.extend(generate_tables_from_response(response3_json))
+                    tables.extend(generate_tables_from_response(response4_json))
+                    tables.extend(generate_tables_from_response(response5_json))
+                    tables.extend(generate_tables_from_response(response6_json))
+                    tables.extend(generate_tables_from_response(response7_json))
                     context.update({
                         'response': response_json,
                         'formatted_prompt1': formatted_prompt1,
@@ -195,10 +258,11 @@ def dashboard(request):
                         'seventh_response': response7_json,
                         'formatted_prompt7': formatted_prompt7,
                         'analysis_status': analysis_status,
-                        'deletion_results': deletion_results
+                        'deletion_results': deletion_results,
+                        'tables': tables
                     })
 
-                # request.session.save()  # Explicitly save the session
+                request.session['tables'] = tables  # Save tables in session
                 print(
                     f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}")
             else:
@@ -208,11 +272,3 @@ def dashboard(request):
 
     return render(request, 'qda_gpt/dashboard.html', context)
 
-def handle_uploaded_file(f):
-    file_path = os.path.join('uploads', f.name)
-    if not os.path.exists('uploads'):
-        os.makedirs('uploads')
-    with open(file_path, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    return file_path

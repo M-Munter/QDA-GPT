@@ -1,8 +1,6 @@
 {% if response %}
-    {% for formatted_prompt in formatted_prompts %}
-        <div><strong>User Prompt:</strong> {{ formatted_prompt }}</div>
-        <br>
-    {% endfor %}
+    <div><strong>User Prompt:</strong> {{ formatted_prompt1 }}</div>
+    <br>
     <div><strong>Response from OpenAI Assistant:</strong></div>
     {% if table %}
         <div style="font-size: 18px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">{{ table.table_name }}</div>
