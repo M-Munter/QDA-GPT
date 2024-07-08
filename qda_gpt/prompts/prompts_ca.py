@@ -44,8 +44,7 @@ Use the following format:
         "simplified expression 1",
         "simplified expression 2"
       ]
-    }},
-    ...
+    }}
   ]
 }}
 
@@ -73,8 +72,7 @@ Expected Output:
         "subcategory name 1",
         "subcategory name 2"
       ]
-    }},
-    ...
+    }}
   ]
 }}
 
@@ -119,10 +117,10 @@ Expected output:
         "non-example 2"
       ],
       "rules": "rules for inclusion in the category"
-    }},
-    ...
+    }}
   ]
 }}
+
 
 
 List of Clusters:
@@ -141,7 +139,7 @@ To perform this step, do the following:
 - Assess the consistency and coherence of the coding by comparing multiple rounds of coding.
 - Identify any ambiguities or inconsistencies in the category definitions and coding rules.
 - Refine and adjust the categories and coding rules as necessary based on the pilot testing results.
-- Categories and coding rules do not need to be adjusted needlessly. However, still small changes can be done is it is relevant.
+- Categories and coding rules do not need to be adjusted needlessly. However, still changes can be done is it is relevant.
 
 Use the following format:
 {{
@@ -150,8 +148,7 @@ Use the following format:
       "text": "interview text 1",
       "initial_category": "applied category in first round",
       "revised_category": "applied category in second round"
-    }},
-    ...
+    }}
   ],
   "Refined Categories": [
     {{
@@ -174,10 +171,11 @@ Use the following format:
         "refined non-example 2"
       ],
       "rules": "refined rules for inclusion in the category"
-    }},
-    ...
+    }}
   ]
 }}
+
+
 
 
 
@@ -205,70 +203,64 @@ of how the analysis answers the research questions and relates to the theoretica
 that includes patterns, themes, relationships, and their alignment with theory and research questions.
 
 Use the following format in the output:
-Refined Categories:
----
-[
-  {{
-    "name": "refined category name",
-    "description": "refined description of the category",
-    "linked_concepts": ["concept 1", "concept 2"],
-    "real_examples": ["refined example from data 1", "refined example from data 2"],
-    "hypothetical_examples": ["refined constructed example 1", "refined constructed example 2"],
-    "non_examples": ["refined non-example 1", "refined non-example 2"],
-    "rules": "refined rules for inclusion in the category"
-  }},
-  ...
-]
----
-Analysis Results:
----
 {{
-  "patterns": [
+  "Refined Categories": [
     {{
-      "pattern": "pattern description",
-      "linked_categories": [
-        "refined category name 1",
-        "refined category name 2"
-      ]
-    }},
-    ...
+      "name": "refined category name",
+      "description": "refined description of the category",
+      "linked_concepts": ["concept 1", "concept 2"],
+      "real_examples": ["refined example from data 1", "refined example from data 2"],
+      "hypothetical_examples": ["refined constructed example 1", "refined constructed example 2"],
+      "non_examples": ["refined non-example 1", "refined non-example 2"],
+      "rules": "refined rules for inclusion in the category"
+    }}
   ],
-  "themes": [
-    {{
-      "theme": "theme description",
-      "linked_patterns": [
-        "pattern description 1",
-        "pattern description 2"
-      ],
-      "linked_categories": [
-        "refined category name 1",
-        "refined category name 2"
-      ]
-    }},
-    ...
-  ],
-  "relationships": [
-    {{
-      "relationship": "relationship description",
-      "linked_themes": [
-        "theme description 1",
-        "theme description 2"
-      ],
-      "linked_patterns": [
-        "pattern description 1",
-        "pattern description 2"
-      ],
-      "linked_categories": [
-        "refined category name 1",
-        "refined category name 2"
-      ]
-    }},
-    ...
-  ],
-  "alignment_with_theory": "description of how results align with theoretical concepts",
-  "answers_to_research_questions": "summary of how the findings answer the research questions"
+  "Analysis Results": {{
+    "patterns": [
+      {{
+        "pattern": "pattern description",
+        "linked_categories": [
+          "refined category name 1",
+          "refined category name 2"
+        ]
+      }}
+    ],
+    "themes": [
+      {{
+        "theme": "theme description",
+        "linked_patterns": [
+          "pattern description 1",
+          "pattern description 2"
+        ],
+        "linked_categories": [
+          "refined category name 1",
+          "refined category name 2"
+        ]
+      }}
+    ],
+    "relationships": [
+      {{
+        "relationship": "relationship description",
+        "linked_themes": [
+          "theme description 1",
+          "theme description 2"
+        ],
+        "linked_patterns": [
+          "pattern description 1",
+          "pattern description 2"
+        ],
+        "linked_categories": [
+          "refined category name 1",
+          "refined category name 2"
+        ]
+      }}
+    ],
+    "alignment_with_theory": "description of how results align with theoretical concepts",
+    "answers_to_research_questions": "summary of how the findings answer the research questions"
+  }}
 }}
----
+
+
 
 List of input  categories:
 {response5_json}
