@@ -2,26 +2,26 @@ from qda_gpt.prompts.prompts_ta import ta_prompt1, ta_prompt2, ta_prompt3, ta_pr
 from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
 
-def handle_analysis(request):
-    formatted_ta_prompt1 = ta_prompt1.format()
-    response_json = get_openai_response(formatted_ta_prompt1, request.session['assistant_id'], request.session['thread_id'])
-    return response_json, formatted_ta_prompt1
+def phase1(request):
+    formatted_prompt1 = ta_prompt1.format()
+    response_json = get_openai_response(formatted_prompt1, request.session['assistant_id'], request.session['thread_id'])
+    return response_json, formatted_prompt1
 
-def handle_second_prompt_analysis(request, response_json):
-    formatted_ta_prompt2 = ta_prompt2.format(response_json=response_json)
-    response2_json = get_openai_response(formatted_ta_prompt2, request.session['assistant_id'], request.session['thread_id'])
-    return response2_json, formatted_ta_prompt2
+def phase2(request, response_json):
+    formatted_prompt2 = ta_prompt2.format(response_json=response_json)
+    response2_json = get_openai_response(formatted_prompt2, request.session['assistant_id'], request.session['thread_id'])
+    return response2_json, formatted_prompt2
 
-def handle_ta_phase3(request, response_json):
-    formatted_ta_prompt3 = ta_prompt3.format(response_json=response_json)
-    response3_json = get_openai_response(formatted_ta_prompt3, request.session['assistant_id'], request.session['thread_id'])
-    return response3_json, formatted_ta_prompt3
+def phase3(request, response_json):
+    formatted_prompt3 = ta_prompt3.format(response_json=response_json)
+    response3_json = get_openai_response(formatted_prompt3, request.session['assistant_id'], request.session['thread_id'])
+    return response3_json, formatted_prompt3
 
-def handle_ta_phase4(request, response2_json, response3_json):
-    formatted_ta_prompt4 = ta_prompt4.format(response2_json=response2_json, response3_json=response3_json)
+def phase4(request, response2_json, response3_json):
+    formatted_prompt4 = ta_prompt4.format(response2_json=response2_json, response3_json=response3_json)
     if request.session.get('initialized', False):
         try:
-            response4_json = get_openai_response(formatted_ta_prompt4, request.session['assistant_id'], request.session['thread_id'])
+            response4_json = get_openai_response(formatted_prompt4, request.session['assistant_id'], request.session['thread_id'])
             request.session['fourth_response'] = response4_json
             deletion_results = handle_deletion(request)
             request.session['deletion_results'] = deletion_results
@@ -34,8 +34,8 @@ def handle_ta_phase4(request, response2_json, response3_json):
                 analysis_status = "Analysis completed successfully. Deletion of all OpenAI elements failed."
 
             request.session['analysis_status'] = analysis_status
-            return response4_json, formatted_ta_prompt4, analysis_status, deletion_results
+            return response4_json, formatted_prompt4, analysis_status, deletion_results
         except Exception as e:
             request.session['analysis_status'] = f"An error occurred: {str(e)}"
-            return None, formatted_ta_prompt4, f"An error occurred: {str(e)}", ""
-    return None, formatted_ta_prompt4, "No analysis performed.", ""
+            return None, formatted_prompt4, f"An error occurred: {str(e)}", ""
+    return None, formatted_prompt4, "No analysis performed.", ""

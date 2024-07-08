@@ -15,19 +15,35 @@ gt_prompt1 = """
 You are requested to perform initial coding phase of the Gioia method to the attached dataset of transcribed interviews.
 In this phase, scrutinize the text to identify emergent themes, concepts, or patterns.
 Your output should be a JSON object with an array of strings no longer than 7 words, each representing a distinct initial code in the language of the data.
-For example, your output should be in this format: {{"codes": string[]}}. Ensure to return ONLY a proper JSON array of strings.
+For example, your output should be in this format: {{"Initial Codes": string[]}}. Ensure to return ONLY a proper JSON array of strings.
 
 Perform initial coding according to the Gioia method on the attached transcribed interviews. Return a JSON object.
 
-You are requested to identify the most relevant themes in the following dataset of transcribed interviews.
-
-For each code, provide:
+For each initial code, provide:
  - index number starting from 1,
- - code name (i.e. code) in no more than 3 words,
+ - code name (i.e. initial code) in no more than 3 words,
  - a meaningful and compact description of the code with no longer than 7 words, and
  - a quote from the respondent.
 
-Format the response in a structured table format suitable for conversion to a CSV file.
+{
+  "Initial Codes": [
+    {
+      "index": 1,
+      "code": "communication issues",
+      "description": "Problems with communication",
+      "quote": "We often face communication issues."
+    },
+    {
+      "index": 2,
+      "code": "positive feedback",
+      "description": "Positive feedback received",
+      "quote": "The feedback from the manager was great."
+    }
+    // more codes...
+  ]
+}
+
+
 """
 
 
@@ -51,7 +67,7 @@ Initial codes:
 
 gt_prompt3 = """
 You are requested to perform the Aggregate Dimensions phase of the Gioia method.
-In this phase, identify overarching theoretical dimensions (typically 5-7) that aggregate the 2nd order codes.
+In this phase, identify overarching theoretical dimensions (typically 6-8) that aggregate the 2nd order codes.
 Your output should be a JSON-formatted object mapping each aggregate dimension to an array of 2nd order codes that belong to it.
 As a general example, "Policy Usability" could make for a good, quantifiable dimension. Your output should look like this, where
 the keys are the (quantifiable) dimensions: {{"some dim": ["theme", "another theme"], "another dim": ["theme123"]}}.
