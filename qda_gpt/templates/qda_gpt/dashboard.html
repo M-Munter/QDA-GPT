@@ -56,9 +56,7 @@
         <h2>Results</h2>
         <div id="analyze-loader" class="loader"></div>
         <div class="left-align">
-            {% for table in tables %}
-                {% include "qda_gpt/response_table.html" with table=table counter=forloop.counter0 %}
-            {% endfor %}
+            {% include "qda_gpt/response_table.html" %}
             {% if deletion_results %}
                 <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
             {% endif %}

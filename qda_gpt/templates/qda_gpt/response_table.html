@@ -1,21 +1,20 @@
-{% if response %}
-    {% for formatted_prompt in formatted_prompts %}
-        <div><strong>User Prompt:</strong> {{ formatted_prompt }}</div>
-        <br>
-    {% endfor %}
+<!-- response_table.html -->
+{% for pair in prompt_table_pairs %}
+    <div><strong>User Prompt:</strong> {{ pair.prompt }}</div>
+    <br>
     <div><strong>Response from OpenAI Assistant:</strong></div>
-    {% if table %}
-        <div style="font-size: 18px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">{{ table.table_name }}</div>
+    {% if pair.table %}
+        <div style="font-size: 18px; font-weight: bold; margin-top: 10px; margin-bottom: 6px;">{{ pair.table.table_name }}</div>
         <table class="generated-table">
             <thead>
                 <tr>
-                    {% for column in table.columns %}
+                    {% for column in pair.table.columns %}
                         <th>{{ column }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for row in table.data %}
+                {% for row in pair.table.data %}
                     <tr>
                         {% for cell in row %}
                             <td>{{ cell }}</td>
@@ -25,5 +24,5 @@
             </tbody>
         </table>
     {% endif %}
-{% endif %}
-<br>
+    <br>
+{% endfor %}
