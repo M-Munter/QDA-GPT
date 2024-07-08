@@ -25,7 +25,7 @@ Format the response in json format. Format the response in a structured table fo
 
 Example JSON output:
 {{
-    "themes": [
+    "Themes": [
         {{
             "index": 1,
             "name": "Educational Benefits",
@@ -61,7 +61,7 @@ Display the full list.
 
 Example JSON output:
 {{
-    "groups": [
+    "Groups": [
         {{
             "index": 1,
             "name": "Educational and Cultural Impact",
@@ -102,7 +102,7 @@ Display the full list.
 
 Example JSON output:
 {{
-    "groups": [
+    "Groups": [
         {{
             "index": 1,
             "name": "Social and Ethical Issues",
@@ -128,7 +128,7 @@ Using all the topics in the list, give summary in two sentences and a name with 
 
 Example JSON output:
 {{
-    "summary": {{
+    "Summary": {{
         "name": "Gaming Impact Overview",
         "description": "Video games have significant educational, cultural, economic, and technological impacts. They also raise important social and ethical issues."
     }}

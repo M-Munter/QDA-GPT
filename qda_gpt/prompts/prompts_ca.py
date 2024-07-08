@@ -22,7 +22,13 @@ To perform this step, do the following:
 - Simplify and list these expressions.
 
 Use the following JSON format:
-{{ "Expressions": [ "simplified expression 1", "simplified expression 2", ... ] }}
+{{
+  "Expressions": [
+    "simplified expression 1",
+    "simplified expression 2",
+    ...
+  ]
+}}
 """
 
 
@@ -42,7 +48,8 @@ Use the following format:
       "subcategory": "subcategory name",
       "expressions": [
         "simplified expression 1",
-        "simplified expression 2"
+        "simplified expression 2",
+        ...
       ]
     }}
   ]
@@ -71,6 +78,7 @@ Expected Output:
       "linked_clusters": [
         "subcategory name 1",
         "subcategory name 2"
+        ...
       ]
     }}
   ]
@@ -184,23 +192,18 @@ List of Categories (or revised categories):
 """
 
 
+
 # Main analysis
 ca_prompt6 = """
-You are requested to perform the main analysis phase the Content Analysis.
+You are requested to perform the main analysis phase of the Content Analysis.
 
 To perform this step, do the following:
-- Review the categories and their definitions that were refined in the pilot testing phase to ensure that you are
-familiar with the categories, definitions, examples, and rules, which are crucial for consistent and accurate coding.
-- Apply the refined coding framework to the entire datasetto ensure comprehensive coding of the data, allowing for 
-the identification of all relevant instances according to the refined categories. Follow the examples and rules 
-strictly to maintain consistency.
-- Document any issues or ambiguities encountered during codingto identify areas that may need further refinement 
-and ensures transparency in the coding process.
+- Review the categories and their definitions that were refined in the pilot testing phase to ensure familiarity with the categories, definitions, examples, and rules, which are crucial for consistent and accurate coding.
+- Apply the refined coding framework to the entire dataset to ensure comprehensive coding of the data, allowing for the identification of all relevant instances according to the refined categories. Follow the examples and rules strictly to maintain consistency.
+- Document any issues or ambiguities encountered during coding to identify areas that may need further refinement and ensure transparency in the coding process.
 - Analyze the coded data to identify patterns, themes, and relationships to derive meaningful insights from the coded data.
-Link these patterns, themes, and relationships to the refined categories to ensure they are grounded in the coding framework.
-- Summarize how the findings align with the research questions and theoretical framework to provide a comprehensive view 
-of how the analysis answers the research questions and relates to the theoretical concepts. Create a detailed report 
-that includes patterns, themes, relationships, and their alignment with theory and research questions.
+- Link these patterns, themes, and relationships to the refined categories to ensure they are grounded in the coding framework.
+- Summarize how the findings align with the research questions and theoretical framework to provide a comprehensive view of how the analysis answers the research questions and relates to the theoretical concepts. Create a detailed report that includes patterns, themes, relationships, and their alignment with theory and research questions.
 
 Use the following format in the output:
 {{
@@ -215,53 +218,49 @@ Use the following format in the output:
       "rules": "refined rules for inclusion in the category"
     }}
   ],
-  "Analysis Results": {{
-    "patterns": [
-      {{
-        "pattern": "pattern description",
-        "linked_categories": [
-          "refined category name 1",
-          "refined category name 2"
-        ]
-      }}
-    ],
-    "themes": [
-      {{
-        "theme": "theme description",
-        "linked_patterns": [
-          "pattern description 1",
-          "pattern description 2"
-        ],
-        "linked_categories": [
-          "refined category name 1",
-          "refined category name 2"
-        ]
-      }}
-    ],
-    "relationships": [
-      {{
-        "relationship": "relationship description",
-        "linked_themes": [
-          "theme description 1",
-          "theme description 2"
-        ],
-        "linked_patterns": [
-          "pattern description 1",
-          "pattern description 2"
-        ],
-        "linked_categories": [
-          "refined category name 1",
-          "refined category name 2"
-        ]
-      }}
-    ],
-    "alignment_with_theory": "description of how results align with theoretical concepts",
-    "answers_to_research_questions": "summary of how the findings answer the research questions"
-  }}
+  "Patterns": [
+    {{
+      "description": "pattern description",
+      "linked_categories": [
+        "refined category name 1",
+        "refined category name 2"
+      ]
+    }}
+  ],
+  "Themes": [
+    {{
+      "description": "theme description",
+      "linked_patterns": [
+        "pattern description 1",
+        "pattern description 2"
+      ],
+      "linked_categories": [
+        "refined category name 1",
+        "refined category name 2"
+      ]
+    }}
+  ],
+  "Relationships": [
+    {{
+      "description": "relationship description",
+      "linked_themes": [
+        "theme description 1",
+        "theme description 2"
+      ],
+      "linked_patterns": [
+        "pattern description 1",
+        "pattern description 2"
+      ],
+      "linked_categories": [
+        "refined category name 1",
+        "refined category name 2"
+      ]
+    }}
+  ],
+  "Alignment with Theory": "description of how results align with theoretical concepts",
+  "Answers to Research Questions": "summary of how the findings answer the research questions"
 }}
 
-
-
-List of input  categories:
-{response5_json}
+List of input categories:
+{{response5_json}}
 """

@@ -192,6 +192,7 @@ def generate_tables_from_response(response_text):
 
 
 
+
 def dashboard(request):
     if request.method == 'GET':
         clear_session_data(request)
@@ -223,7 +224,6 @@ def dashboard(request):
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
-                tables = []
                 formatted_prompts = []
                 prompt_table_pairs = []
 
@@ -235,13 +235,15 @@ def dashboard(request):
                     response4_json, formatted_prompt4, analysis_status, deletion_results = thematic_analysis.handle_ta_phase4(request, response2_json, response3_json)
 
                     formatted_prompts.extend([formatted_prompt1, formatted_prompt2, formatted_prompt3, formatted_prompt4])
-                    tables.extend(generate_tables_from_response(response_json))
-                    tables.extend(generate_tables_from_response(response2_json))
-                    tables.extend(generate_tables_from_response(response3_json))
-                    tables.extend(generate_tables_from_response(response4_json))
+                    tables1 = generate_tables_from_response(response_json)
+                    tables2 = generate_tables_from_response(response2_json)
+                    tables3 = generate_tables_from_response(response3_json)
+                    tables4 = generate_tables_from_response(response4_json)
 
-                    for prompt, table in zip(formatted_prompts, tables):
-                        prompt_table_pairs.append({'prompt': prompt, 'table': table})
+                    prompt_table_pairs.append({'prompt': formatted_prompt1, 'tables': tables1})
+                    prompt_table_pairs.append({'prompt': formatted_prompt2, 'tables': tables2})
+                    prompt_table_pairs.append({'prompt': formatted_prompt3, 'tables': tables3})
+                    prompt_table_pairs.append({'prompt': formatted_prompt4, 'tables': tables4})
 
                     context.update({
                         'analysis_status': analysis_status,
@@ -257,15 +259,19 @@ def dashboard(request):
                     response6_json, formatted_prompt6, analysis_status, deletion_results = content_analysis.handle_ca_phase6(request, response5_json)
 
                     formatted_prompts.extend([formatted_prompt1, formatted_prompt2, formatted_prompt3, formatted_prompt4, formatted_prompt5, formatted_prompt6])
-                    tables.extend(generate_tables_from_response(response_json))
-                    tables.extend(generate_tables_from_response(response2_json))
-                    tables.extend(generate_tables_from_response(response3_json))
-                    tables.extend(generate_tables_from_response(response4_json))
-                    tables.extend(generate_tables_from_response(response5_json))
-                    tables.extend(generate_tables_from_response(response6_json))
+                    tables1 = generate_tables_from_response(response_json)
+                    tables2 = generate_tables_from_response(response2_json)
+                    tables3 = generate_tables_from_response(response3_json)
+                    tables4 = generate_tables_from_response(response4_json)
+                    tables5 = generate_tables_from_response(response5_json)
+                    tables6 = generate_tables_from_response(response6_json)
 
-                    for prompt, table in zip(formatted_prompts, tables):
-                        prompt_table_pairs.append({'prompt': prompt, 'table': table})
+                    prompt_table_pairs.append({'prompt': formatted_prompt1, 'tables': tables1})
+                    prompt_table_pairs.append({'prompt': formatted_prompt2, 'tables': tables2})
+                    prompt_table_pairs.append({'prompt': formatted_prompt3, 'tables': tables3})
+                    prompt_table_pairs.append({'prompt': formatted_prompt4, 'tables': tables4})
+                    prompt_table_pairs.append({'prompt': formatted_prompt5, 'tables': tables5})
+                    prompt_table_pairs.append({'prompt': formatted_prompt6, 'tables': tables6})
 
                     context.update({
                         'analysis_status': analysis_status,
@@ -282,16 +288,21 @@ def dashboard(request):
                     response7_json, formatted_prompt7, analysis_status, deletion_results = grounded_theory.handle_gt_phase7(request, response6_json)
 
                     formatted_prompts.extend([formatted_prompt1, formatted_prompt2, formatted_prompt3, formatted_prompt4, formatted_prompt5, formatted_prompt6, formatted_prompt7])
-                    tables.extend(generate_tables_from_response(response_json))
-                    tables.extend(generate_tables_from_response(response2_json))
-                    tables.extend(generate_tables_from_response(response3_json))
-                    tables.extend(generate_tables_from_response(response4_json))
-                    tables.extend(generate_tables_from_response(response5_json))
-                    tables.extend(generate_tables_from_response(response6_json))
-                    tables.extend(generate_tables_from_response(response7_json))
+                    tables1 = generate_tables_from_response(response_json)
+                    tables2 = generate_tables_from_response(response2_json)
+                    tables3 = generate_tables_from_response(response3_json)
+                    tables4 = generate_tables_from_response(response4_json)
+                    tables5 = generate_tables_from_response(response5_json)
+                    tables6 = generate_tables_from_response(response6_json)
+                    tables7 = generate_tables_from_response(response7_json)
 
-                    for prompt, table in zip(formatted_prompts, tables):
-                        prompt_table_pairs.append({'prompt': prompt, 'table': table})
+                    prompt_table_pairs.append({'prompt': formatted_prompt1, 'tables': tables1})
+                    prompt_table_pairs.append({'prompt': formatted_prompt2, 'tables': tables2})
+                    prompt_table_pairs.append({'prompt': formatted_prompt3, 'tables': tables3})
+                    prompt_table_pairs.append({'prompt': formatted_prompt4, 'tables': tables4})
+                    prompt_table_pairs.append({'prompt': formatted_prompt5, 'tables': tables5})
+                    prompt_table_pairs.append({'prompt': formatted_prompt6, 'tables': tables6})
+                    prompt_table_pairs.append({'prompt': formatted_prompt7, 'tables': tables7})
 
                     context.update({
                         'analysis_status': analysis_status,
@@ -299,7 +310,6 @@ def dashboard(request):
                         'prompt_table_pairs': prompt_table_pairs
                     })
 
-                request.session['tables'] = tables
                 request.session['prompt_table_pairs'] = prompt_table_pairs
                 print(f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}")
             else:
@@ -307,3 +317,6 @@ def dashboard(request):
                 print(f"[DEBUG] POST request: setup_status after failed handle_setup: {request.session.get('setup_status', '')}")
 
     return render(request, 'qda_gpt/dashboard.html', context)
+
+
+

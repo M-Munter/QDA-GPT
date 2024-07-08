@@ -25,6 +25,7 @@ def handle_ca_phase4(request, response3_json):
 def handle_ca_phase5(request, response4_json):
     formatted_ca_prompt5 = ca_prompt5.format(response4_json=response4_json)
     response5_json = get_openai_response(formatted_ca_prompt5, request.session['assistant_id'], request.session['thread_id'])
+    print(f"[DEBUG] Response number 5: {response5_json}\n")  # Debugging print statement
     return response5_json, formatted_ca_prompt5
 
 def handle_ca_phase6(request, response5_json):
