@@ -60,7 +60,7 @@ function fetchStatus() {
 
 function clearSessionData() {
     console.log("[DEBUG] clearSessionData called");
-    fetch('{% url "clear_session" %}', {
+    fetch('/clear-session/', {
         method: 'GET',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}'
@@ -68,7 +68,7 @@ function clearSessionData() {
     }).then(response => {
         if (response.ok) {
             console.log("[DEBUG] clearSessionData response received");
-            window.location.href = "{% url 'dashboard' %}"; // Redirect to dashboard without reloading the current state
+            window.location.href = "/"; // Redirect to the dashboard (root URL)
         } else {
             console.error("[DEBUG] Failed to clear session data");
         }
