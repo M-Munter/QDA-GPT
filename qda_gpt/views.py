@@ -34,6 +34,7 @@ def clear_session(request):
 
 def get_setup_status(request):
     status = request.session.get('setup_status', '')
+    analysis_status = request.session.get('analysis_status', '')
     print(f"[DEBUG] Current setup_status: {status}\n", flush=True)  # Debugging print statement
     return JsonResponse({'setup_status': status})
 
