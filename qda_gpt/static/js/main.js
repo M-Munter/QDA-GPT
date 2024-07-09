@@ -78,18 +78,26 @@ function clearSessionData() {
 }
 
 function downloadCSV() {
-    console.log("downloadCSV function called"); // Add this log to ensure function call
-    fetch('/download_csv/')
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.csv`;
+
+    const url = `/download_csv/?file_name=${fileName}`;
+    fetch(url)
         .then(response => response.blob())
         .then(blob => {
-            const url = window.URL.createObjectURL(blob);
+            const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
-            a.href = url;
-            a.download = 'prompts_and_tables.csv';
+            a.href = downloadUrl;
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(downloadUrl);
             document.body.removeChild(a);
         })
         .catch(error => console.error('Error downloading CSV:', error));

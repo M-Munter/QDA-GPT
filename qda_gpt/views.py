@@ -7,6 +7,8 @@ from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from collections import OrderedDict
 from django.core.serializers.json import DjangoJSONEncoder
+from urllib.parse import quote
+
 from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
@@ -106,6 +108,7 @@ def flatten_dict(d, parent_key='', sep='_'):
 def download_csv(request):
     analysis_type = request.session.get('analysis_type', 'N/A')
     user_prompt = request.session.get('user_prompt', 'N/A')
+    file_name = request.GET.get('file_name', 'qda.csv')  # Get the filename from the query parameters
 
     # Map analysis type to full names
     analysis_type_full_name = {
@@ -125,12 +128,11 @@ def download_csv(request):
 
     prompt_table_pairs = request.session.get('prompt_table_pairs', [])
 
-    # Generate dynamic filename
-    now = datetime.now()
-    filename = f"qda_{now.year}_{now.month:02d}_{now.day:02d}_{now.hour:02d}{now.minute:02d}.csv"
+    # Sanitize the filename for use in Content-Disposition
+    file_name = quote(file_name)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 
     writer = csv.writer(response, delimiter=';')
 
