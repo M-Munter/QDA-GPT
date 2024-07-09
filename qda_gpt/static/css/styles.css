@@ -56,6 +56,7 @@ h1 {
     background-color: #001f3f;
     color: white;
     border: 2px solid #001f3f;
+    border-radius: 3px; /* Add border-radius for rounding */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
@@ -73,19 +74,29 @@ h1 {
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
-.form-section input[type="file"],
-.form-section select,
-.form-section button,
-.form-section textarea,
-.form-section .status-text { /* Add status-text here */
+.form-section input[type="file"] {
     flex: 1;
     margin-left: 10px; /* Add some space between label and input */
+    border-radius: 3px; /* Add border-radius for rounding */
+    padding: 5px; /* Add some padding for better appearance */
+    border: none; /* Remove border for input[type="file"] */
+}
+
+.form-section select,
+.form-section button,
+.form-section textarea {
+    flex: 1;
+    margin-left: 10px; /* Add some space between label and input */
+    border-radius: 3px; /* Add border-radius for rounding */
+    border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-section select,
 .form-section button {
     max-width: 200px; /* Set a max-width for dropdown and buttons */
+    border-radius: 3px; /* Add border-radius for rounding */
+    border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
@@ -95,11 +106,15 @@ h1 {
     margin-bottom: 10px;
     box-sizing: border-box;
     resize: vertical;
+    border-radius: 3px; /* Add border-radius for rounding */
+    border: 1px solid #ccc; /* Add consistent border color and width */
 }
 
 #setup-status {
     font-family: inherit;
     font-weight: normal; /* Match the font weight of "Analysis Status:" */
+    border: none; /* Remove border */
+    margin-left: 10px; /* Align with other elements on the right */
 }
 
 .form-section .status-text {
@@ -108,6 +123,40 @@ h1 {
     display: flex;
     align-items: center; /* Align content at the center */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+    border: none; /* Remove border */
+}
+
+.left-align {
+    text-align: left;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+}
+
+.footer-margin {
+    height: 0px;
+}
+
+footer {
+    text-align: center;
+    padding: 0px;
+    position: fixed;
+    bottom: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 55px;
+    left: 0;
+    background: #001f3f;
+    color: #ecf0f1;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+}
+
+button:disabled {
+    background-color: #ccc;
+    color: #666;
+    border: 2px solid #aaa;
+    cursor: not-allowed;
+    border-radius: 3px; /* Add border-radius for rounding */
 }
 
 
@@ -177,37 +226,6 @@ h1 {
 
 
 
-.left-align {
-    text-align: left;
-    margin-left: 20px;
-    margin-right: 20px;
-    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-}
-
-.footer-margin {
-    height: 0px;
-}
-
-footer {
-    text-align: center;
-    padding: 0px;
-    position: fixed;
-    bottom: 0;
-    box-sizing: border-box;
-    width: 100%;
-    height: 55px;
-    left: 0;
-    background: #001f3f;
-    color: #ecf0f1;
-    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-}
-
-button:disabled {
-    background-color: #ccc;
-    color: #666;
-    border: 2px solid #aaa;
-    cursor: not-allowed;
-}
 
 .generated-table {
     width: 100%;

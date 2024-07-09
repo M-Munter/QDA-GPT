@@ -1,5 +1,5 @@
 # qda_gpt/__version__.py
-__version__ = '0.5.3 (Byte Panther: Data Forever)'
+__version__ = '0.5.4 (Byte Panther: Data Forever)'
 
 # Into the Data-Verse
 # Byte Panther: Data Forever
