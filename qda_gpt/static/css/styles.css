@@ -15,6 +15,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     min-width: 700px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 /* Specific styles for the header container */
@@ -24,43 +25,48 @@ body {
     margin-top: 10px; /* Reduce the top margin to half */
     padding-top: 10px;
     padding-bottom: 10px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 h1 {
     margin: 0px; /* No margin for the header text */
     padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
-
-
 
 .form-container {
     margin-top: 0;
     padding-top: 10px;
     background: #f8f8f8;
     min-height: 180px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-container h2 {
     margin-top: 0;
     padding-top: 0;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .active-button {
     background-color: #001f3f;
     color: white;
     border: 2px solid #001f3f;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-section {
     display: flex;
     align-items: center; /* Align items at the center */
     margin-bottom: 20px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-section label {
     flex: 0 0 213px; /* Fixed width for labels */
     text-align: left;
     align-self: flex-start; /* Align labels to the top */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-section input[type="file"],
@@ -70,11 +76,13 @@ h1 {
 .form-section .status-text { /* Add status-text here */
     flex: 1;
     margin-left: 10px; /* Add some space between label and input */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .form-section select,
 .form-section button {
     max-width: 200px; /* Set a max-width for dropdown and buttons */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .prompt-input {
@@ -95,6 +103,7 @@ h1 {
     font-weight: normal; /* Match the font weight of "Analysis Status:" */
     display: flex;
     align-items: center; /* Align content at the center */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 
@@ -164,15 +173,17 @@ h1 {
 
 
 
-
 .left-align {
     text-align: left;
     margin-left: 20px;
     margin-right: 20px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
+
 .footer-margin {
     height: 0px;
 }
+
 footer {
     text-align: center;
     padding: 0px;
@@ -184,6 +195,7 @@ footer {
     left: 0;
     background: #001f3f;
     color: #ecf0f1;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 button:disabled {
@@ -197,6 +209,7 @@ button:disabled {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .generated-table th, .generated-table td {
@@ -205,6 +218,7 @@ button:disabled {
     vertical-align: top; /* Align text to the top in all cells */
     background-color: #ffffff;
     color: black;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .generated-table th {
@@ -212,6 +226,7 @@ button:disabled {
     padding-top: 6px;
     padding-bottom: 6px;
     text-align: left;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
 .generated-table tr:nth-child(even) {
@@ -224,4 +239,5 @@ button:disabled {
 
 .generated-table td {
     font-size: 13px; /* Smaller font size for normal text */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }

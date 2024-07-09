@@ -23,6 +23,7 @@ function selectAnalysisType(type) {
     });
     document.getElementById(type + '-button').classList.add('active-button');
     document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
 
 function handleSubmit(event) {
@@ -103,16 +104,14 @@ function downloadCSV() {
         .catch(error => console.error('Error downloading CSV:', error));
 }
 
-function validateForm() {
-    const fileInput = document.querySelector('input[type="file"]').files.length > 0;
-    const analysisType = document.getElementById('analysis_type_hidden').value !== "";
-    const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
-
-    const isValid = fileInput && analysisType && promptInput;
-    const analyzeButton = document.getElementById('analyze-button');
-
-    analyzeButton.disabled = !isValid;
-    console.log("Analyze button disabled state:", analyzeButton.disabled);
+function selectAnalysisType(type) {
+    document.getElementById('analysis_type_hidden').value = type; // Update this line to ensure the correct ID
+    var buttons = document.querySelectorAll('.analysis-button');
+    buttons.forEach(function(button) {
+        button.classList.remove('active-button');
+    });
+    document.getElementById(type + '-button').classList.add('active-button');
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -132,4 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadButton.disabled = false;
         downloadButton.classList.remove('disabled-button');
     }
+    console.log("[DEBUG] DOMContentLoaded event fired");
 });
+
