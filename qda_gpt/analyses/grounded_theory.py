@@ -8,16 +8,19 @@ def phase1(request):
     return response_json, formatted_prompt1
 
 def phase2(request, response_json):
+    print("response_json:", response_json)  # Debugging print statement
     formatted_prompt2 = gt_prompt2.format(response_json=response_json)
     response2_json = get_openai_response(formatted_prompt2, request.session['assistant_id'], request.session['thread_id'])
     return response2_json, formatted_prompt2
 
 def phase3(request, response2_json):
+    print("response2_json:", response2_json)  # Debugging print statement
     formatted_prompt3 = gt_prompt3.format(response2_json=response2_json)
     response3_json = get_openai_response(formatted_prompt3, request.session['assistant_id'], request.session['thread_id'])
     return response3_json, formatted_prompt3
 
 def phase4(request, response3_json):
+    print("response3_json:", response3_json)  # Debugging print statement
     formatted_prompt4 = gt_prompt4.format(response3_json=response3_json)
     response4_json = get_openai_response(formatted_prompt4, request.session['assistant_id'], request.session['thread_id'])
     return response4_json, formatted_prompt4
@@ -40,8 +43,6 @@ def phase7(request, response6_json):
             request.session['seventh_response'] = response7_json
             deletion_results = handle_deletion(request)
             request.session['deletion_results'] = deletion_results
-
-            print(f"[DEBUG] Final response: {response7_json}\n")  # Debugging print statement
 
             if "Deletion successful" in deletion_results:
                 analysis_status = "Analysis completed. All OpenAI elements deleted successfully."

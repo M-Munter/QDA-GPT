@@ -26,23 +26,23 @@ For each initial code, provide:
  - a quote from the respondent.
 
 JSON Example:
-{
+{{
   "Initial Codes": [
-    {
+    {{
       "index": 1,
       "code": "communication issues",
       "description": "Problems with communication",
       "quote": "We often face communication issues."
-    },
-    {
+    }},
+    {{
       "index": 2,
       "code": "positive feedback",
       "description": "Positive feedback received",
       "quote": "The feedback from the manager was great."
-    }
+    }}
     // more codes...
   ]
-}
+}}
 
 
 """
@@ -197,7 +197,7 @@ The output JSON should follow this schema:
     }}
   ],
   "relationships": [
-    {
+    {{
       "index": 1,
       "type": "influences",
       "from": "Employee Sentiment",
@@ -212,7 +212,7 @@ The output JSON should follow this schema:
       "description": "Lack of resources negatively impacts efficiency."
     }}
   ],
-  "theory": {
+  "theory": {{
     "summary": "The overall organizational climate is influenced by employee sentiment, team dynamics, and resource allocation.",
     "details": [
       {{
@@ -287,7 +287,7 @@ Expected Output Example for Validation Strategies:
       "index": 2,
       "strategy": "peer_debriefing",
       "description": "Discuss the theory with colleagues or experts in the field to identify any biases or gaps. Incorporate their feedback to strengthen the theory."
-    },
+    }},
     {{
       "index": 3,
       "strategy": "triangulation",

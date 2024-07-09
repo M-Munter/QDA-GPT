@@ -27,7 +27,7 @@ def clear_session(request):
 
 def get_setup_status(request):
     status = request.session.get('setup_status', '')
-    print(f"[DEBUG] Current setup_status: {status}", flush=True)  # Debugging print statement
+    print(f"[DEBUG] Current setup_status: {status}\n", flush=True)  # Debugging print statement
     return JsonResponse({'setup_status': status})
 
 def handle_uploaded_file(f):
@@ -95,31 +95,29 @@ def handle_setup(request, setup_form):
 
 def generate_tables_from_response(response_text):
     try:
-        # Parse the JSON response
         start = response_text.find('{')
         end = response_text.rfind('}') + 1
         if start == -1 or end == -1:
             raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
         response_text = response_text[start:end]
         response_json = json.loads(response_text)
-        # Prepare the table data
+
         tables = []
         if isinstance(response_json, dict):
             for table_name, records in response_json.items():
                 if isinstance(records, list):
-                    if records and all(isinstance(record, dict) for record in records):
-                        columns = list(records[0].keys())
-                        data = [list(record.values()) for record in records]
+                    flattened_data = []
+                    for record in records:
+                        flattened_record = flatten_dict(record)
+                        flattened_data.append(flattened_record)
+
+                    if flattened_data:
+                        columns = set(flattened_data[0].keys())
+                        data = [[record.get(col, None) for col in columns] for record in flattened_data]
                         tables.append({
                             'table_name': table_name,
-                            'columns': columns,
+                            'columns': list(columns),
                             'data': data
-                        })
-                    else:
-                        tables.append({
-                            'table_name': table_name,
-                            'columns': ["Expressions"],
-                            'data': [[expression] for expression in records]
                         })
         return tables
 
@@ -127,69 +125,21 @@ def generate_tables_from_response(response_text):
         return []
 
 
-
-
-
-
-# views.py
-from django.shortcuts import render, redirect
-from .forms import SetupForm
-from django.http import JsonResponse
-from .openai_api import initialize_openai_resources, create_thread
-from .__version__ import __version__
-from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
-import os
-import time
-import json
-
-def clear_session_data(request):
-    session_keys = [
-        'response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
-        'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response',
-        'analysis_type', 'user_prompt', 'file_name', 'tables', 'prompt_table_pairs'
-    ]
-    for key in session_keys:
-        request.session.pop(key, None)
-    request.session.save()
-
-def clear_session(request):
-    clear_session_data(request)
-    return redirect('dashboard')
-
-def generate_tables_from_response(response_text):
-    try:
-        start = response_text.find('{')
-        end = response_text.rfind('}') + 1
-        if start == -1 or end == -1:
-            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
-        response_text = response_text[start:end]
-        response_json = json.loads(response_text)
-        tables = []
-        if isinstance(response_json, dict):
-            for table_name, records in response_json.items():
-                if isinstance(records, list):
-                    if records and all(isinstance(record, dict) for record in records):
-                        columns = list(records[0].keys())
-                        data = [list(record.values()) for record in records]
-                        tables.append({
-                            'table_name': table_name,
-                            'columns': columns,
-                            'data': data
-                        })
-                    else:
-                        tables.append({
-                            'table_name': table_name,
-                            'columns': ["no content produced"],
-                            'data': [[expression] for expression in records]
-                        })
-        print(f"[DEBUG] tables: {tables}")
-        return tables
-
-    except json.JSONDecodeError as e:
-        return []
-
-
-
+def flatten_dict(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        elif isinstance(v, list):
+            if v and isinstance(v[0], dict):
+                for i, sub_v in enumerate(v):
+                    items.extend(flatten_dict(sub_v, f"{new_key}{sep}{i}", sep=sep).items())
+            else:
+                items.append((new_key, v))
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
 
 
@@ -200,7 +150,7 @@ def generate_tables_from_response(response_text):
 def dashboard(request):
     if request.method == 'GET':
         clear_session_data(request)
-        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}")
+        print(f"[DEBUG] GET request: setup_status after clear_session: {request.session.get('setup_status', '')}\n")
 
     setup_form = SetupForm(request.POST or None, request.FILES or None)
     analysis_type = request.POST.get('analysis_type', request.session.get('analysis_type', ''))
@@ -271,7 +221,6 @@ def dashboard(request):
                     tables4 = generate_tables_from_response(response4_json)
                     tables5 = generate_tables_from_response(response5_json)
                     tables6 = generate_tables_from_response(response6_json)
-                    print(f"[DEBUG] content analysis final table: {tables6}\n")
 
                     prompt_table_pairs.append({'prompt': formatted_prompt1, 'tables': tables1})
                     prompt_table_pairs.append({'prompt': formatted_prompt2, 'tables': tables2})
@@ -319,9 +268,9 @@ def dashboard(request):
                     })
 
                 request.session['prompt_table_pairs'] = prompt_table_pairs
-                print(f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}")
+                print(f"[DEBUG] POST request: session saved with setup_status: {request.session.get('setup_status', '')}\n")
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
-                print(f"[DEBUG] POST request: setup_status after failed handle_setup: {request.session.get('setup_status', '')}")
+                print(f"[DEBUG] POST request: setup_status after failed handle_setup: {request.session.get('setup_status', '')}\n")
 
     return render(request, 'qda_gpt/dashboard.html', context)
