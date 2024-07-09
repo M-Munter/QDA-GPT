@@ -1,3 +1,7 @@
+#selected-analysis-type {
+    display: none; /* This will hide the selected analysis type text */
+}
+
 body {
     text-align: center;
     font-family: 'Open Sans', sans-serif;

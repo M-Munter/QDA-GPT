@@ -23,7 +23,21 @@ function selectAnalysisType(type) {
     });
     document.getElementById(type + '-button').classList.add('active-button');
     document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
+
+
+function selectAnalysisType(type) {
+    document.getElementById('analysis_type_hidden').value = type; // Update this line to ensure the correct ID
+    var buttons = document.querySelectorAll('.analysis-button');
+    buttons.forEach(function(button) {
+        button.classList.remove('active-button');
+    });
+    document.getElementById(type + '-button').classList.add('active-button');
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
+}
+
 
 function handleSubmit(event) {
     var action = event.submitter.value;
@@ -103,6 +117,8 @@ function downloadCSV() {
         .catch(error => console.error('Error downloading CSV:', error));
 }
 
+
+
 function validateForm() {
     const fileInput = document.querySelector('input[type="file"]').files.length > 0;
     const analysisType = document.getElementById('analysis_type_hidden').value !== "";
@@ -133,3 +149,4 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadButton.classList.remove('disabled-button');
     }
 });
+

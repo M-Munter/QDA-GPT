@@ -23,7 +23,7 @@
                 <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
                 <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
                 <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
-                <input type="hidden" name="analysis_type" id="analysis_type" value="{{ analysis_type }}">
+                <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
                 <div id="selected-analysis-type" class="form-section">
                     {% if analysis_type %}
                         Selected analysis type: {{ analysis_type|capfirst }} Analysis
@@ -33,23 +33,33 @@
                 </div>
             </div>
             <div class="form-section">
-                <textarea name="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
+                <label for="user_prompt">Write prompt:</label>
+                <textarea name="user_prompt" id="user_prompt" placeholder="Enter your prompt here..." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
             </div>
             <div class="form-section">
-                <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Analyze</button>
+                <label>Launch Analysis:</label>
+                <button type="submit" name="action" value="analyze" id="analyze-button" class="disabled-button" disabled>Analyze</button>
             </div>
             <div id="status-container" class="form-section">
-                <div><strong>Analysis status:</strong>
-                    {% if analysis_status %}
-                        {{ analysis_status }}
-                    {% else %}
-                        <span id="setup-status">Waiting...</span>
-                    {% endif %}
+                <label>Analysis Status:</label>
+                <div class="status-text">
+                    <strong>
+                        {% if analysis_status %}
+                            {{ analysis_status }}
+                        {% else %}
+                            <span id="setup-status">Waiting...</span>
+                        {% endif %}
+                    </strong>
                 </div>
             </div>
-            <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
-            <button type="button" id="download-csv-btn" onclick="downloadCSV()">Download CSV</button>
-            <button type="button" onclick="clearSessionData()">Clear Session</button>
+            <div class="form-section">
+                <label>Download CSV:</label>
+                <button type="button" id="download-csv-btn" onclick="downloadCSV()" class="disabled-button" disabled>Download CSV</button>
+            </div>
+            <div class="form-section">
+                <label>Clear Session Input and Data:</label>
+                <button type="button" onclick="clearSessionData()">Clear Session</button>
+            </div>
         </form>
     </div>
 
@@ -65,6 +75,9 @@
             {% include "qda_gpt/response_table.html" %}
             {% if deletion_results %}
                 <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
+                <div id="deletion-results" data-results="true"></div>
+            {% else %}
+                <div id="deletion-results" data-results="false"></div>
             {% endif %}
         </div>
     </div>

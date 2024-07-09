@@ -19,11 +19,11 @@
                 {{ setup_form.model_choice }}
             </div>
             <div class="form-section">
-                <label>Select Analysis Type:</label>
+                <label for="analysis_type">Select Analysis Type:</label>
                 <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
                 <button type="button" id="content-button" class="analysis-button" onclick="selectAnalysisType('content')">Content Analysis</button>
                 <button type="button" id="grounded-button" class="analysis-button" onclick="selectAnalysisType('grounded')">Grounded Theory</button>
-                <input type="hidden" name="analysis_type_hidden" id="analysis_type_hidden" value="{{ analysis_type }}">
+                <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
                 <div id="selected-analysis-type" class="form-section">
                     {% if analysis_type %}
                         Selected analysis type: {{ analysis_type|capfirst }} Analysis
@@ -38,7 +38,7 @@
             </div>
             <div class="form-section">
                 <label>Launch Analysis:</label>
-                <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')" class="disabled-button" disabled>Analyze</button>
+                <button type="submit" name="action" value="analyze" id="analyze-button" class="disabled-button" disabled>Analyze</button>
             </div>
             <div id="status-container" class="form-section">
                 <label>Analysis Status:</label>
