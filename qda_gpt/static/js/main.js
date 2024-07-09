@@ -95,6 +95,5 @@ function downloadCSV() {
         .catch(error => console.error('Error downloading CSV:', error));
 }
 
-// For debugging purposes, add a console log
-console.log("main.js is loaded and downloadCSV function is defined.");
+
 

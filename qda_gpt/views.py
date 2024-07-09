@@ -7,6 +7,9 @@ from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from collections import OrderedDict
 from django.core.serializers.json import DjangoJSONEncoder
+from qda_gpt.prompts.prompts_ca import ca_instruction
+from qda_gpt.prompts.prompts_gt import gt_instruction
+from qda_gpt.prompts.prompts_ta import ta_instruction
 import os
 import time
 import json
@@ -102,9 +105,7 @@ def flatten_dict(d, parent_key='', sep='_'):
 
 def download_csv(request):
     analysis_type = request.session.get('analysis_type', 'N/A')
-    ta_instructions = request.session.get('ta_instructions', 'N/A')
-    gt_instructions = request.session.get('gt_instructions', 'N/A')
-    ca_instructions = request.session.get('ca_instructions', 'N/A')
+    user_prompt = request.session.get('user_prompt', 'N/A')
 
     # Map analysis type to full names
     analysis_type_full_name = {
@@ -114,35 +115,52 @@ def download_csv(request):
     }.get(analysis_type, 'Unknown Analysis Type')
 
     # Select the correct instructions based on the analysis type
-    instructions = {
-        'Thematic Analysis': ta_instructions,
-        'Grounded Theory': gt_instructions,
-        'Content Analysis': ca_instructions
+    instructions_template = {
+        'Thematic Analysis': ta_instruction,
+        'Grounded Theory': gt_instruction,
+        'Content Analysis': ca_instruction
     }.get(analysis_type_full_name, 'N/A')
 
+    instructions = instructions_template.format(user_prompt=user_prompt)
+
     prompt_table_pairs = request.session.get('prompt_table_pairs', [])
-    print(f"[DEBUG] prompt_table_pairs: {prompt_table_pairs}")
+
+    # Generate dynamic filename
+    now = datetime.now()
+    filename = f"qda_{now.year}_{now.month:02d}_{now.day:02d}_{now.hour:02d}{now.minute:02d}.csv"
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="prompts_and_tables.csv"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    writer = csv.writer(response)
+    writer = csv.writer(response, delimiter=';')
 
     # Write analysis type and instructions at the beginning
     writer.writerow(['Analysis Type', analysis_type_full_name])
-    writer.writerow(['Instructions', instructions])
+    writer.writerow([])  # Add an empty row for separation
+    writer.writerow(['Instructions'])
+    for line in instructions.split('\n'):
+        writer.writerow([line])
+    writer.writerow([])  # Add an empty row for separation
     writer.writerow([])  # Add an empty row for separation
 
     for index, pair in enumerate(prompt_table_pairs):
-        writer.writerow([f'Prompt {index + 1}', pair['prompt']])
+        writer.writerow([f'Prompt {index + 1}'])
+        for line in pair.get('prompt', 'N/A').split('\n'):
+            writer.writerow([line])
+        writer.writerow([])  # Add an empty row for separation
         for table in pair['tables']:
             writer.writerow([table['table_name']])
             writer.writerow(table['columns'])
             for row in table['data']:
-                writer.writerow(row)
+                if isinstance(row, list):
+                    writer.writerow(row)
+                elif isinstance(row, dict):
+                    writer.writerow([row.get(col, '') for col in table['columns']])
             writer.writerow([])  # Add an empty row for separation
 
     return response
+
+
 
 
 
