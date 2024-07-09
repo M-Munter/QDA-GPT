@@ -1,2 +1,2 @@
 # qda_gpt/__version__.py
-__version__ = '0.4.14'
+__version__ = '0.5.1'
