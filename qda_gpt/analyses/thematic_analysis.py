@@ -5,20 +5,23 @@ from qda_gpt.deletion import handle_deletion
 def phase1(request):
     formatted_prompt1 = ta_prompt1.format()
     response_json = get_openai_response(formatted_prompt1, request.session['assistant_id'], request.session['thread_id'])
+    print("response_json:", response_json)  # Debugging print statement
     return response_json, formatted_prompt1
 
 def phase2(request, response_json):
     formatted_prompt2 = ta_prompt2.format(response_json=response_json)
     response2_json = get_openai_response(formatted_prompt2, request.session['assistant_id'], request.session['thread_id'])
+    print("response2_json:", response2_json)  # Debugging print statement
     return response2_json, formatted_prompt2
 
-def phase3(request, response_json):
-    formatted_prompt3 = ta_prompt3.format(response_json=response_json)
+def phase3(request, response2_json):
+    formatted_prompt3 = ta_prompt3.format(response2_json=response2_json)
     response3_json = get_openai_response(formatted_prompt3, request.session['assistant_id'], request.session['thread_id'])
+    print("response3_json:", response3_json)  # Debugging print statement
     return response3_json, formatted_prompt3
 
-def phase4(request, response2_json, response3_json):
-    formatted_prompt4 = ta_prompt4.format(response2_json=response2_json, response3_json=response3_json)
+def phase4(request, response3_json):
+    formatted_prompt4 = ta_prompt4.format(response3_json=response3_json)
     if request.session.get('initialized', False):
         try:
             response4_json = get_openai_response(formatted_prompt4, request.session['assistant_id'], request.session['thread_id'])

@@ -119,7 +119,7 @@ Example JSON output:
 }}
 
 List of groups:
-{response_json}
+{response2_json}
 """
 
 
@@ -135,7 +135,6 @@ Example JSON output:
 }}
 
 List of topics:
-{response2_json}
 {response3_json}
 """
 

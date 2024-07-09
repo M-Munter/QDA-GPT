@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from .openai_api import initialize_openai_resources, create_thread
 from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
+from collections import OrderedDict
 import os
 import time
 import json
@@ -99,7 +100,7 @@ def generate_tables_from_response(response_text):
         if start == -1 or end == -1:
             raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
         response_text = response_text[start:end]
-        response_json = json.loads(response_text)
+        response_json = json.loads(response_text, object_pairs_hook=OrderedDict)
 
         tables = []
         if isinstance(response_json, dict):
@@ -111,33 +112,40 @@ def generate_tables_from_response(response_text):
                         flattened_data.append(flattened_record)
 
                     if flattened_data:
-                        columns = set(flattened_data[0].keys())
+                        first_record = flattened_data[0]
+                        columns = list(first_record.keys())
                         data = [[record.get(col, None) for col in columns] for record in flattened_data]
                         tables.append({
                             'table_name': table_name,
-                            'columns': list(columns),
+                            'columns': columns,
                             'data': data
                         })
         return tables
 
     except json.JSONDecodeError as e:
+        print(f"JSONDecodeError: {e}")
         return []
-
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
 
 def flatten_dict(d, parent_key='', sep='_'):
     items = []
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
-        elif isinstance(v, list):
-            if v and isinstance(v[0], dict):
-                for i, sub_v in enumerate(v):
-                    items.extend(flatten_dict(sub_v, f"{new_key}{sep}{i}", sep=sep).items())
+    if isinstance(d, dict):
+        for k, v in d.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(flatten_dict(v, new_key, sep=sep).items())
+            elif isinstance(v, list):
+                if v and isinstance(v[0], dict):
+                    for i, sub_v in enumerate(v):
+                        items.extend(flatten_dict(sub_v, f"{new_key}{sep}{i}", sep=sep).items())
+                else:
+                    items.append((new_key, v))
             else:
                 items.append((new_key, v))
-        else:
-            items.append((new_key, v))
+    else:
+        items.append((parent_key, d))
     return dict(items)
 
 
