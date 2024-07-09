@@ -55,7 +55,12 @@
 
     <div class="container form-container">
         <h2>Results</h2>
-        <div id="analyze-loader" class="loader"></div>
+        <div id="analyze-loader" class="loader">
+            <div class="outer-ring"></div>
+            <div class="outer-ring"></div>
+            <div class="inner-ring"></div>
+            <div class="inner-ring"></div>
+        </div>
         <div class="left-align">
             {% include "qda_gpt/response_table.html" %}
             {% if deletion_results %}
