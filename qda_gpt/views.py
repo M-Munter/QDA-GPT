@@ -1,14 +1,16 @@
 # views.py
 from django.shortcuts import render, redirect
 from .forms import SetupForm
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .openai_api import initialize_openai_resources, create_thread
 from .__version__ import __version__
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from collections import OrderedDict
+from django.core.serializers.json import DjangoJSONEncoder
 import os
 import time
 import json
+import csv
 
 def clear_session_data(request):
     session_keys = [
@@ -39,58 +41,6 @@ def handle_uploaded_file(f):
             destination.write(chunk)
     return file_path
 
-
-def handle_setup(request, setup_form):
-    if setup_form.is_valid():
-        file = request.FILES.get('file')
-        if not file:
-            return "Please select a file."
-        model_choice = setup_form.cleaned_data['model_choice']
-        user_prompt = request.POST.get('user_prompt', '')
-        file_path = handle_uploaded_file(file)
-        try:
-            # Create thread and assign correct thread ID
-            request.session['setup_status'] = "Initializing OpenAI Assistant."
-            request.session.save()  # Explicitly save the session
-            time.sleep(0.25)
-            thread_id = create_thread()
-            if thread_id:
-                request.session['thread_id'] = thread_id
-                resources = initialize_openai_resources(
-                    file_path, model_choice, request.session['analysis_type'], user_prompt
-                )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
-                request.session.save()  # Explicitly save the session
-
-                time.sleep(0.55)
-
-                print("Waiting for indexing: ", end='', flush=True)
-                for i in range(5, -1, -1):  # Adjusted range to include 0
-                    print(f"{i} ", end='', flush=True)  # Print the countdown number with a space
-                    time.sleep(0.9)
-                    print('\rWaiting for indexing: ', end='',
-                          flush=True)  # Return to the beginning of the line and overwrite
-                print("0")
-                print("Indexing complete.\n")
-
-                request.session['initialized'] = True
-                request.session['vector_store_id'] = resources['vector_store'].id
-                request.session['assistant_id'] = resources['assistant'].id
-                request.session['file_id'] = resources['file'].id
-                request.session['file_name'] = file.name
-                request.session['user_prompt'] = user_prompt  # Save user prompt to session
-
-                return True  # Return early to immediately show the setup status. Indicate success immediately
-            else:
-                request.session['setup_status'] = "Failed to create thread."
-                request.session.save()  # Explicitly save the session
-                return False # Indicate failure immediately
-
-        except Exception as e:
-            request.session['setup_status'] = f"Error initializing OpenAI resources: {str(e)}"
-            request.session.save()  # Explicitly save the session
-            return False
-    return False
 
 
 def generate_tables_from_response(response_text):
@@ -150,8 +100,105 @@ def flatten_dict(d, parent_key='', sep='_'):
 
 
 
+def download_csv(request):
+    analysis_type = request.session.get('analysis_type', 'N/A')
+    ta_instructions = request.session.get('ta_instructions', 'N/A')
+    gt_instructions = request.session.get('gt_instructions', 'N/A')
+    ca_instructions = request.session.get('ca_instructions', 'N/A')
+
+    # Map analysis type to full names
+    analysis_type_full_name = {
+        'thematic': 'Thematic Analysis',
+        'grounded': 'Grounded Theory',
+        'content': 'Content Analysis'
+    }.get(analysis_type, 'Unknown Analysis Type')
+
+    # Select the correct instructions based on the analysis type
+    instructions = {
+        'Thematic Analysis': ta_instructions,
+        'Grounded Theory': gt_instructions,
+        'Content Analysis': ca_instructions
+    }.get(analysis_type_full_name, 'N/A')
+
+    prompt_table_pairs = request.session.get('prompt_table_pairs', [])
+    print(f"[DEBUG] prompt_table_pairs: {prompt_table_pairs}")
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="prompts_and_tables.csv"'
+
+    writer = csv.writer(response)
+
+    # Write analysis type and instructions at the beginning
+    writer.writerow(['Analysis Type', analysis_type_full_name])
+    writer.writerow(['Instructions', instructions])
+    writer.writerow([])  # Add an empty row for separation
+
+    for index, pair in enumerate(prompt_table_pairs):
+        writer.writerow([f'Prompt {index + 1}', pair['prompt']])
+        for table in pair['tables']:
+            writer.writerow([table['table_name']])
+            writer.writerow(table['columns'])
+            for row in table['data']:
+                writer.writerow(row)
+            writer.writerow([])  # Add an empty row for separation
+
+    return response
 
 
+
+
+
+def handle_setup(request, setup_form):
+    if setup_form.is_valid():
+        file = request.FILES.get('file')
+        if not file:
+            return "Please select a file."
+        model_choice = setup_form.cleaned_data['model_choice']
+        user_prompt = request.POST.get('user_prompt', '')
+        file_path = handle_uploaded_file(file)
+        try:
+            # Create thread and assign correct thread ID
+            request.session['setup_status'] = "Initializing OpenAI Assistant."
+            request.session.save()  # Explicitly save the session
+            time.sleep(0.25)
+            thread_id = create_thread()
+            if thread_id:
+                request.session['thread_id'] = thread_id
+                resources = initialize_openai_resources(
+                    file_path, model_choice, request.session['analysis_type'], user_prompt
+                )
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
+                request.session.save()  # Explicitly save the session
+
+                time.sleep(0.55)
+
+                print("Waiting for indexing: ", end='', flush=True)
+                for i in range(5, -1, -1):  # Adjusted range to include 0
+                    print(f"{i} ", end='', flush=True)  # Print the countdown number with a space
+                    time.sleep(0.9)
+                    print('\rWaiting for indexing: ', end='',
+                          flush=True)  # Return to the beginning of the line and overwrite
+                print("0")
+                print("Indexing complete.\n")
+
+                request.session['initialized'] = True
+                request.session['vector_store_id'] = resources['vector_store'].id
+                request.session['assistant_id'] = resources['assistant'].id
+                request.session['file_id'] = resources['file'].id
+                request.session['file_name'] = file.name
+                request.session['user_prompt'] = user_prompt  # Save user prompt to session
+
+                return True  # Return early to immediately show the setup status. Indicate success immediately
+            else:
+                request.session['setup_status'] = "Failed to create thread."
+                request.session.save()  # Explicitly save the session
+                return False # Indicate failure immediately
+
+        except Exception as e:
+            request.session['setup_status'] = f"Error initializing OpenAI resources: {str(e)}"
+            request.session.save()  # Explicitly save the session
+            return False
+    return False
 
 
 
@@ -219,7 +266,8 @@ def dashboard(request):
         'user_prompt': user_prompt,
         'file_name': file_name,
         'tables': request.session.get('tables', []),
-        'prompt_table_pairs': request.session.get('prompt_table_pairs', [])
+        'prompt_table_pairs': request.session.get('prompt_table_pairs', []),
+        'prompt_table_pairs_json': json.dumps(request.session.get('prompt_table_pairs', []), cls=DjangoJSONEncoder)
     }
 
     if request.method == 'POST':
@@ -230,6 +278,9 @@ def dashboard(request):
                 context_update = handle_analysis(request, analysis_type)
                 context.update(context_update)
                 request.session['prompt_table_pairs'] = context.get('prompt_table_pairs', [])
+                context['prompt_table_pairs_json'] = json.dumps(
+                    context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
+                )
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
 

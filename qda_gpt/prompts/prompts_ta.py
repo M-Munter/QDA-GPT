@@ -123,18 +123,26 @@ List of groups:
 """
 
 
-ta_prompt4 = """
-Using all the topics in the list, give summary in two sentences and a name with max 5 words for summary.
+ta_prompt4 =  """
+Provide a general summary of all identified themes and groups.
+
+The summary should include:
+- a name for the summary with a maximum of 5 words,
+- a description in two sentences covering the main insights from the themes and groups.
+
+Format the response in JSON format in a table named "Overview" with columns "name" and "description".
 
 Example JSON output:
 {{
-    "Summary": {{
-        "name": "Gaming Impact Overview",
-        "description": "Video games have significant educational, cultural, economic, and technological impacts. They also raise important social and ethical issues."
-    }}
+    "Thematic Analysis Summary": [
+        {{
+            "name": "Gaming Impact Overview",
+            "description": "Video games have significant educational, cultural, economic, and technological impacts. They also raise important social and ethical issues."
+        }}
+    ]
 }}
 
-List of topics:
+List of groups:
 {response3_json}
 """
 

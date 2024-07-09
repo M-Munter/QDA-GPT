@@ -37,7 +37,6 @@
             </div>
             <div class="form-section">
                 <button type="submit" name="action" value="analyze" id="analyze-button" onclick="showLoader('analyze')">Analyze</button>
-                <button type="button" onclick="clearSessionData()">Clear Session</button>
             </div>
             <div id="status-container" class="form-section">
                 <div><strong>Analysis status:</strong>
@@ -49,6 +48,8 @@
                 </div>
             </div>
             <input type="hidden" name="analysis_type" id="analysis_type_hidden" value="{{ analysis_type }}">
+            <button type="button" id="download-csv-btn" onclick="downloadCSV()">Download CSV</button>
+            <button type="button" onclick="clearSessionData()">Clear Session</button>
         </form>
     </div>
 
