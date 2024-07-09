@@ -3,7 +3,7 @@
 {% block title %}Dashboard - QDA-GPT{% endblock %}
 
 {% block content %}
-    <div class="form-container form-container-setup">
+    <div class="container form-container">
         <h2>Setup and Analyze</h2>
         <form method="post" enctype="multipart/form-data" id="setup-form" action="{% url 'dashboard' %}" onsubmit="return handleSubmit(event)">
             {% csrf_token %}
@@ -53,7 +53,7 @@
         </form>
     </div>
 
-    <div class="form-container">
+    <div class="container form-container">
         <h2>Results</h2>
         <div id="analyze-loader" class="loader"></div>
         <div class="left-align">

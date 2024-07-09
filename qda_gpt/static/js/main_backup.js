@@ -1,3 +1,8 @@
+// Function to get the CSRF token from the meta tag
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 function showLoader(type) {
     console.log("[DEBUG] showLoader called with type:", type);
     if (type === 'analyze') {
@@ -60,6 +65,10 @@ function fetchStatus() {
 
 function clearSessionData() {
     console.log("[DEBUG] clearSessionData called");
+
+    // Fetch the CSRF token from the hidden input in the form
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     fetch('/clear-session/', {
         method: 'GET',
         headers: {

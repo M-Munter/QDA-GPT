@@ -34,7 +34,7 @@ h1 {
     margin-top: 0px; /* Adjust the value as needed */
     padding-top: 10px;
     background: #f8f8f8;
-    min-height: 200px; /* Adjust this value to your desired minimum height */
+    min-height: 180px; /* Adjust this value to your desired minimum height */
 }
 
 .form-container h2 {
@@ -65,8 +65,8 @@ h1 {
     border-top: 8px solid #3498db;
     width: 80px;
     height: 80px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
+    -webkit-animation: spin 1.3s linear infinite;
+    animation: spin 1.3s linear infinite;
     display: none;
     margin: 10px auto;
 }

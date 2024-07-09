@@ -5,16 +5,14 @@ function getCsrfToken() {
 
 function showLoader(type) {
     console.log("[DEBUG] showLoader called with type:", type);
-    if (type === 'analyze') {
-        document.getElementById("analyze-loader").style.display = "block";
-        document.getElementById("analysis-status").style.display = "none";
-    }
-    setTimeout(function(){
-        if (type === 'analyze') {
-            document.getElementById("analyze-loader").style.display = "none";
-            document.getElementById("analysis-status").style.display = "block";
+    const loader = document.getElementById("analyze-loader");
+    if (loader && type === 'analyze') {
+        loader.style.display = "block";
+        const analysisStatus = document.getElementById("analysis-status");
+        if (analysisStatus) {
+            analysisStatus.style.display = "none";
         }
-    }, 5000);
+    }
 }
 
 function selectAnalysisType(type) {
@@ -47,15 +45,15 @@ function handleSubmit(event) {
 
 function fetchStatus() {
     console.log("[DEBUG] fetchStatus called");
-    fetch('{% url "setup_status" %}', {
+    fetch('/setup-status/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': getCsrfToken()
         }
     }).then(response => response.json()).then(data => {
         if (data.setup_status) {
             document.getElementById('setup-status').innerText = data.setup_status;
-            console.log("[DEBUG] Fetched setup_status:", data.setup_status);  // Debugging console log
+            console.log("[DEBUG] Fetched setup_status:", data.setup_status);
         }
         if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
             setTimeout(fetchStatus, 500); // Poll half a second
