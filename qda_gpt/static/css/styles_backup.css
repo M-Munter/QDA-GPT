@@ -147,12 +147,14 @@ footer {
     background: #001f3f;
     color: #ecf0f1;
 }
-.disabled-button {
+
+button:disabled {
     background-color: #ccc;
     color: #666;
     border: 2px solid #aaa;
     cursor: not-allowed;
 }
+
 .generated-table {
     width: 100%;
     border-collapse: collapse;

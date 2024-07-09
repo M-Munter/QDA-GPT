@@ -4,21 +4,17 @@ function getCsrfToken() {
 }
 
 function showLoader(type) {
-    console.log("[DEBUG] showLoader called with type:", type);
-    if (type === 'analyze') {
-        document.getElementById("analyze-loader").style.display = "block";
-        document.getElementById("analysis-status").style.display = "none";
-    }
-    setTimeout(function(){
-        if (type === 'analyze') {
-            document.getElementById("analyze-loader").style.display = "none";
-            document.getElementById("analysis-status").style.display = "block";
+    const loader = document.getElementById("analyze-loader");
+    if (loader && type === 'analyze') {
+        loader.style.display = "block";
+        const analysisStatus = document.getElementById("analysis-status");
+        if (analysisStatus) {
+            analysisStatus.style.display = "none";
         }
-    }, 5000);
+    }
 }
 
 function selectAnalysisType(type) {
-    console.log("[DEBUG] selectAnalysisType called with type:", type);
     document.getElementById('analysis_type').value = type;
     document.getElementById('analysis_type_hidden').value = type;
     var buttons = document.querySelectorAll('.analysis-button');
@@ -30,7 +26,6 @@ function selectAnalysisType(type) {
 }
 
 function handleSubmit(event) {
-    console.log("[DEBUG] handleSubmit called");
     var action = event.submitter.value;
     if (action === 'analyze') {
         var fileInput = document.querySelector('input[type="file"]');
@@ -46,16 +41,14 @@ function handleSubmit(event) {
 }
 
 function fetchStatus() {
-    console.log("[DEBUG] fetchStatus called");
-    fetch('{% url "setup_status" %}', {
+    fetch('/setup-status/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': getCsrfToken()
         }
     }).then(response => response.json()).then(data => {
         if (data.setup_status) {
             document.getElementById('setup-status').innerText = data.setup_status;
-            console.log("[DEBUG] Fetched setup_status:", data.setup_status);  // Debugging console log
         }
         if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
             setTimeout(fetchStatus, 500); // Poll half a second
@@ -64,7 +57,6 @@ function fetchStatus() {
 }
 
 function clearSessionData() {
-    console.log("[DEBUG] clearSessionData called");
 
     // Fetch the CSRF token from the hidden input in the form
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -76,7 +68,6 @@ function clearSessionData() {
         }
     }).then(response => {
         if (response.ok) {
-            console.log("[DEBUG] clearSessionData response received");
             window.location.href = "/"; // Redirect to the dashboard (root URL)
         } else {
             console.error("[DEBUG] Failed to clear session data");
@@ -112,5 +103,33 @@ function downloadCSV() {
         .catch(error => console.error('Error downloading CSV:', error));
 }
 
+function validateForm() {
+    const fileInput = document.querySelector('input[type="file"]').files.length > 0;
+    const analysisType = document.getElementById('analysis_type_hidden').value !== "";
+    const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
 
+    const isValid = fileInput && analysisType && promptInput;
+    const analyzeButton = document.getElementById('analyze-button');
 
+    analyzeButton.disabled = !isValid;
+    console.log("Analyze button disabled state:", analyzeButton.disabled);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('file-input').addEventListener('change', validateForm);
+    document.querySelectorAll('.analysis-button').forEach(button => {
+        button.addEventListener('click', validateForm);
+    });
+    document.querySelector('textarea[name="user_prompt"]').addEventListener('input', validateForm);
+
+    // Initially disable the Analyze button
+    validateForm();
+
+    // Enable the Download CSV button if deletion_results is present
+    const deletionResults = document.getElementById('deletion-results').getAttribute('data-results');
+    if (deletionResults === 'true') {
+        const downloadButton = document.getElementById('download-csv-btn');
+        downloadButton.disabled = false;
+        downloadButton.classList.remove('disabled-button');
+    }
+});

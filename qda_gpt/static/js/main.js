@@ -103,5 +103,33 @@ function downloadCSV() {
         .catch(error => console.error('Error downloading CSV:', error));
 }
 
+function validateForm() {
+    const fileInput = document.querySelector('input[type="file"]').files.length > 0;
+    const analysisType = document.getElementById('analysis_type_hidden').value !== "";
+    const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
 
+    const isValid = fileInput && analysisType && promptInput;
+    const analyzeButton = document.getElementById('analyze-button');
 
+    analyzeButton.disabled = !isValid;
+    console.log("Analyze button disabled state:", analyzeButton.disabled);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('file-input').addEventListener('change', validateForm);
+    document.querySelectorAll('.analysis-button').forEach(button => {
+        button.addEventListener('click', validateForm);
+    });
+    document.querySelector('textarea[name="user_prompt"]').addEventListener('input', validateForm);
+
+    // Initially disable the Analyze button
+    validateForm();
+
+    // Enable the Download CSV button if deletion_results is present
+    const deletionResults = document.getElementById('deletion-results').getAttribute('data-results');
+    if (deletionResults === 'true') {
+        const downloadButton = document.getElementById('download-csv-btn');
+        downloadButton.disabled = false;
+        downloadButton.classList.remove('disabled-button');
+    }
+});
