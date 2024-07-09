@@ -112,6 +112,7 @@ function selectAnalysisType(type) {
     });
     document.getElementById(type + '-button').classList.add('active-button');
     document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
