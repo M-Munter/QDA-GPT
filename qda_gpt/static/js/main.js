@@ -4,7 +4,6 @@ function getCsrfToken() {
 }
 
 function showLoader(type) {
-    console.log("[DEBUG] showLoader called with type:", type);
     const loader = document.getElementById("analyze-loader");
     if (loader && type === 'analyze') {
         loader.style.display = "block";
@@ -16,7 +15,6 @@ function showLoader(type) {
 }
 
 function selectAnalysisType(type) {
-    console.log("[DEBUG] selectAnalysisType called with type:", type);
     document.getElementById('analysis_type').value = type;
     document.getElementById('analysis_type_hidden').value = type;
     var buttons = document.querySelectorAll('.analysis-button');
@@ -28,7 +26,6 @@ function selectAnalysisType(type) {
 }
 
 function handleSubmit(event) {
-    console.log("[DEBUG] handleSubmit called");
     var action = event.submitter.value;
     if (action === 'analyze') {
         var fileInput = document.querySelector('input[type="file"]');
@@ -44,7 +41,6 @@ function handleSubmit(event) {
 }
 
 function fetchStatus() {
-    console.log("[DEBUG] fetchStatus called");
     fetch('/setup-status/', {
         method: 'GET',
         headers: {
@@ -53,7 +49,6 @@ function fetchStatus() {
     }).then(response => response.json()).then(data => {
         if (data.setup_status) {
             document.getElementById('setup-status').innerText = data.setup_status;
-            console.log("[DEBUG] Fetched setup_status:", data.setup_status);
         }
         if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
             setTimeout(fetchStatus, 500); // Poll half a second
@@ -62,7 +57,6 @@ function fetchStatus() {
 }
 
 function clearSessionData() {
-    console.log("[DEBUG] clearSessionData called");
 
     // Fetch the CSRF token from the hidden input in the form
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -74,7 +68,6 @@ function clearSessionData() {
         }
     }).then(response => {
         if (response.ok) {
-            console.log("[DEBUG] clearSessionData response received");
             window.location.href = "/"; // Redirect to the dashboard (root URL)
         } else {
             console.error("[DEBUG] Failed to clear session data");

@@ -43,9 +43,9 @@ h1 {
 }
 
 .active-button {
-    background-color: #001f3f; /* Navy blue */
+    background-color: #2236ff;
     color: white;
-    border: 2px solid #001f3f; /* Navy blue border */
+    border: 2px solid #2980b9;
 }
 
 
@@ -60,56 +60,15 @@ h1 {
     resize: vertical;
 }
 
-
 .loader {
-    position: relative;
-    width: 100px;
-    height: 100px;
+    border: 12px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 12px solid #3498db;
+    width: 80px;
+    height: 80px;
+    animation: spin 1.3s linear infinite, color-change 3s ease-in-out infinite;
     display: none;
     margin: 10px auto;
-    left: -12px; /* Adjust this value to properly center the loader */
-}
-
-.loader .outer-ring, .loader .inner-ring {
-    position: absolute;
-    border: 10px solid transparent; /* Slightly thicker border */
-    border-radius: 50%;
-    animation: spin linear infinite reverse, color-change 3s ease-in-out infinite reverse; /* Reversed animation */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Similar shadow to containers */
-}
-
-.loader .outer-ring:nth-child(1) {
-    width: 100px;
-    height: 100px;
-    border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.6s; /* Speed for outer ring */
-}
-
-.loader .outer-ring:nth-child(2) {
-    width: 100px;
-    height: 100px;
-    border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.6s; /* Speed for outer ring */
-    animation-delay: -0.8s; /* Opposite phase */
-}
-
-.loader .inner-ring:nth-child(3) {
-    width: 70px; /* Slightly smaller to create a gap */
-    height: 70px;
-    top: 15px; /* Adjusted positioning for the gap */
-    left: 15px;
-    border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.2s; /* Faster speed for inner ring */
-}
-
-.loader .inner-ring:nth-child(4) {
-    width: 70px; /* Slightly smaller to create a gap */
-    height: 70px;
-    top: 15px; /* Adjusted positioning for the gap */
-    left: 15px;
-    border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.2s; /* Faster speed for inner ring */
-    animation-delay: -0.6s; /* Opposite phase */
 }
 
 @keyframes spin {
@@ -118,19 +77,14 @@ h1 {
 }
 
 @keyframes color-change {
-    0%, 100% { border-top-color: #001f3f; }
-    25% { border-top-color: #ba00bf; }
-    50% { border-top-color: #d50000; }
-    75% { border-top-color: ##ff6f00; }
+    0%, 100% { border-top-color: #3498db; } /* Blue */
+    50% { border-top-color: #e74c3c; } /* Red */
 }
-
-
 
 
 .left-align {
     text-align: left;
     margin-left: 20px;
-    margin-right: 20px;
 }
 .footer-margin {
     height: 0px;
