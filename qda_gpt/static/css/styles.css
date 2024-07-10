@@ -58,6 +58,7 @@ h1 {
     border: 2px solid #001f3f;
     border-radius: 3px; /* Add border-radius for rounding */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+    height: 24px; /* Set height for active button */
 }
 
 .form-section {
@@ -74,40 +75,45 @@ h1 {
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
+/* Ensure consistent border color for the "Choose File" button */
+.form-section input[type="file"]::file-selector-button {
+    border: 1px solid #ccc; /* Ensure consistent border color */
+    border-radius: 3px; /* Add border-radius for rounding */
+    padding: 5px;
+    width: 200px; /* Set width to match Analyze and Download CSV buttons */
+    height: 24px; /* Set height to match other buttons */
+}
+
 .form-section input[type="file"] {
     flex: 1;
     margin-left: 10px; /* Add some space between label and input */
-    border-radius: 3px; /* Add border-radius for rounding */
-    padding: 5px; /* Add some padding for better appearance */
+    padding: 0px; /* Add some padding for better appearance */
     border: none; /* Remove border for input[type="file"] */
+    padding-left: 0px; /* Add padding to align correctly */
 }
 
 .form-section select,
-.form-section button,
+.form-section button {
+    flex: 1;
+    margin-left: 10px; /* Add some space between label and input */
+    border-radius: 3px; /* Add border-radius for rounding */
+    border: 1px solid #ccc; /* Add consistent border color and width */
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+    height: 24px; /* Set height to match Analyze and Download CSV buttons */
+    max-width: 200px; /* Set a max-width for dropdown and buttons */
+}
+
 .form-section textarea {
     flex: 1;
     margin-left: 10px; /* Add some space between label and input */
     border-radius: 3px; /* Add border-radius for rounding */
     border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-}
-
-.form-section select,
-.form-section button {
-    max-width: 200px; /* Set a max-width for dropdown and buttons */
-    border-radius: 3px; /* Add border-radius for rounding */
-    border: 1px solid #ccc; /* Add consistent border color and width */
-    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-}
-
-.prompt-input {
     width: 100%; /* Make the prompt box as wide as possible */
     padding: 0;
     margin-bottom: 10px;
     box-sizing: border-box;
     resize: vertical;
-    border-radius: 3px; /* Add border-radius for rounding */
-    border: 1px solid #ccc; /* Add consistent border color and width */
 }
 
 #setup-status {
@@ -158,8 +164,6 @@ button:disabled {
     cursor: not-allowed;
     border-radius: 3px; /* Add border-radius for rounding */
 }
-
-
 
 .loader {
     position: relative;
