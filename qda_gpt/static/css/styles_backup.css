@@ -58,7 +58,22 @@ h1 {
     border: 2px solid #001f3f;
     border-radius: 3px; /* Add border-radius for rounding */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-    height: 24px; /* Set height for active button */
+    height: 34px; /* Set height for active button */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s; /* Add animation for background, color, border, and box-shadow */
+}
+
+button:hover, .form-section select:hover, .form-section input[type="file"]::file-selector-button:hover {
+    border-color: #999; /* Darker border color on hover */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+    background-color: #f0f0f0; /* Slightly lighter background on hover */
+    color: #333; /* Slightly darker text color on hover */
+}
+
+button:active, .form-section select:active, .form-section input[type="file"]::file-selector-button:active {
+    border-color: #666; /* Even darker border color when pressed */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Add deeper shadow when pressed */
+    background-color: #e0e0e0; /* Even lighter background when pressed */
+    color: #000; /* Darker text color when pressed */
 }
 
 .form-section {
@@ -81,7 +96,8 @@ h1 {
     border-radius: 3px; /* Add border-radius for rounding */
     padding: 5px;
     width: 200px; /* Set width to match Analyze and Download CSV buttons */
-    height: 24px; /* Set height to match other buttons */
+    height: 34px; /* Set height to match other buttons */
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s; /* Add animation for border, box-shadow, background, and color */
 }
 
 .form-section input[type="file"] {
@@ -99,8 +115,9 @@ h1 {
     border-radius: 3px; /* Add border-radius for rounding */
     border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-    height: 24px; /* Set height to match Analyze and Download CSV buttons */
+    height: 34px; /* Set height to match Analyze and Download CSV buttons */
     max-width: 200px; /* Set a max-width for dropdown and buttons */
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s; /* Add animation for border, box-shadow, background, and color */
 }
 
 .form-section textarea {
