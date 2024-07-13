@@ -1,9 +1,6 @@
 # prompts_ta.py
 # This script contains the Thematic Analysis instruction and prompts sent to OpenAI Assistant.
 
-# prompts_ta.py
-# This script contains the Thematic Analysis instruction and prompts sent to OpenAI Assistant.
-
 ta_instruction = """
 You are a qualitative data analyst performing Thematic Analysis. Your task is to analyze the provided dataset of transcribed interviews to identify patterns, themes, and insights that address the research questions or objectives.
 
@@ -15,11 +12,13 @@ Here is an overview of the process that will be used in this thematic analysis:
 1. Familiarization and Initial Coding: Read through the dataset to become thoroughly familiar with the content and identify significant features of the data (codes) relevant to the research questions or objectives. This phase involves thoroughly reading the data, noting any initial analytic observations, and generating initial codes that capture interesting aspects of the data systematically.
 2. Category Identification: Organize similar codes into broader categories based on patterns and similarities observed in the data. This phase involves sorting and collating all relevant coded data extracts into potential categories to identify broader patterns of meaning.
 3. Theme Identification: Group categories into overarching themes that capture the major patterns and meanings in the data, providing comprehensive insights. This phase involves reviewing the categories to identify themes that are meaningful and significant in relation to the research questions or objectives.
-4. Top-Down Theme Identification: Identify and develop preliminary themes directly from the research questions and data using a deductive approach. This phase involves deriving themes based on existing theoretical concepts or research questions, ensuring that the themes are informed by and aligned with the specific concepts or frameworks relevant to the study.
-5. Theme Review and Refinement: Review and refine the themes to ensure each is distinct, comprehensive, and relevant to the research questions or objectives. This phase involves examining all the data associated with each theme to ensure they form a coherent and consistent pattern, and merging any overlapping or similar themes to create a unified set of final themes.
+4. Deductive Theme Identification: Identify and develop preliminary themes directly from the research questions and data using a deductive approach. This phase involves deriving themes based on existing theoretical concepts or research questions, ensuring that the themes are informed by and aligned with the specific concepts or frameworks relevant to the study.
+5. Theme Review and Refinement: Review and refine the themes to ensure each is distinct, comprehensive, and relevant to the research questions or objectives. This phase involves examining all the data associated with each theme to ensure they form a coherent and consistent pattern and merging any overlapping or similar themes to create a unified set of final themes.
 6. Assigning Categories to Themes: Review and assign existing categories to the appropriate final themes, refactoring as necessary to ensure clarity and relevance. This phase involves finalizing the allocation of categories to themes, ensuring that each theme accurately represents the data and is supported by the categories.
 7. Assigning Codes to Categories: Review and assign initial codes to the appropriate final categories, ensuring that the retained codes are distinct, comprehensive, and accurately represent the data. This phase involves ensuring that each code fits within the appropriate category, providing a detailed and nuanced understanding of the data.
 8. Producing the Report: Synthesize findings from each theme to answer the research questions or objectives, explaining how themes interrelate and contribute to the overall understanding of the research topic. Present the analysis in a coherent narrative that addresses the research objectives. This phase involves writing the final analysis, including vivid examples and quotes, to illustrate the story the data tell.
+
+Note that in this thematic analysis process we will use three levels of abstraction: code, category, and theme.
 
 In the analysis, take into account the following information and considerations for performing the analysis:
 {user_prompt}
@@ -28,7 +27,7 @@ In the analysis, take into account the following information and considerations 
 
 
 
-# Generating initial codes and familiarizing with the data
+# Familiarization and Initial Coding
 ta_prompt1 = """
 Read through the data to understand its content and familiarize yourself with it. Identify and label significant features of the data (codes). Ensure to capture both explicit (clearly stated) and implicit (underlying) meanings in the data. Allocate the entire data set to different codes based on the parts of the data relevant to the research questions or objectives.
 
@@ -62,9 +61,9 @@ Example JSON output:
 
 
 
-# Searching for categories
+# Category Indentification
 ta_prompt2 = """
-Read through the data and the codes you generated. Group similar codes into different categories based on similarities or patterns observed in the data. Codes can belong to more than one category. Ensure all codes are assigned to a relevant category, but discard those that do not contribute meaningfully to the analysis. At this stage, it is better to have too many than too few categories and codes.
+Read through the data and the codes you generated. Group codes into higher level categories based on similarities or patterns observed in the data. Codes can belong to more than one category. Ensure all codes are assigned to a relevant category, but discard those that do not contribute meaningfully to the analysis. At this stage, it is better to have too many than too few categories and codes.
 
 For each category, provide:
 - index number,
@@ -83,7 +82,7 @@ Example JSON output:
             "definition": "A category that encompasses various forms of active student involvement in the learning process. This includes behaviors such as asking questions, engaging in discussions, and participating in group activities. The purpose is to capture the extent and nature of student engagement in educational activities. Requirements for this category include observable behaviors that indicate active participation.",
             "description": "This category is relevant to understanding how different forms of student engagement impact learning outcomes and classroom dynamics.",
             "code_requirements": "Codes in this category must demonstrate behaviors indicative of active student participation.",
-            "codes": [1, 2, 5, 9, 15, 20, 35, 36, 66, 71, 73, 88, 101, 105, 111, 123, 129, 199, 248, 266]
+            "codes": [1, 2, 5, 8, 9, 15, 20, 35, 36, 38, 65, 66, 68, 71, 73, 82, 88, 101, 105, 111]
         }},
         {{
             "index": 2,
@@ -91,7 +90,7 @@ Example JSON output:
             "definition": "A category that includes various types of support and encouragement provided by teachers. This can involve one-on-one tutoring, positive reinforcement, and providing additional learning resources. The purpose is to identify supportive behaviors from teachers that enhance student learning and motivation. Requirements for this category include actions taken by teachers that provide direct support to students.",
             "description": "This category helps to explore the role of teacher support in fostering student academic success and emotional well-being.",
             "code_requirements": "Codes in this category should reflect actions taken by teachers to assist students.",
-            "codes": [2, 7, 11, 17, 123, 144, 347]
+            "codes": [2, 7, 11, 17, 23, 44, 98]
         }}
     ]
 }}
@@ -100,7 +99,7 @@ Example JSON output:
 
 
 
-# Assign categories to themes
+# Theme Identification
 ta_prompt3 = """
 Read through the data to understand its content. Identify overarching themes that encompass multiple categories to provide comprehensive insights into the major patterns and meanings in the data. Group similar categories into different themes based on similarities or patterns observed in the data. One category can belong to more than one theme. Ensure all categories are assigned to a relevant theme, but discard those that do not contribute meaningfully to the analysis. At this stage, it is better to have too many than too few themes and categories.
 
@@ -137,14 +136,14 @@ Example JSON output:
 
 
 
-# Assign themes top-down, separate prompt to different OpenAI Assistant thread
+# Deductive Theme Identification
 ta_prompt_separate = """
 Read through the data to understand its content. As the first step of thematic analysis, derive and develop preliminary themes regarding the research questions or objectives and the data. Use a deductive approach to develop themes informed by existing theoretical frameworks, pre-existing concepts, established themes, and relevant literature or research. Ensure that the research questions or objectives are also considered in developing the themes. The number of themes is often 3-8, but you can deviate from that if needed. Provide a general summary of all identified themes.
 
 For each theme, provide:
 - theme name in 1-3 words (max 5 words),
 - a meaningful and compact definition of the theme with 2-10 sentences to describe the most significant properties, purpose, and what are the requirements for a specific topic/content to be identified as a theme,
-- references to relevant theoretical frameworks, pre-existing concepts, established themes, and/or relevant literature or research, including specific studies or sources that support the theme,
+- references to and reasoning for relevant theoretical frameworks, pre-existing concepts, established themes, and/or relevant literature or research, including specific studies or sources that support the theme,
 - a description of the theme and its relevance to the research questions or objectives.
 
 Example JSON output:
@@ -168,7 +167,7 @@ Example JSON output:
 
 
 
-# Merge themes
+# Theme Review and Refinement
 ta_prompt4 = """
 Read through the data to understand its content. Below between *** is a set of top-down themes derived from the research questions or objectives.
 
@@ -204,7 +203,7 @@ Example JSON output:
 """
 
 
-# Assign categories to final themes
+# Assign Categories to Themes
 ta_prompt5 = """
 Read through the data to understand its content. Below between *** are the categories you previously created.
 
@@ -300,7 +299,7 @@ Example JSON output:
 
 
 
-# Assign codes to final categories
+# Assign Codes to Categories
 ta_prompt6 = """
 Read through the data to understand its content. Below between *** are the codes you previously created.
 
@@ -425,22 +424,22 @@ Example JSON output:
 """
 
 
-
-
-# Interpretation, analysis, and synthesis
+# Producing the Report
 ta_prompt7 = """
 Read through the data to understand its content. Analyze the themes, categories, and codes to draw conclusions related to the research questions or objectives. Highlight key findings and insights for interpretation.
 
 Review the following dataset to ensure that all data segments are coded correctly under the final themes, categories, and codes. Flag any segments that are not sufficiently covered, misclassified, or missing critical information related to themes, categories, and/or codes. Identify patterns, relationships, and insights, and suggest any potential sub-themes.
 
 Please synthesize the findings from each of the analyzed themes. Integrate these insights to answer the research questions or objectives and explain how the themes interrelate and contribute to the overall understanding of the research topic.
+
 The output should include:
+- presentation of each theme with definitions, descriptions, and illustrative quotes,
 - a concise title for the summary that captures the essence of the findings in up to 10 words,
 - a description in two sentences covering the main insights from the themes and groups,
 - flagged segments that are not sufficiently covered, misclassified, or missing critical information related to themes, categories, and/or codes,
-- presentation of each theme with definitions, descriptions, and illustrative quotes,
-- analysis and interpretation of findings,
-- conclusions and implications of the study.
+- analysis and interpretation of findings (consider also the relation to the research questions or objectives),
+- conclusions and implications (consider also the relation to the research questions or objectives),
+- reflection on how well the analysis addresses the original research questions or objectives.
 
 Example JSON output:
 
@@ -450,23 +449,26 @@ Example JSON output:
             "name": "Educational and Social Impact",
             "quotes": "Gaming has significantly improved my problem-solving skills. ||| I have made many friends through online gaming. ||| Educational games have made me more interested in learning.",
             "analysis": "This theme shows that gaming has both positive and negative impacts on education and social behavior.",
-            "conclusions": "Gaming can be a valuable educational tool but requires careful implementation."
+            "conclusions": "Gaming can be a valuable educational tool but requires careful implementation. This conclusion aligns with the research objective to understand the educational benefits of gaming."
         }},
         {{
             "name": "Technological Advances",
             "quotes": "The new VR technology has transformed my gaming experience. ||| The gaming industry has created numerous job opportunities. ||| Technological innovations are crucial for the future of gaming.",
             "analysis": "Technological innovations in gaming drive industry growth and change user experiences.",
-            "conclusions": "Ongoing technological developments are crucial for the future of the gaming industry."
+            "conclusions": "Ongoing technological developments are crucial for the future of the gaming industry. This conclusion addresses the research question on the impact of technological advancements in gaming."
         }}
     ],
     "Overall_Findings": {{
         "summary_title": "Key Educational, Social, and Technological Findings from Gaming",
         "description": "This study explores the educational, social, and technological impacts of gaming, highlighting both benefits and challenges.",
         "flagged_segments": "The segment 'Gaming has helped me understand historical events better' is not sufficiently covered, which could potentially provide new insights if properly categorized. ||| The segment 'I use VR for exercise routines' appears to be miscategorized under 'Technological Advances' when it might fit better under 'Educational and Social Impact'. ||| The segment 'Gaming can sometimes be isolating' is missing critical information on the specific contexts where this occurs.",
-        "analysis_and_interpretation": "The themes collectively highlight the multifaceted impact of gaming on education, social behavior, and technological progress.",
-        "conclusions_and_implications": "The study concludes that while gaming offers significant educational and social benefits, there are also challenges that need to be addressed. Technological advancements play a key role in the industry's future."
+        "analysis_and_interpretation": "The themes collectively highlight the multifaceted impact of gaming on education, social behavior, and technological progress. These findings directly address the research questions regarding the benefits and challenges of gaming in these areas.",
+        "conclusions_and_implications": "The study concludes that while gaming offers significant educational and social benefits, there are also challenges that need to be addressed. Technological advancements play a key role in the industry's future. These conclusions are aligned with the research objectives to understand the broad impacts of gaming.",
+        "reflection": "The analysis adequately addresses the original research questions by exploring the key areas of educational, social, and technological impact. However, some segments require further review to ensure complete coverage and to enhance the reliability and validity of the findings."
     }}
 }}
 """
+
+
 
 
