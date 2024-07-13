@@ -6,10 +6,19 @@ You are a qualitative data analyst performing Content Analysis. Your task is to 
 
 Always respond with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
 
-Theoretical framework:
+This process is informed by the theoretical framework of Krippendorff's Content Analysis.
 
+Here is an overview of the process that will be used in this content analysis:
+1. Data Reduction: Identify significant features of the data (units) relevant to the research questions or objectives. This phase involves extracting meaningful units from the data, ensuring they retain their context and relevance.
+2. Data Clustering: Organize similar units into broader subcategories based on patterns and similarities observed in the data. This phase involves sorting and collating all relevant units into potential subcategories to identify broader patterns of meaning.
+3. Coding and Categorization: Group subcategories into overarching categories that capture the major patterns and meanings in the data, providing comprehensive insights. This phase involves reviewing the subcategories to identify categories that are meaningful and significant in relation to the research questions or objectives.
+4. Subcategory Assignment and Refinement: This phase involves reviewing and adjusting subcategories to ensure clarity and relevance to the categories.
+5. Unit Assignment to Subcategories and Refinement: Assign units to the refined subcategories. This phase involves ensuring that each unit fits well within its assigned subcategory and further adjusting subcategories if necessary.
+6. Final Categorization: Finalize the categories by grouping refined subcategories. This phase involves ensuring that categories are distinct, comprehensive, and accurately represent the data.
+7. Theoretical Concept Formation: Form theoretical concepts by abstracting from the categories and subcategories. This phase involves identifying themes and patterns, linking theoretical concepts to broader theoretical frameworks, and providing high-level summaries of key themes and patterns.
+8. Producing Overall Findings: Integrate the theoretical concepts into a cohesive narrative, identify relationships between concepts, develop a comprehensive model, and draw conclusions based on the analyzed data, relating them back to the research question.
 
-Here is an overview of the process that will be used in this thematic analysis:
+Note that in this content analysis process, we will use three levels of abstraction: unit, subcategory, and category. Theoretical concepts consist of abstracted themes derived from these categories.
 
 In the analysis, take into account the following considerations to get relevant context and information for the analysis:
 
@@ -404,7 +413,7 @@ Example JSON output:
 
 
 
-# Data Abstraction
+# Theoretical Concept Formation
 ca_prompt7 = """
 Read the provided interview transcripts and familiarize yourself with the context. Your task is to form theoretical concepts by abstracting from the categories and subcategories.
 
