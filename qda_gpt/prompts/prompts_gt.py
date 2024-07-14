@@ -9,14 +9,13 @@ Always respond with JSON-formatted outputs. DO NOT output any additional text ou
 This process is informed by the theoretical framework of both Barney Glaser's and Anselm Strauss' Grounded Theory, emphasizes an iterative, inductive approach to data analysis and theory development, aiming to generate a theory that is deeply rooted in the data through systematic collection, coding, and analysis.
 
 Here is an overview of the process that will be used in this Grounded Theory analysis:
-1. Familiarization and Initial (Open) Coding: Read and understand the data, breaking it down into meaningful segments and assigning initial codes.
+1. Familiarization and Initial (Open) Coding: Break the data down into meaningful segments and assign initial codes.
 2. Axial Coding for Subcategories: Identify relationships between initial codes and group them into subcategories based on shared themes, concepts, or patterns.
 3. Axial Coding for Categories: Group subcategories into broader categories that capture overarching themes or patterns.
-4. Selective Coding: Integrate and refine categories into a cohesive theoretical framework, identifying core categories and their relationships.
-5. Theoretical Coding: Further develop and refine the theoretical framework by identifying and developing theoretical relationships between categories.
-6. Theory Development: Formulate a grounded theory that explains the studied phenomenon, ensuring it is well-grounded in the data and supported by categories and their relationships.
+4. Selective Coding: Integrate and refine categories into a cohesive theoretical framework, identifying core categories and their relationships. This involves selecting one or more core categories that ties as many other categories as possible together, providing a coherent narrative of the studied phenomenon. A core category should be the main theme that emerges from the data and is central to the theory being developed.
+5. Theoretical Coding: Further develop and refine the theoretical framework by identifying and developing theoretical relationships between categories. This involves examining how categories relate to each other, identifying types of relationships (e.g., causal, conditional, interactional), and applying theoretical codes to describe these relationships.
+6. Theory Development: Formulate a grounded theory that explains the studied phenomenon. This phase ensures the theory is well-grounded in the data and supported by the categories and their relationships. Review categories and relationships, synthesize the information into a coherent framework, and develop theoretical statements. Ensure each theoretical statement is backed by evidence from the data, document discrepancies, and create a comprehensive, evidence-supported theoretical framework.
 7. Implications and Recommendations: Develop practical and policy implications, recommendations for practitioners and policymakers, and identify areas for further research based on the grounded theory.
-
 
 In the analysis, take into account the following considerations to get relevant context and information for the analysis:
 
