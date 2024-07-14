@@ -2,379 +2,443 @@
 # This script contains the Grounded Theory prompts sent to OpenAI Assistant.
 
 gt_instruction = """
-You are a qualitative data analyst performing Grounded Theory. Your task is to analyze the provided dataset of transcribed interviews.
+You are a qualitative data analyst performing Grounded Theory process. Your task is to analyze the provided dataset of transcribed interviews.
 
-Respond always with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
+Always respond with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
 
 In the analysis, take into account the following considerations to get relevant context and information for the analysis:
 
 {user_prompt}
 """
 
+# Familiarization and Initial (open) coding
 gt_prompt1 = """
-You are requested to perform initial coding phase of the Gioia method to the attached dataset of transcribed interviews.
-In this phase, scrutinize the text to identify emergent themes, concepts, or patterns.
-Your output should be a JSON object with an array of strings no longer than 7 words, each representing a distinct initial code in the language of the data.
-For example, your output should be in this format: {{"Initial Codes": string[]}}. Ensure to return ONLY a proper JSON array of strings.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. You are requested to perform the initial (open) coding phase for the attached dataset of transcribed interviews.
 
-Perform initial coding according to the Gioia method on the attached transcribed interviews. Return a JSON object.
+Guidelines for initial coding:
+1. Divide the data into meaningful segments. Each segment can range from a part of a sentence to a full interview response.
+2. Identify relevant segments. Focus only on meaningful and relevant segments. If certain segments of data repeat the same information without adding new insights, they may be considered redundant. Similarly, data segments that do not contribute to understanding the phenomena being studied or do not align with the research questions or objectives may be considered less relevant.
+3. Assign an initial code to each data fragment that captures the essence of that segment. Codes should be a few words or a short phrase, clearly describing the content of the segment. Ensure that the codes are representative and accurately reflect the meaning of the data fragment. Once the codes are well-developed and no new properties or dimensions are emerging, further coding of similar data may not be necessary.
+4. Ensure flexibility and recognize that initial codes are tentative and may be revised as you progress through the data. Revisit and refine codes as new data is coded and new insights are gained.
+5. For each data segment, provide a meaningful and compact description of the code.
+
+For each data segment, provide:
+ - Index number starting from 1,
+ - Initial code name in a few words or a short phrase,
+ - Data fragment,
+ - Description of the code.
+
+Example JSON output:
+{
+  "Initial Codes": [
+    {
+      "index": 1,
+      "initial_code_name": "Frustration with management communication",
+      "data_fragment": "I'm really frustrated with how poorly management communicates.",
+      "description": "The participant's feelings of frustration due to inadequate communication from management."
+    },
+    {
+      "index": 2,
+      "initial_code_name": "Unheard concerns",
+      "data_fragment": "I feel like no one listens to my concerns.",
+      "description": "The participant's perception that their issues and concerns are not being acknowledged or addressed by management."
+    },
+    {
+      "index": 3,
+      "initial_code_name": "Overwhelmed by workload",
+      "data_fragment": "It's just too much sometimes, you know? Like, I'm constantly juggling tasks and there's never enough time to actually focus on any one thing. I end up doing everything half-heartedly because I'm spread so thin.",
+      "description": "The participant feels overwhelmed by their workload, resulting in a lack of focus and quality in their work."
+    },
+    {
+      "index": 4,
+      "initial_code_name": "Lack of resources",
+      "data_fragment": "We don't have the tools we need to do our jobs properly, it's like we're expected to build a house with a spoon.",
+      "description": "The participant is expressing frustration over the lack of necessary resources to perform their job effectively."
+    }
+  ]
+}
+"""
+
+
+
+# Axial coding for subcategories
+gt_prompt2 = """
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the initial codes from the initial (open) coding phase. You are requested to develop subcategories in the Axial Coding phase.
+
+Guidelines for developing subcategories:
+1. Identify relationships between the initial codes and group them into subcategories based on shared themes, concepts, or patterns evident in the initial codes.
+2. Assign descriptive labels to each subcategory that capture the essence of the grouped segments.
+3. Provide a description for each subcategory that summarizes its core idea and context.
+4. Define properties and dimensions for each subcategory. In practice, this means identifying the key characteristics (properties) of each subcategory and the range or spectrum (dimensions) along which these properties vary.
+5. Initial codes can belong to more than one subcategory. One subcategory can contain multiple initial codes.
+6. Avoid redundancy and ensure each subcategory is distinct and meaningful.
+7. Document the rationale behind each grouping decision for transparency and future reference.
+
+For each subcategory, provide:
+- Subcategory index number starting from 1,
+- Subcategory name in 1-3 words (max 5 words),
+- Description of the subcategory,
+- Properties of the subcategory,
+- Dimensions of the subcategory.
 
 For each initial code, provide:
- - index number starting from 1,
- - code name (i.e. initial code) in no more than 3 words,
- - a meaningful and compact description of the code with no longer than 7 words, and
- - a quote from the respondent.
+- Index number of initial code,
+- Initial code name,
+- The rationale for why this specific unit belongs to this subcategory.
 
-JSON Example:
-{{
-  "Initial Codes": [
-    {{
-      "index": 1,
-      "code": "communication issues",
-      "description": "Problems with communication",
-      "quote": "We often face communication issues."
-    }},
-    {{
-      "index": 2,
-      "code": "positive feedback",
-      "description": "Positive feedback received",
-      "quote": "The feedback from the manager was great."
-    }}
-    // more codes...
-  ]
-}}
-
-
-"""
-
-
-gt_prompt2 = """
-You are requested to perform the 2nd order coding phase of the Gioia method.
-
-In this phase, identify higher-level themes or categories that aggregate the initial codes. Your output should be a JSON-formatted object mapping each
-higher-level theme to an array of initial codes that belong to it.
-
-For each higher-level theme, provide:
- - index number starting from 1,
- - theme name (i.e. higher-level theme),
- - for each initial code included in the theme, provide the initial code index and name.
-
-As a general example, "employee sentiment" could be a 2nd order code to 1st level codes "Positive feelings toward new policy" and "Sense of control".
-Your output should look like this, where the keys are the higher-level concepts: {{"Some higher-Level theme": ["initial code index: initial code", "another initial code index: another initial code"]}}.
-Ensure to return ONLY a proper JSON object.
-
-Perform 2nd Order Coding according to the Gioia method and return a JSON object.
-
-JSON Example:
-{{
-  "Higher-Level Themes": [
-    {{
-      "index": 1,
-      "theme": "Employee Sentiment",
+Example JSON output:
+{
+  "Subcategories": [
+    {
+      "subcategory_index": 1,
+      "subcategory_name": "Management Communication Issues",
+      "description": "Problems related to the frequency and clarity of communication from management.",
+      "properties": ["frequency", "clarity"],
+      "dimensions": ["infrequent to frequent", "unclear to clear"],
       "initial_codes": [
-        {{
+        {
           "index": 1,
-          "code": "positive feedback"
-        }},
-        {{
+          "initial_code_name": "Frustration with management communication",
+          "rationale": "This code reflects issues with the frequency and clarity of communication from management."
+        },
+        {
           "index": 2,
-          "code": "communication issues"
-        }}
+          "initial_code_name": "Unheard concerns",
+          "rationale": "This code captures the lack of effective communication from management, leading to employees feeling unheard."
+        }
       ]
-    }},
-    {{
-      "index": 2,
-      "theme": "Resource Allocation",
+    },
+    {
+      "subcategory_index": 2,
+      "subcategory_name": "Workload Challenges",
+      "description": "Challenges related to the intensity of workload and the support provided.",
+      "properties": ["intensity", "support"],
+      "dimensions": ["low to high", "insufficient to sufficient"],
       "initial_codes": [
-        {{
+        {
           "index": 3,
-          "code": "lack of resources"
-        }}
+          "initial_code_name": "Overwhelmed by workload",
+          "rationale": "This code describes the intensity of the workload and the lack of support felt by the participant."
+        },
+        {
+          "index": 4,
+          "initial_code_name": "Lack of resources",
+          "rationale": "This code reflects challenges related to insufficient resources needed to manage the workload effectively."
+        }
       ]
-    }}
-    // more themes...
+    }
   ]
-}}
-
-
-Initial codes:
-{response_json}
+}
 """
 
 
+
+
+# Axial coding for categories
 gt_prompt3 = """
-You are requested to perform the Aggregate Dimensions phase of the Gioia method.
-In this phase, identify overarching theoretical dimensions (typically 5-7) that aggregate the 2nd order codes.
-Your output should be a JSON-formatted object mapping each aggregate dimension to an array of 2nd order codes that belong to it.
-For each aggregate dimension, provide:
- - index number starting from 1,
- - dimension name (i.e. aggregate dimension),
- - for each higher-level theme included in the dimension, provide the theme index and name.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes and subcategories. You are requested to develop categories in the Axial Coding phase.
 
-As a general example, "Policy Usability" could make for a good, quantifiable dimension. Your output should look like this, where
-the keys are the (quantifiable) dimensions: {{"some dim": ["theme index: theme", "another theme index: another theme"]}}.
-Ensure that the aggregate dimensions are grounded in the themes and to return ONLY a proper JSON object.
+Guidelines for developing categories:
+1. Identify higher-level themes or concepts that can encompass multiple subcategories, grouping them into broader categories based on shared overarching themes or patterns.
+2. Assign descriptive labels to each category that capture the essence of the grouped subcategories at a higher level of abstraction.
+3. Provide a description for each category that summarizes its core idea and context, highlighting its broader significance.
+4. Define properties and dimensions for each category. In practice, this means identifying the key characteristics (properties) of each category and the range or spectrum (dimensions) along which these properties vary.
+5. Subcategories can belong to more than one category if they fit within multiple broader themes. One category can contain multiple subcategories.
+6. Avoid redundancy and ensure each category is distinct and meaningful.
+7. Document the rationale behind each grouping decision for transparency and future reference.
 
-Perform aggregation into theoretical dimensions according to the Gioia method and return a JSON object.
+For each category, provide:
+- Category index number starting from 1,
+- Category name in 1-3 words (max 5 words),
+- Description of the category,
+- Properties of the category,
+- Dimensions of the category.
 
-JSON Example:
-{{
-  "Aggregate Dimensions": [
-    {{
-      "index": 1,
-      "dimension": "Organizational Climate",
-      "higher_level_themes": [
-        {{
-          "index": 1,
-          "theme": "Employee Sentiment"
-        }},
-        {{
-          "index": 2,
-          "theme": "Team Dynamics"
-        }}
+For each subcategory, provide:
+- Index number of the subcategory,
+- Subcategory name,
+- The rationale for why this specific subcategory belongs to this category.
+
+Example JSON output:
+{
+  "Categories": [
+    {
+      "category_index": 1,
+      "category_name": "Communication Issues",
+      "description": "Broad issues related to communication within the organization, including both management and employee communication.",
+      "properties": ["clarity", "frequency"],
+      "dimensions": ["unclear to clear", "infrequent to frequent"],
+      "subcategories": [
+        {
+          "subcategory_index": 1,
+          "subcategory_name": "Management Communication Issues",
+          "rationale": "This subcategory focuses on problems specifically with how management communicates with employees."
+        },
+        {
+          "subcategory_index": 2,
+          "subcategory_name": "Employee Communication Issues",
+          "rationale": "This subcategory addresses how employees communicate with each other and with management."
+        }
       ]
-    }},
-    {{
-      "index": 2,
-      "dimension": "Operational Efficiency",
-      "higher_level_themes": [
-        {{
-          "index": 3,
-          "theme": "Resource Allocation"
-        }}
+    },
+    {
+      "category_index": 2,
+      "category_name": "Work Environment",
+      "description": "Overall conditions and factors that affect the workplace, including workload management and resource availability.",
+      "properties": ["workload intensity", "resource support"],
+      "dimensions": ["low to high", "insufficient to sufficient"],
+      "subcategories": [
+        {
+          "subcategory_index": 3,
+          "subcategory_name": "Workload Challenges",
+          "rationale": "This subcategory deals with the difficulties employees face in managing their workload."
+        },
+        {
+          "subcategory_index": 4,
+          "subcategory_name": "Resource Availability",
+          "rationale": "This subcategory addresses the availability and adequacy of resources to support workload management."
+        }
       ]
-    }}
-    // more dimensions...
+    }
   ]
-}}
-
-The 2nd order codes:
-{response2_json}
+}
 """
 
 
+# Selective coding
 gt_prompt4 = """
-I have completed the open and axial coding phases of my grounded theory research.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, and categories. You are requested to perform selective coding to integrate and refine these categories into a cohesive theoretical framework.
 
-Below is the JSON data representing the categories, subcategories, and their relationships.
+Guidelines for selective coding:
+1. Identify core categories that are central to your research question or objectives. A core category is related to many other codes or holds particular importance. It should be central, frequent in the data, abstract enough to be broadly applicable, and capable of integrating other categories.
+2. One or more core categories may be identified.
+3. Categories can belong to more than one core category.
+4. Develop a cohesive theoretical framework that explains the relationships between the core category and other categories. This framework should provide a comprehensive understanding of the studied phenomenon.
+5. Create theoretical statements, including clear propositions or hypotheses that articulate the relationships and interactions between a core category and other categories.
+6. Create a narrative that describes the grounded theory, illustrating how a core category and related categories explain the data.
 
-You are requested to perform Theoretical Coding by integrating these elements into a coherent theoretical framework in JSON format.
+For each core category, provide:
+- Core category index number starting from 1,
+- Core category name in 1-3 words (max 5 words),
+- Description of the core category,
+- The requirements for a specific category to be identified as a core category,
+- Theoretical framework,
+- Theoretical statements,
+- Narrative description.
 
-Specifically, identify the core category, elaborate on the key relationships between categories, and provide a narrative that explains the overall theory.
+For each category, nested under its respective core category, provide:
+- Category index number starting from 1 within each core category,
+- Category name,
+- Description of the category,
+- The rationale for why this specific category belongs to this core category.
 
-The output JSON should contain the following elements:
-- Core Category: The main theme that integrates all other categories.
-- Categories: An array of categories with their subcategories.
-- Relationships: An array of relationships between categories.
-- Theory: A summary of the overall theory, followed by detailed explanations of key relationships.
-
-The output JSON should follow this schema:
-{{
-  "core_category": "Organizational Climate",
-  "categories": [
-    {{
-      "index": 1,
-      "name": "Employee Sentiment",
-      "subcategories": [
-        "positive feedback",
-        "communication issues"
+Example JSON output:
+{
+  "Core Categories": [
+    {
+      "core_category_index": 1,
+      "core_category_name": "Work-Life Balance",
+      "description": "Central theme related to balancing professional responsibilities with personal life while working remotely.",
+      "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
+      "theoretical_framework": "Work-life balance is influenced by various factors, including flexible work schedules and boundary management. These factors collectively enhance overall satisfaction and productivity.",
+      "theoretical_statements": [
+        "Flexible work schedules improve work-life balance.",
+        "Effective boundary management is crucial for maintaining work-life balance."
+      ],
+      "narrative_description": "Work-life balance emerged as a core category influencing multiple aspects of remote work dynamics. Factors such as flexible work schedules and boundary management were found to be critical in determining overall satisfaction and productivity. By addressing these factors, organizations can enhance work-life balance and achieve better outcomes.",
+      "categories": [
+        {
+          "category_index": 1,
+          "category_name": "Flexible Work Schedules",
+          "description": "Importance of having flexible working hours to accommodate personal and professional needs.",
+          "rationale": "This category is critical to work-life balance as it addresses the need for flexibility in managing work and personal responsibilities."
+        },
+        {
+          "category_index": 2,
+          "category_name": "Boundary Management",
+          "description": "Strategies for maintaining clear boundaries between work and personal life.",
+          "rationale": "This category is integral to work-life balance, focusing on the importance of setting and maintaining boundaries to avoid burnout and maintain productivity."
+        }
       ]
-    }},
-    {{
-      "index": 2,
-      "name": "Team Dynamics",
-      "subcategories": [
-        "team collaboration",
-        "management support"
+    },
+    {
+      "core_category_index": 2,
+      "core_category_name": "Remote Work Productivity",
+      "description": "Central theme related to factors that impact productivity while working remotely.",
+      "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
+      "theoretical_framework": "Remote work productivity is influenced by various factors, including technology use and communication practices. These factors significantly impact the efficiency and effectiveness of remote work.",
+      "theoretical_statements": [
+        "Effective use of technology enhances remote work productivity.",
+        "Clear communication practices are crucial for maintaining productivity in a remote work environment."
+      ],
+      "narrative_description": "Remote work productivity emerged as a core category that significantly influences the effectiveness of remote work. Elements such as technology use and communication practices were identified as key factors. Improving these aspects can lead to increased productivity and better remote work outcomes.",
+      "categories": [
+        {
+          "category_index": 1,
+          "category_name": "Technology Use",
+          "description": "The role of technology in enabling efficient remote work.",
+          "rationale": "This category is crucial to remote work productivity as it addresses the importance of leveraging technology to enhance work efficiency."
+        },
+        {
+          "category_index": 2,
+          "category_name": "Communication Practices",
+          "description": "The impact of communication strategies on maintaining productivity while working remotely.",
+          "rationale": "This category is essential to remote work productivity, highlighting the need for clear and effective communication practices to support remote work."
+        }
       ]
-    }},
-    {{
-      "index": 3,
-      "name": "Resource Allocation",
-      "subcategories": [
-        "lack of resources"
-      ]
-    }}
-  ],
-  "relationships": [
-    {{
-      "index": 1,
-      "type": "influences",
-      "from": "Employee Sentiment",
-      "to": "Team Dynamics",
-      "description": "Positive feedback improves team collaboration."
-    }},
-    {{
-      "index": 2,
-      "type": "impacts",
-      "from": "Resource Allocation",
-      "to": "Operational Efficiency",
-      "description": "Lack of resources negatively impacts efficiency."
-    }}
-  ],
-  "theory": {{
-    "summary": "The overall organizational climate is influenced by employee sentiment, team dynamics, and resource allocation.",
-    "details": [
-      {{
-        "relationship": "Employee Sentiment and Team Dynamics",
-        "explanation": "Positive feedback and communication issues shape how well teams collaborate and the support they receive from management."
-      }},
-      {{
-        "relationship": "Resource Allocation and Operational Efficiency",
-        "explanation": "Adequate resources are critical for maintaining operational efficiency within the organization."
-      }}
-    ]
-  }}
-}}
-
-The Aggregate Dimensions phase:
-{response3_json}
+    }
+  ]
+}
 """
 
 
+
+
+# Theoretical coding
 gt_prompt5 = """
-I have completed the theoretical coding phase of my grounded theory research.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, categories, and selective coding. You are requested to perform theoretical coding to integrate and refine these categories into a cohesive theoretical framework.
 
-Below is the JSON data representing the refined categories, relationships, and the emerging theory.
+Guidelines for Theoretical Coding:
+1. Examine Categories and Subcategories. Review the categories and subcategories to understand what each represents. Think about how these categories might be related, considering whether there are any cause-and-effect relationships or if some categories provide context for others.
+2. Identify Relationships. Begin by identifying conceptual links between different categories. Determine how these categories interact and influence each other, with a focus on how other categories relate to the core category identified during selective coding.
+3. Develop Theoretical Codes. Look for various types of relationships, such as cause and effect, context and condition, interaction, and process. Apply theoretical codes like "if-then," "because," "leads to," and "is part of" to describe these relationships. Document the identified relationships and explain how they contribute to the emerging theory.
+4. Integrate Categories. Synthesize the identified relationships into a coherent theoretical framework. Use a JSON format flowchart to map out the relationships and see how they fit together within the emerging theory. Ensure that the framework covers all significant aspects of the data.
+5. Write Narrative Description. Summarize the theoretical coding and integration phases by writing a detailed explanation that integrates the theoretical propositions, framework, and visual diagram into a coherent story explaining the relationships and the overall theory.
 
-You are requested to perform the theory refinement phase.
+For each core category, provide:
+- Core category name
+- Identified relationships with interactions and influences
+- Theoretical propositions
+- Theoretical framework for categories and relationships
+- Narrative description
+- Table format visualization of the flowchart
 
-Specifically, the output should include suggestions for further integration and refinement of the theory,
-ensuring that all aspects are comprehensive and well-structured.
-
-Each suggestion should be a separate row, with different aspects provided as columns.
-
-Expected Output Example for Theory Refinement:
+Example JSON Output:
 {{
-  "theory_refinement": [
+  "Theoretical Coding": [
     {{
-      "index": 1,
-      "suggestion": "Ensure that all categories and subcategories are clearly defined and interrelated.",
-      "explanation": "Review and refine the definitions of all categories and subcategories to ensure clarity and coherence."
-    }},
-    {{
-      "index": 2,
-      "suggestion": "Examine any potential gaps in the theory and address them with additional data if necessary.",
-      "explanation": "Identify and fill any gaps in the data by collecting additional information if required."
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "relationships": [
+        "Leadership Support → Emotional Support: Effective leadership practices foster a supportive team environment, enhancing emotional support among peers.",
+        "Emotional Support ↔ Professional Development: A supportive team environment encourages employees to engage in professional development opportunities.",
+        "Professional Development → Employee Well-being: Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being.",
+        "Work-Life Balance → Employee Well-being: Flexible work arrangements help employees manage stress and improve their overall well-being."
+      ],
+      "theoretical_codes": [
+        "If leadership provides guidance and mentoring, then team cohesion and peer empathy will improve.",
+        "Because a supportive team environment exists, employees are more likely to participate in professional development.",
+        "Professional development opportunities lead to increased job satisfaction and well-being.",
+        "Flexible work hours reduce stress, which is part of improving overall employee well-being."
+      ],
+      "theoretical_framework": {{
+        "Leadership Support": "Leads to Emotional Support and Professional Development.",
+        "Emotional Support": "Reduces stress and increases job satisfaction.",
+        "Professional Development": "Enhances sense of growth and job satisfaction.",
+        "Work-Life Balance": "Reduces burnout and enhances job satisfaction."
+      }},
+      "narrativeDescription": "Leadership practices such as mentoring and providing feedback play a crucial role in fostering a supportive team environment. This environment enhances emotional support among employees, reducing stress and increasing job satisfaction. Additionally, opportunities for professional development contribute to a sense of growth and achievement, further enhancing well-being. Work-life balance, facilitated by flexible work arrangements, helps reduce burnout and improve overall job satisfaction. Together, these factors create a comprehensive framework for understanding and improving employee well-being in the workplace."
     }}
-    // more suggestions...
+  ],
+  "table_format_visualization": [
+    {{
+      "CoreCategory": "Employee Well-being",
+      "Relationships": [
+        {{"From": "Leadership Support", "To": "Emotional Support", "Description": "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers."}},
+        {{"From": "Emotional Support", "To": "Professional Development", "Description": "A supportive team environment encourages employees to engage in professional development opportunities."}},
+        {{"From": "Professional Development", "To": "Employee Well-being", "Description": "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being."}},
+        {{"From": "Work-Life Balance", "To": "Employee Well-being", "Description": "Flexible work arrangements help employees manage stress and improve their overall well-being."}}
+      ]
+    }}
   ]
 }}
-
-The Theoretical Coding:
-{response4_json}
 """
 
 
+
+
+# Theory development
 gt_prompt6 = """
-I have completed the theoretical coding and theory refinement phase of my grounded theory research.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, categories, selective coding, and theoretical coding. You are requested to perform theory development to formulate a grounded theory that explains the studied phenomenon and to ensure the theory is well-grounded in the data and supported by the categories and their relationships.
 
-Below is the JSON data representing the refined categories, relationships, and the emerging theory.
+Guidelines for Theory Development:
+1. Formulate the Theory by synthesizing the categories and their relationships into a coherent theory that explains the core phenomenon. Review categories and relationships by examining all the categories and their identified relationships. Ensure you have a comprehensive understanding of how each category relates to the core phenomenon. Synthesize information by integrating these categories and relationships into a coherent framework. This involves combining the different elements in a way that they form a unified explanation of the phenomenon. Develop theoretical statements by creating theoretical statements or propositions that encapsulate the synthesized information. These statements should clearly articulate how different categories interact to explain the core phenomenon.
+2. Ground in the data by ensuring that the theory is deeply rooted in the data. Compare the theoretical statements and framework against the raw data. Check if each theoretical statement is backed by evidence from the data. Document any discrepancies by noting which statements are not supported by the data, what specific issues exist, and why these are not supported by the data.
+3. Ensure that the relationships between categories support the overall theory. Each aspect of the theory should be backed by evidence from the data. For each relationship identified in the theoretical framework, find supporting data. This can be quotes from interviews, observed behaviors, or other relevant data points. Create a document or table where each relationship is listed alongside the supporting evidence from the data. If supporting evidence cannot be found, document the discrepancies by noting which relationships are not supported by the data, what specific issues exist, and why these issues are not supported by the data.
 
-You are requested to develop validation strategies. Specifically, the output should include methods for validating the theory, including member checking, peer debriefing, and triangulation.
+For each core category, provide:
+- Theoretical statements
+- Discrepancies regarding statements
+- Discrepancies regarding relationships
 
-Each strategy should be a separate row, with different aspects provided as columns.
-
-Expected Output Example for Validation Strategies:
+Example JSON Output:
 {{
-  "validation_strategies": [
+  "Theory Development": [
     {{
-      "index": 1,
-      "strategy": "member_checking",
-      "description": "Share the emerging theory with participants and ask for their feedback on its accuracy and relevance. Use their input to refine and validate the theory."
-    }},
-    {{
-      "index": 2,
-      "strategy": "peer_debriefing",
-      "description": "Discuss the theory with colleagues or experts in the field to identify any biases or gaps. Incorporate their feedback to strengthen the theory."
-    }},
-    {{
-      "index": 3,
-      "strategy": "triangulation",
-      "description": "Use additional data sources or methods to confirm the consistency and validity of the findings. This may include reviewing related literature, conducting supplementary interviews, or employing different analytical techniques."
+      "coreCategoryIndex": 1,
+      "coreCategoryName": "Employee Well-being",
+      "Theoretical Statements": [
+        "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers.",
+        "A supportive team environment encourages employees to engage in professional development opportunities.",
+        "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being.",
+        "Flexible work arrangements help employees manage stress and improve their overall well-being."
+      ],
+      "discrepancies_statements": [
+        "Professional Development → Employee Well-being: Lack of supporting evidence from a subset of participants because some participants did not have access to training programs."
+      ],
+      "discrepancies_relationships": [
+        "Emotional Support ↔ Professional Development: Inconsistent evidence across different departments due to varying levels of team support in different departments."
+      ]
     }}
-    // more strategies...
   ]
 }}
-
-The refined Theoretical Coding:
-{response5_json}
 """
 
 
+
+
+
+
+
+# Implications and Recommendations
 gt_prompt7 = """
-I have completed the theoretical coding phase of my grounded theory research.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, categories, selective coding, theoretical coding, and theory development. You are requested to develop the implications and recommendations based on the grounded theory.
 
-Below is the JSON data representing the refined categories, relationships, and the emerging theory.
+Practical Implications. Discuss how the findings can be applied in practical settings. Consider the following:
+- How can the grounded theory inform best practices within the relevant field?
+- What specific strategies or interventions can be derived from the theory?
+- How can these findings improve processes, behaviors, or outcomes in practical settings?
 
-You are requested to prepare a detailed presentation of the theory.
+Policy Implications. Explain how the findings can inform policy decisions. Consider the following:
+- What policy changes or developments can be suggested based on the findings?
+- How can the grounded theory inform or support policy-making processes?
+- What specific aspects of policy could be influenced or shaped by the findings?
 
-Specifically, the output should include a detailed outline for documenting the theory, suggestions for visual
-representations, and a discussion of theoretical, practical, and policy implications.
+Recommendations for Practitioners. Suggest practical strategies or interventions based on the findings. Consider the following:
+- What actionable steps can practitioners take to implement the findings in their work?
+- How can these strategies or interventions improve practices within the field?
+- Provide concrete examples of how practitioners can apply the grounded theory in their daily operations.
 
-Expected Output Example for Detailed Presentation:
-{{
-  "presentation_and_writing": {{
-    "outline": [
-      {{
-        "index": number,
-        "section": "introduction",
-        "description": "Introduce the research problem, objectives, and methodology."
-      }},
-      {{
-        "index": number,
-        "section": "theoretical_framework",
-        "description": "Present the refined categories, relationships, and core category."
-      }},
-      {{
-        "index": number,
-        "section": "data_analysis",
-        "description": "Describe the coding process and how the theory emerged."
-      }},
-      {{
-        "index": number,
-        "section": "discussion",
-        "description": "Discuss the theoretical, practical, and policy implications of the findings."
-      }},
-      {{
-        "index": number,
-        "section": "conclusion",
-        "description": "Summarize the key contributions and suggest areas for future research."
-      }}
-    ],
-    "visual_representations": [
-      {{
-        "index": number,
-        "visual": "Diagram of relationships",
-        "description": "Create a diagram showing the relationships between categories and subcategories."
-      }},
-      {{
-        "index": number,
-        "visual": "Model illustration",
-        "description": "Develop a model illustrating the core category and its connections to other elements of the theory."
-      }}
-    ],
-    "implications": [
-      {{
-        "index": number,
-        "type": "theoretical",
-        "description": "Discuss how the theory advances understanding in the field of organizational change and communication strategies."
-      }},
-      {{
-        "index": number,
-        "type": "practical",
-        "description": "Provide practical applications of the theory for managers and organizations to improve communication strategies and support systems during organizational change."
-      }},
-      {{
-        "index": number,
-        "type": "policy",
-        "description": "Suggest potential policy implications and recommendations based on the findings to guide organizational policies and practices."
-      }}
-    ]
-  }}
-}}
+Recommendations for Policymakers. Offer policy recommendations informed by the theory. Consider the following:
+- What specific policy recommendations can be made based on the grounded theory?
+- How can these recommendations address current gaps or challenges in existing policies?
+- Provide clear and actionable suggestions for policymakers to consider.
 
+Recommendations for Further Research. Identify areas for further research and remaining questions. Consider the following:
+- What aspects of the phenomenon require further investigation?
+- What questions remain unanswered that future research could address?
+- Suggest potential research directions or methodologies that could build on the current findings.
 
-The Final Coding:
-{response6_json}
+Example Output:
+{
+  "Implications And Recommendations": {
+    "Practical Implications": "The findings suggest that effective leadership practices can significantly enhance employee well-being. By fostering a supportive team environment and providing opportunities for professional development, organizations can reduce stress and increase job satisfaction among employees. Specific strategies derived from the theory include implementing mentorship programs, regular feedback sessions, and team-building activities. These practices can lead to improved employee morale, higher retention rates, and better overall performance.",
+    "Policy Implications": "Policies that promote flexible work arrangements and provide resources for professional development can help improve employee well-being. Policymakers should consider incorporating these elements into labor regulations and organizational policies to support a healthier and more productive workforce. For instance, policies could mandate a minimum number of hours for professional development or provide tax incentives for companies that offer flexible working conditions. These changes could lead to a more engaged and satisfied workforce, reducing turnover and increasing productivity.",
+    "Recommendations For Practitioners": "Practitioners should focus on creating a supportive work environment by offering regular feedback and mentoring to employees. Implementing flexible work schedules and providing access to training programs can also enhance employee satisfaction and well-being. For example, managers can hold weekly one-on-one meetings to discuss progress and areas for development, or establish peer support groups to foster a sense of community and shared learning. These steps can help practitioners improve workplace culture and employee engagement.",
+    "Recommendations For Policymakers": "Policymakers should advocate for policies that encourage flexible work arrangements and support ongoing professional development for employees. This could include tax incentives for companies that invest in employee training and development, as well as regulations that protect employees' rights to request flexible working conditions. Such policies can help address current gaps in employee support and ensure that all workers have the opportunity to develop their skills and manage their work-life balance effectively.",
+    "Recommendations For Further Research": "Future research should explore the long-term effects of flexible work arrangements on employee well-being. Additionally, studies could investigate the impact of leadership styles on different aspects of employee satisfaction and productivity. Specific questions that remain unanswered include: How do different leadership approaches affect employee engagement over time? What are the most effective ways to implement flexible work policies in various industries? By addressing these questions, future research can build on the current findings and contribute to a deeper understanding of employee well-being."
+  }
+}
 """
+
+
