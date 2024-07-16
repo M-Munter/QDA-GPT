@@ -9,7 +9,7 @@ def handle_deletion(request):
 
     if assistant_id and file_id and thread_id and vector_store_id:
         try:
-            deletion_results = delete_openai_resources(assistant_id, file_id, thread_id, vector_store_id)
+            deletion_results = delete_openai_resources(assistant_id, thread_id, vector_store_id, file_id)
             request.session['deletion_results'] = deletion_results
 
             try:

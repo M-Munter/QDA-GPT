@@ -82,7 +82,7 @@ Example JSON output:
             "definition": "A category that encompasses various forms of active student involvement in the learning process. This includes behaviors such as asking questions, engaging in discussions, and participating in group activities. The purpose is to capture the extent and nature of student engagement in educational activities. Requirements for this category include observable behaviors that indicate active participation.",
             "description": "This category is relevant to understanding how different forms of student engagement impact learning outcomes and classroom dynamics.",
             "code_requirements": "Codes in this category must demonstrate behaviors indicative of active student participation.",
-            "codes": [1, 2, 5, 8, 9, 15, 20, 35, 36, 38, 65, 66, 68, 71, 73, 82, 88, 101, 105, 111]
+            "codes": "1, 2, 5, 8, 9, 15, 20, 35, 36, 38, 65, 66, 68, 71, 73, 82, 88, 101, 105, 111"
         }},
         {{
             "index": 2,
@@ -90,7 +90,7 @@ Example JSON output:
             "definition": "A category that includes various types of support and encouragement provided by teachers. This can involve one-on-one tutoring, positive reinforcement, and providing additional learning resources. The purpose is to identify supportive behaviors from teachers that enhance student learning and motivation. Requirements for this category include actions taken by teachers that provide direct support to students.",
             "description": "This category helps to explore the role of teacher support in fostering student academic success and emotional well-being.",
             "code_requirements": "Codes in this category should reflect actions taken by teachers to assist students.",
-            "codes": [2, 7, 11, 17, 23, 44, 98]
+            "codes": "2, 7, 11, 17, 23, 44, 98"
         }}
     ]
 }}
@@ -120,7 +120,7 @@ Example JSON output:
             "definition": "This theme covers the social dynamics and ethical concerns within the gaming community. It includes topics such as online behavior, community building, and the ethical implications of game content and industry practices. The purpose is to explore how gaming impacts social interactions and raises ethical questions. Requirements for this theme include a focus on social behavior, ethical dilemmas, and community interactions.",
             "description": "This theme is relevant to understanding the broader social and ethical impacts of gaming on individuals and communities.",
             "category_requirements": "Categories in this theme must address social or ethical dimensions of gaming.",
-            "categories": [5, 6, 12, 19]
+            "categories": "5, 6, 12, 19"
         }},
         {{
             "index": 2,
@@ -128,7 +128,7 @@ Example JSON output:
             "definition": "This theme focuses on technological advancements and their economic implications within the gaming industry. It includes categories related to the development and adoption of new technologies, economic trends, and the financial aspects of game development and distribution. The purpose is to examine how technology drives economic change in the gaming sector. Requirements for this theme include a focus on technological development, economic analysis, and financial impact.",
             "description": "This theme helps to understand the influence of technological progress and economic factors on the evolution of the gaming industry.",
             "category_requirements": "Categories in this theme should reflect technological or economic aspects.",
-            "categories": [3, 7, 12, 13, 18]
+            "categories": "3, 7, 12, 13, 18"
         }}
     ]
 }}
@@ -137,7 +137,7 @@ Example JSON output:
 
 
 # Deductive Theme Identification
-ta_prompt_separate = """
+ta_prompt4 = """
 Read through the data to understand its content. As the first step of thematic analysis, derive and develop preliminary themes regarding the research questions or objectives and the data. Use a deductive approach to develop themes informed by existing theoretical frameworks, pre-existing concepts, established themes, and relevant literature or research. Ensure that the research questions or objectives are also considered in developing the themes. The number of themes is often 3-8, but you can deviate from that if needed. Provide a general summary of all identified themes.
 
 For each theme, provide:
@@ -168,11 +168,11 @@ Example JSON output:
 
 
 # Theme Review and Refinement
-ta_prompt4 = """
+ta_prompt5 = """
 Read through the data to understand its content. Below between *** is a set of top-down themes derived from the research questions or objectives.
 
 ***
-{response_from_separate_thread}
+{response4_json}
 ***
 
 Merge these top-down themes with the themes that you created in your previous message to form a coherent set of final themes. Ensure that insights from both sets (your previous answer and the top-down themes) are considered. Identify any overlapping or closely related themes between the two sets. Merge overlapping and closely related themes to create unified themes that capture the essence of both insights. Retain any unique themes from both sets that do not overlap. Ensure that the merged themes are distinct, comprehensive, and accurately represent the data, while being relevant to the research questions or objectives. Provide a brief description for each final theme, explaining its relevance to the research questions or objectives and the data.
@@ -204,11 +204,11 @@ Example JSON output:
 
 
 # Assign Categories to Themes
-ta_prompt5 = """
+ta_prompt6 = """
 Read through the data to understand its content. Below between *** are the categories you previously created.
 
 ***
-{response_from_prompt2}
+{response2_json}
 ***
 
 Review current categories and assign existing categories to the appropriate final themes. You can refactor categories based on the data and research questions or objectives if needed. Refactoring can include merging similar categories, splitting broad categories, or creating new categories based on emerging patterns. Add new categories if they better capture the data's meaning. Remove redundant categories that cannot be assigned to any themes. One category can belong to more than one theme. Ensure that the retained categories are distinct, comprehensive, and accurately represent the data. Provide a brief description for each category, explaining its relevance to the theme.
@@ -231,32 +231,32 @@ Example JSON output:
             "name": "Educational Benefits",
             "definition": "This category includes various positive impacts of gaming on educational contexts. It encompasses improved problem-solving skills, enhanced motivation for learning, and the use of educational games for skill development. Requirements for this category include observable educational outcomes that are positively influenced by gaming.",
             "requirements_relevance": "Categories in this theme must demonstrate educational improvements or benefits resulting from gaming. This is relevant for understanding how gaming can enhance learning experiences and outcomes.",
-            "themes": [1],
-            "theme_names": ["Educational and Social Impact"]
+            "themes": "1",
+            "theme_names": "Educational and Social Impact"
         }},
         {{
             "index": 2,
             "name": "Social Interaction",
             "definition": "This category covers how gaming facilitates social interactions. It includes forming friendships, online collaboration, and community building through gaming. Requirements for this category include social behaviors and interactions that occur within the context of gaming.",
             "requirements_relevance": "Categories in this theme must reflect social interactions and community engagement facilitated by gaming. This is relevant for understanding the social aspects and community-building potential of gaming.",
-            "themes": [1, 2],
-            "theme_names": ["Educational and Social Impact", "Technological Advances"]
+            "themes": "1, 2",
+            "theme_names": "Educational and Social Impact, Technological Advances"
         }},
         {{
             "index": 3,
             "name": "Technological Innovation",
             "definition": "This category includes advancements in gaming technology such as new game engines, VR/AR, and other cutting-edge technologies. Requirements for this category include the development and implementation of new technologies in gaming.",
             "requirements_relevance": "Categories in this theme must demonstrate technological advancements and innovations in gaming. This is relevant for understanding the role of technology in shaping the gaming industry.",
-            "themes": [2],
-            "theme_names": ["Technological Advances"]
+            "themes": "2",
+            "theme_names": "Technological Advances"
         }},
         {{
             "index": 4,
             "name": "Economic Impact",
             "definition": "This category covers the economic aspects of gaming, including revenue generation, job creation, and market trends. Requirements for this category include the financial implications and economic benefits of the gaming industry.",
             "requirements_relevance": "Categories in this theme must reflect economic factors and impacts related to gaming. This is relevant for understanding the economic influence of the gaming industry.",
-            "themes": [2],
-            "theme_names": ["Technological Advances"]
+            "themes": 2,
+            "theme_names": "Technological Advances"
         }}
     ],
     "ThemeCategoryHierarchy": [
@@ -300,11 +300,11 @@ Example JSON output:
 
 
 # Assign Codes to Categories
-ta_prompt6 = """
+ta_prompt7 = """
 Read through the data to understand its content. Below between *** are the codes you previously created.
 
 ***
-{response_from_prompt1}
+{response1_json}
 ***
 
 Review initial codes and assign them to the appropriate final categories. You can merge codes that are very similar into a single, more comprehensive code (do not do this easily). You can change code names but not the underlying meaning/feature/description. You can remove redundant codes that do not belong to any category. One code can belong to more than one category if relevant. Ensure that the retained codes are distinct, comprehensive, and accurately represent the data.
@@ -329,8 +329,8 @@ Example JSON output:
             "definition": "This code refers to instances where gaming has helped improve problem-solving skills. It includes scenarios where players need to strategize, plan, and solve complex problems within the game environment. This differs from 'Learning Motivation' which focuses on the motivational aspects of learning through gaming.",
             "quote": "Gaming has significantly improved my problem-solving skills.",
             "category_requirements": "Codes in this category must demonstrate improvements in cognitive skills due to gaming.",
-            "categories": [1],
-            "category_names": ["Educational Benefits"]
+            "categories": "1",
+            "category_names": "Educational Benefits"
         }},
         {{
             "index": 2,
@@ -338,8 +338,8 @@ Example JSON output:
             "definition": "This code captures instances where gaming has led to the formation of new friendships online. It includes examples of players meeting new people, building friendships, and maintaining social connections through gaming. This differs from 'Community Events' which focuses on organized events within the gaming community.",
             "quote": "I have made many friends through online gaming.",
             "category_requirements": "Codes in this category must reflect social interactions and relationships formed through gaming.",
-            "categories": [2],
-            "category_names": ["Social Interaction"]
+            "categories": "2",
+            "category_names": "Social Interaction"
         }},
         {{
             "index": 3,
@@ -347,8 +347,8 @@ Example JSON output:
             "definition": "This code includes mentions of Virtual Reality (VR) technology in gaming. It encompasses the development, use, and impact of VR on the gaming experience. This differs from 'Game Engine Development' which focuses on the software used to create games.",
             "quote": "The new VR technology has transformed my gaming experience.",
             "category_requirements": "Codes in this category must demonstrate the use and impact of VR technology in gaming.",
-            "categories": [1, 2],
-            "category_names": ["Educational Benefits", "Social Interaction"]
+            "categories": "1, 2",
+            "category_names": "Educational Benefits", "Social Interaction"
         }},
         {{
             "index": 4,
@@ -356,8 +356,8 @@ Example JSON output:
             "definition": "This code represents instances where the gaming industry has created job opportunities. It includes examples of employment in game development, marketing, and esports. This differs from 'Revenue Generation' which focuses on the financial income from gaming.",
             "quote": "The gaming industry has created numerous job opportunities.",
             "category_requirements": "Codes in this category must reflect economic benefits and job creation related to gaming.",
-            "categories": [1],
-            "category_names": ["Educational Benefits"]
+            "categories": "1",
+            "category_names": "Educational Benefits"
         }},
         {{
             "index": 5,
@@ -365,8 +365,8 @@ Example JSON output:
             "definition": "This code refers to instances where gaming has increased motivation for learning. It includes examples where educational games or gamified learning experiences have encouraged students to engage more with educational content. This differs from 'Problem Solving Skills' which focuses on cognitive skill development.",
             "quote": "Educational games have made me more interested in learning.",
             "category_requirements": "Codes in this category must demonstrate increased motivation for learning due to gaming.",
-            "categories": [1],
-            "category_names": ["Educational Benefits"]
+            "categories": "1",
+            "category_names": "Educational Benefits"
         }},
         {{
             "index": 6,
@@ -374,8 +374,8 @@ Example JSON output:
             "definition": "This code captures instances of organized events within the gaming community, such as tournaments, meetups, and online gatherings. This differs from 'Online Friendships' which focuses on individual social relationships.",
             "quote": "I love participating in online gaming tournaments.",
             "category_requirements": "Codes in this category must reflect organized community events within the gaming context.",
-            "categories": [2],
-            "category_names": ["Social Interaction"]
+            "categories": "2",
+            "category_names": "Social Interaction"
         }}
     ],
     "CategoryCodeHierarchy": [
@@ -425,7 +425,7 @@ Example JSON output:
 
 
 # Producing the Report
-ta_prompt7 = """
+ta_prompt8 = """
 Read through the data to understand its content. Analyze the themes, categories, and codes to draw conclusions related to the research questions or objectives. Highlight key findings and insights for interpretation.
 
 Review the following dataset to ensure that all data segments are coded correctly under the final themes, categories, and codes. Flag any segments that are not sufficiently covered, misclassified, or missing critical information related to themes, categories, and/or codes. Identify patterns, relationships, and insights, and suggest any potential sub-themes.

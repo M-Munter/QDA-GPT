@@ -26,6 +26,7 @@ In the analysis, take into account the following considerations to get relevant 
 
 """
 
+
 # Data Reduction
 ca_prompt1 = """
 Read the interview transcripts provided and familiarize yourself with them, understanding the context. You are requested to perform reduction on the attached data.
@@ -130,7 +131,6 @@ Example JSON output:
   ]
 }}
 """
-
 
 
 # Coding and Categorization
@@ -278,7 +278,7 @@ Read the interview transcripts provided and familiarize yourself with them, unde
 Below, between ***, are the units you previously created.
 
 ***
-{response_from_prompt1}
+{response1_json}
 ***
 
 To perform this step, do the following:
@@ -516,6 +516,64 @@ Example JSON output:
   }}
 }}
 """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

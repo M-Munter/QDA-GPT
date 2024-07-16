@@ -75,7 +75,7 @@ def initialize_openai_resources(file_path, model, analysis_type, user_prompt):
 
 def get_openai_response(content, assistant_id, thread_id):
     client = get_openai_client()
-    print("OpenAI API key loaded successfully. Sending message to OpenAi Assistant.\n")
+    print("OpenAI API key loaded successfully. Sending message to OpenAI Assistant.\n")
 
     try:
         # Send message to the thread
@@ -142,7 +142,7 @@ def get_openai_response(content, assistant_id, thread_id):
 
 
 
-def delete_openai_resources(assistant_id, file_id, thread_id, vector_store_id):
+def delete_openai_resources(assistant_id, thread_id, vector_store_id, file_id=None):
     """
     Deletes the specified assistant, file, and thread.
 

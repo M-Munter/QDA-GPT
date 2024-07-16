@@ -80,7 +80,7 @@ h1 {
     border: 1px solid #ccc; /* Ensure consistent border color */
     border-radius: 3px; /* Add border-radius for rounding */
     padding: 5px;
-    width: 200px; /* Set width to match Analyze and Download CSV buttons */
+    width: 200px; /* Set width to match Analyze and Download Excel buttons */
     height: 24px; /* Set height to match other buttons */
 }
 
@@ -99,7 +99,7 @@ h1 {
     border-radius: 3px; /* Add border-radius for rounding */
     border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-    height: 24px; /* Set height to match Analyze and Download CSV buttons */
+    height: 24px; /* Set height to match Analyze and Download Excel buttons */
     max-width: 200px; /* Set a max-width for dropdown and buttons */
 }
 

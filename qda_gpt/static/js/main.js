@@ -92,13 +92,14 @@ function clearSessionData() {
 }
 
 function downloadCSV() {
+    console.log("[DEBUG] downloadExcel called.");
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.csv`;
+    const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.xlsx`;
 
     const url = `/download_csv/?file_name=${fileName}`;
     fetch(url)
@@ -114,12 +115,13 @@ function downloadCSV() {
             window.URL.revokeObjectURL(downloadUrl);
             document.body.removeChild(a);
         })
-        .catch(error => console.error('Error downloading CSV:', error));
+        .catch(error => console.error('Error downloading Excel:', error));
 }
 
 
 
 function validateForm() {
+    console.log("[DEBUG] validateForm called.");
     const fileInput = document.querySelector('input[type="file"]').files.length > 0;
     const analysisType = document.getElementById('analysis_type_hidden').value !== "";
     const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
@@ -129,9 +131,11 @@ function validateForm() {
 
     analyzeButton.disabled = !isValid;
     console.log("Analyze button disabled state:", analyzeButton.disabled);
+
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
     document.querySelectorAll('.analysis-button').forEach(button => {
         button.addEventListener('click', validateForm);
@@ -141,12 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initially disable the Analyze button
     validateForm();
 
-    // Enable the Download CSV button if deletion_results is present
+    // Enable the Download Excel button if deletion_results is present
     const deletionResults = document.getElementById('deletion-results').getAttribute('data-results');
+    console.log("[DEBUG] Initial deletionResults:", deletionResults);
     if (deletionResults === 'true') {
         const downloadButton = document.getElementById('download-csv-btn');
         downloadButton.disabled = false;
         downloadButton.classList.remove('disabled-button');
+        console.log("[DEBUG] Download button enabled initially.");
     }
 });
 

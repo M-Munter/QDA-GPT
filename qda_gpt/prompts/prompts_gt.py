@@ -6,7 +6,7 @@ You are a qualitative data analyst performing Grounded Theory process. Your task
 
 Always respond with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
 
-This process is informed by the theoretical framework of both Barney Glaser's and Anselm Strauss' Grounded Theory, emphasizes an iterative, inductive approach to data analysis and theory development, aiming to generate a theory that is deeply rooted in the data through systematic collection, coding, and analysis.
+This process is informed by the theoretical framework of both Cathy Urquhart's and Anselm Strauss' Grounded Theory, emphasizes an iterative, inductive approach to data analysis and theory development, aiming to generate a theory that is deeply rooted in the data through systematic collection, coding, and analysis.
 
 Here is an overview of the process that will be used in this Grounded Theory analysis:
 1. Familiarization and Initial (Open) Coding: Break the data down into meaningful segments and assign initial codes.
@@ -40,34 +40,34 @@ For each data segment, provide:
  - Description of the code.
 
 Example JSON output:
-{
+{{
   "Initial Codes": [
-    {
+    {{
       "index": 1,
       "initial_code_name": "Frustration with management communication",
       "data_fragment": "I'm really frustrated with how poorly management communicates.",
       "description": "The participant's feelings of frustration due to inadequate communication from management."
-    },
-    {
+    }},
+    {{
       "index": 2,
       "initial_code_name": "Unheard concerns",
       "data_fragment": "I feel like no one listens to my concerns.",
       "description": "The participant's perception that their issues and concerns are not being acknowledged or addressed by management."
-    },
-    {
+    }},
+    {{
       "index": 3,
       "initial_code_name": "Overwhelmed by workload",
       "data_fragment": "It's just too much sometimes, you know? Like, I'm constantly juggling tasks and there's never enough time to actually focus on any one thing. I end up doing everything half-heartedly because I'm spread so thin.",
       "description": "The participant feels overwhelmed by their workload, resulting in a lack of focus and quality in their work."
-    },
-    {
+    }},
+    {{
       "index": 4,
       "initial_code_name": "Lack of resources",
       "data_fragment": "We don't have the tools we need to do our jobs properly, it's like we're expected to build a house with a spoon.",
       "description": "The participant is expressing frustration over the lack of necessary resources to perform their job effectively."
-    }
+    }}
   ]
-}
+}}
 """
 
 
@@ -98,48 +98,48 @@ For each initial code, provide:
 - The rationale for why this specific unit belongs to this subcategory.
 
 Example JSON output:
-{
+{{
   "Subcategories": [
-    {
+    {{
       "subcategory_index": 1,
       "subcategory_name": "Management Communication Issues",
       "description": "Problems related to the frequency and clarity of communication from management.",
       "properties": ["frequency", "clarity"],
       "dimensions": ["infrequent to frequent", "unclear to clear"],
       "initial_codes": [
-        {
+        {{
           "index": 1,
           "initial_code_name": "Frustration with management communication",
           "rationale": "This code reflects issues with the frequency and clarity of communication from management."
-        },
-        {
+        }},
+        {{
           "index": 2,
           "initial_code_name": "Unheard concerns",
           "rationale": "This code captures the lack of effective communication from management, leading to employees feeling unheard."
-        }
+        }}
       ]
-    },
-    {
+    }},
+    {{
       "subcategory_index": 2,
       "subcategory_name": "Workload Challenges",
       "description": "Challenges related to the intensity of workload and the support provided.",
       "properties": ["intensity", "support"],
       "dimensions": ["low to high", "insufficient to sufficient"],
       "initial_codes": [
-        {
+        {{
           "index": 3,
           "initial_code_name": "Overwhelmed by workload",
           "rationale": "This code describes the intensity of the workload and the lack of support felt by the participant."
-        },
-        {
+        }},
+        {{
           "index": 4,
           "initial_code_name": "Lack of resources",
           "rationale": "This code reflects challenges related to insufficient resources needed to manage the workload effectively."
-        }
+        }}
       ]
-    }
+    }}
   ]
-}
+}}
 """
 
 
@@ -171,48 +171,48 @@ For each subcategory, provide:
 - The rationale for why this specific subcategory belongs to this category.
 
 Example JSON output:
-{
+{{
   "Categories": [
-    {
+    {{
       "category_index": 1,
       "category_name": "Communication Issues",
       "description": "Broad issues related to communication within the organization, including both management and employee communication.",
-      "properties": ["clarity", "frequency"],
-      "dimensions": ["unclear to clear", "infrequent to frequent"],
+      "properties": "clarity, frequency",
+      "dimensions": "unclear to clear, infrequent to frequent",
       "subcategories": [
-        {
+        {{
           "subcategory_index": 1,
           "subcategory_name": "Management Communication Issues",
           "rationale": "This subcategory focuses on problems specifically with how management communicates with employees."
-        },
-        {
+        }},
+        {{
           "subcategory_index": 2,
           "subcategory_name": "Employee Communication Issues",
           "rationale": "This subcategory addresses how employees communicate with each other and with management."
-        }
+        }}
       ]
-    },
+    }},
     {
       "category_index": 2,
       "category_name": "Work Environment",
       "description": "Overall conditions and factors that affect the workplace, including workload management and resource availability.",
-      "properties": ["workload intensity", "resource support"],
-      "dimensions": ["low to high", "insufficient to sufficient"],
+      "properties": "workload intensity, resource support",
+      "dimensions": "low to high, insufficient to sufficient",
       "subcategories": [
-        {
+        {{
           "subcategory_index": 3,
           "subcategory_name": "Workload Challenges",
           "rationale": "This subcategory deals with the difficulties employees face in managing their workload."
-        },
-        {
+        }},
+        {{
           "subcategory_index": 4,
           "subcategory_name": "Resource Availability",
           "rationale": "This subcategory addresses the availability and adequacy of resources to support workload management."
-        }
+        }}
       ]
-    }
+    }}
   ]
-}
+}}
 """
 
 
@@ -221,12 +221,11 @@ gt_prompt4 = """
 Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, and categories. You are requested to perform selective coding to integrate and refine these categories into a cohesive theoretical framework.
 
 Guidelines for selective coding:
-1. Identify core categories that are central to your research question or objectives. A core category is related to many other codes or holds particular importance. It should be central, frequent in the data, abstract enough to be broadly applicable, and capable of integrating other categories.
-2. One or more core categories may be identified.
-3. Categories can belong to more than one core category.
-4. Develop a cohesive theoretical framework that explains the relationships between the core category and other categories. This framework should provide a comprehensive understanding of the studied phenomenon.
-5. Create theoretical statements, including clear propositions or hypotheses that articulate the relationships and interactions between a core category and other categories.
-6. Create a narrative that describes the grounded theory, illustrating how a core category and related categories explain the data.
+1. Identify one or more core categories among the existing categories that are central to your research question or objectives. A core category is related to many other codes or holds particular importance. It should be central, frequent in the data, abstract enough to be broadly applicable, and capable of integrating other categories.
+2. Categories can belong to more than one core category. Not all categories need to belong to a core category.
+3. Develop a cohesive theoretical framework that explains the relationships between the core category and other categories. This framework should provide a comprehensive understanding of the studied phenomenon.
+4. Create theoretical statements, including clear propositions or hypotheses that articulate the relationships and interactions between a core category and other categories.
+5. Create a narrative that describes the grounded theory, illustrating how a core category and related categories explain the data.
 
 For each core category, provide:
 - Core category index number starting from 1,
@@ -244,62 +243,56 @@ For each category, nested under its respective core category, provide:
 - The rationale for why this specific category belongs to this core category.
 
 Example JSON output:
-{
+{{
   "Core Categories": [
-    {
+    {{
       "core_category_index": 1,
       "core_category_name": "Work-Life Balance",
       "description": "Central theme related to balancing professional responsibilities with personal life while working remotely.",
       "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
       "theoretical_framework": "Work-life balance is influenced by various factors, including flexible work schedules and boundary management. These factors collectively enhance overall satisfaction and productivity.",
-      "theoretical_statements": [
-        "Flexible work schedules improve work-life balance.",
-        "Effective boundary management is crucial for maintaining work-life balance."
-      ],
+      "theoretical_statements": "Flexible work schedules improve work-life balance. ||| Effective boundary management is crucial for maintaining work-life balance."
       "narrative_description": "Work-life balance emerged as a core category influencing multiple aspects of remote work dynamics. Factors such as flexible work schedules and boundary management were found to be critical in determining overall satisfaction and productivity. By addressing these factors, organizations can enhance work-life balance and achieve better outcomes.",
       "categories": [
-        {
+        {{
           "category_index": 1,
           "category_name": "Flexible Work Schedules",
           "description": "Importance of having flexible working hours to accommodate personal and professional needs.",
           "rationale": "This category is critical to work-life balance as it addresses the need for flexibility in managing work and personal responsibilities."
-        },
-        {
+        }},
+        {{
           "category_index": 2,
           "category_name": "Boundary Management",
           "description": "Strategies for maintaining clear boundaries between work and personal life.",
           "rationale": "This category is integral to work-life balance, focusing on the importance of setting and maintaining boundaries to avoid burnout and maintain productivity."
-        }
+        }}
       ]
-    },
-    {
+    }},
+    {{
       "core_category_index": 2,
       "core_category_name": "Remote Work Productivity",
       "description": "Central theme related to factors that impact productivity while working remotely.",
       "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
       "theoretical_framework": "Remote work productivity is influenced by various factors, including technology use and communication practices. These factors significantly impact the efficiency and effectiveness of remote work.",
-      "theoretical_statements": [
-        "Effective use of technology enhances remote work productivity.",
-        "Clear communication practices are crucial for maintaining productivity in a remote work environment."
-      ],
+      "theoretical_statements": "Effective use of technology enhances remote work productivity. ||| Clear communication practices are crucial for maintaining productivity in a remote work environment."
       "narrative_description": "Remote work productivity emerged as a core category that significantly influences the effectiveness of remote work. Elements such as technology use and communication practices were identified as key factors. Improving these aspects can lead to increased productivity and better remote work outcomes.",
       "categories": [
-        {
+        {{
           "category_index": 1,
           "category_name": "Technology Use",
           "description": "The role of technology in enabling efficient remote work.",
           "rationale": "This category is crucial to remote work productivity as it addresses the importance of leveraging technology to enhance work efficiency."
-        },
-        {
+        }},
+        {{
           "category_index": 2,
           "category_name": "Communication Practices",
           "description": "The impact of communication strategies on maintaining productivity while working remotely.",
           "rationale": "This category is essential to remote work productivity, highlighting the need for clear and effective communication practices to support remote work."
-        }
+        }}
       ]
-    }
+    }}
   ]
-}
+}}
 """
 
 
@@ -326,29 +319,74 @@ For each core category, provide:
 
 Example JSON Output:
 {{
-  "Theoretical Coding": [
+  "Theoretical Coding_relationships": [
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "relationships": [
-        "Leadership Support → Emotional Support: Effective leadership practices foster a supportive team environment, enhancing emotional support among peers.",
-        "Emotional Support ↔ Professional Development: A supportive team environment encourages employees to engage in professional development opportunities.",
-        "Professional Development → Employee Well-being: Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being.",
-        "Work-Life Balance → Employee Well-being: Flexible work arrangements help employees manage stress and improve their overall well-being."
-      ],
-      "theoretical_codes": [
-        "If leadership provides guidance and mentoring, then team cohesion and peer empathy will improve.",
-        "Because a supportive team environment exists, employees are more likely to participate in professional development.",
-        "Professional development opportunities lead to increased job satisfaction and well-being.",
-        "Flexible work hours reduce stress, which is part of improving overall employee well-being."
-      ],
-      "theoretical_framework": {{
-        "Leadership Support": "Leads to Emotional Support and Professional Development.",
-        "Emotional Support": "Reduces stress and increases job satisfaction.",
-        "Professional Development": "Enhances sense of growth and job satisfaction.",
-        "Work-Life Balance": "Reduces burnout and enhances job satisfaction."
-      }},
-      "narrativeDescription": "Leadership practices such as mentoring and providing feedback play a crucial role in fostering a supportive team environment. This environment enhances emotional support among employees, reducing stress and increasing job satisfaction. Additionally, opportunities for professional development contribute to a sense of growth and achievement, further enhancing well-being. Work-life balance, facilitated by flexible work arrangements, helps reduce burnout and improve overall job satisfaction. Together, these factors create a comprehensive framework for understanding and improving employee well-being in the workplace."
+      "relationship": "Leadership Support → Emotional Support: Effective leadership practices foster a supportive team environment, enhancing emotional support among peers."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "relationship": "Emotional Support ↔ Professional Development: A supportive team environment encourages employees to engage in professional development opportunities."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "relationship": "Professional Development → Employee Well-being: Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "relationship": "Work-Life Balance → Employee Well-being: Flexible work arrangements help employees manage stress and improve their overall well-being."
+    }}
+  ],
+  "Theoretical Coding_theoretical_codes": [
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "theoretical_code": "If leadership provides guidance and mentoring, then team cohesion and peer empathy will improve."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "theoretical_code": "Because a supportive team environment exists, employees are more likely to participate in professional development."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "theoretical_code": "Professional development opportunities lead to increased job satisfaction and well-being."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "theoretical_code": "Flexible work hours reduce stress, which is part of improving overall employee well-being."
+    }}
+  ],
+  "Theoretical Coding_theoretical_framework": [
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "framework_component": "Leadership Support",
+      "description": "Leads to Emotional Support and Professional Development."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "framework_component": "Emotional Support",
+      "description": "Reduces stress and increases job satisfaction."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "framework_component": "Professional Development",
+      "description": "Enhances sense of growth and job satisfaction."
+    }},
+    {{
+      "core_category_index": 1,
+      "coreCategoryName": "Employee Well-being",
+      "framework_component": "Work-Life Balance",
+      "description": "Reduces burnout and enhances job satisfaction."
     }}
   ],
   "table_format_visualization": [
@@ -363,6 +401,7 @@ Example JSON Output:
     }}
   ]
 }}
+
 """
 
 
@@ -392,17 +431,32 @@ Example JSON Output:
         "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers.",
         "A supportive team environment encourages employees to engage in professional development opportunities.",
         "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being.",
-        "Flexible work arrangements help employees manage stress and improve their overall well-being."
-      ],
-      "discrepancies_statements": [
+        "Flexible work arrangements help employees manage stress and improve their overall well-being.",
+        "Emotional Support → Work-Life Balance: Emotional support from peers and leaders helps employees manage work-related stress, contributing to a better work-life balance."
+      ]
+    }}
+  ],
+  "Discrepancies Statements": [
+    {{
+      "coreCategoryIndex": 1,
+      "coreCategoryName": "Employee Well-being",
+      "Statements": [
         "Professional Development → Employee Well-being: Lack of supporting evidence from a subset of participants because some participants did not have access to training programs."
-      ],
-      "discrepancies_relationships": [
-        "Emotional Support ↔ Professional Development: Inconsistent evidence across different departments due to varying levels of team support in different departments."
+      ]
+    }}
+  ],
+  "Discrepancies Relationships": [
+    {{
+      "coreCategoryIndex": 1,
+      "coreCategoryName": "Employee Well-being",
+      "Statements": [
+        "Emotional Support ↔ Professional Development: Inconsistent evidence across different departments due to varying levels of team support in different departments.",
+        "Work-Life Balance ↔ Job Satisfaction: Varying levels of job satisfaction reported due to different flexible work arrangement policies across departments."
       ]
     }}
   ]
 }}
+
 """
 
 
@@ -441,15 +495,15 @@ Recommendations for Further Research. Identify areas for further research and re
 - Suggest potential research directions or methodologies that could build on the current findings.
 
 Example Output:
-{
-  "Implications And Recommendations": {
+{{
+  "Implications And Recommendations": {{
     "Practical Implications": "The findings suggest that effective leadership practices can significantly enhance employee well-being. By fostering a supportive team environment and providing opportunities for professional development, organizations can reduce stress and increase job satisfaction among employees. Specific strategies derived from the theory include implementing mentorship programs, regular feedback sessions, and team-building activities. These practices can lead to improved employee morale, higher retention rates, and better overall performance.",
     "Policy Implications": "Policies that promote flexible work arrangements and provide resources for professional development can help improve employee well-being. Policymakers should consider incorporating these elements into labor regulations and organizational policies to support a healthier and more productive workforce. For instance, policies could mandate a minimum number of hours for professional development or provide tax incentives for companies that offer flexible working conditions. These changes could lead to a more engaged and satisfied workforce, reducing turnover and increasing productivity.",
     "Recommendations For Practitioners": "Practitioners should focus on creating a supportive work environment by offering regular feedback and mentoring to employees. Implementing flexible work schedules and providing access to training programs can also enhance employee satisfaction and well-being. For example, managers can hold weekly one-on-one meetings to discuss progress and areas for development, or establish peer support groups to foster a sense of community and shared learning. These steps can help practitioners improve workplace culture and employee engagement.",
     "Recommendations For Policymakers": "Policymakers should advocate for policies that encourage flexible work arrangements and support ongoing professional development for employees. This could include tax incentives for companies that invest in employee training and development, as well as regulations that protect employees' rights to request flexible working conditions. Such policies can help address current gaps in employee support and ensure that all workers have the opportunity to develop their skills and manage their work-life balance effectively.",
     "Recommendations For Further Research": "Future research should explore the long-term effects of flexible work arrangements on employee well-being. Additionally, studies could investigate the impact of leadership styles on different aspects of employee satisfaction and productivity. Specific questions that remain unanswered include: How do different leadership approaches affect employee engagement over time? What are the most effective ways to implement flexible work policies in various industries? By addressing these questions, future research can build on the current findings and contribute to a deeper understanding of employee well-being."
-  }
-}
+  }}
+}}
 """
 
 
