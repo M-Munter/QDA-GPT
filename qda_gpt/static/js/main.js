@@ -91,7 +91,7 @@ function clearSessionData() {
     });
 }
 
-function downloadCSV() {
+function downloadXLSX() {
     console.log("[DEBUG] downloadExcel called.");
     const now = new Date();
     const year = now.getFullYear();
@@ -101,7 +101,7 @@ function downloadCSV() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.xlsx`;
 
-    const url = `/download_csv/?file_name=${fileName}`;
+    const url = `/download_xlsx/?file_name=${fileName}`;
     fetch(url)
         .then(response => response.blob())
         .then(blob => {
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deletionResults = document.getElementById('deletion-results').getAttribute('data-results');
     console.log("[DEBUG] Initial deletionResults:", deletionResults);
     if (deletionResults === 'true') {
-        const downloadButton = document.getElementById('download-csv-btn');
+        const downloadButton = document.getElementById('download-xlsx-btn');
         downloadButton.disabled = false;
         downloadButton.classList.remove('disabled-button');
         console.log("[DEBUG] Download button enabled initially.");
