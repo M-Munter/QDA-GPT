@@ -167,6 +167,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Prevent entire row from being clickable
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.addEventListener('click', function(event) {
+            if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA' && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'LABEL' && event.target.className !== 'file-name') {
+                event.stopPropagation();
+            }
+        });
+    });
+
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+
+
     // Initially disable the Analyze button
     validateForm();
 

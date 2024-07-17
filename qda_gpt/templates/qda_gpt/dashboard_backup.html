@@ -19,9 +19,11 @@
                 {% if file_name %}
                     <p>File selected: {{ file_name }}</p>
                 {% endif %}
+                <div class="spacer"></div>
                 <div id="file-info" class="info-box">
-                    <span class="close" onclick="hideInfo('file-info')">&times;</span>
-                    Upload your qualitative data file here. At least, the following formats are supported: DOC, DOCX, HTML, JSON, PDF and TXT.
+                    <span class="close" onclick="hideInfo('file-info')"><i class="fas fa-times"></i></span>
+                    <h4>Upload Qualitative Data File</h4>
+                    <p>Upload your qualitative data file here. At least, the following formats are supported: DOC, DOCX, HTML, JSON, PDF and TXT.</p>
                 </div>
             </div>
             <div class="form-section">
@@ -34,11 +36,12 @@
                 </label>
                 {{ setup_form.model_choice }}
                 <div id="model-info" class="info-box">
-                    <span class="close" onclick="hideInfo('model-info')">&times;</span>
-                    Select the OpenAI language model to use for the analysis:
-                    GPT-3.5 Turbo           A fast, inexpensive model for simple tasks
-                    GPT-4o                  The fastest and most affordable flagship model
-                    GPT-4 Turbo and GPT-4	The previous set of high-intelligence models
+                    <span class="close" onclick="hideInfo('file-info')"><i class="fas fa-times"></i></span>
+                    <h4>Select OpenAI Language Model</h4>
+                    <p>Select the OpenAI language model to use for the analysis:</p>
+                    <p>- GPT-3.5 Turbo: A fast, inexpensive model for simple tasks</p>
+                    <p>- GPT-4 Turbo and GPT-4: The previous set of high-intelligence models</p>
+                    <p>- GPT-4o: The fastest and most affordable flagship model</p>
                 </div>
             </div>
             <div class="form-section">
@@ -65,8 +68,13 @@
                 </label>
                 <textarea name="user_prompt" id="user_prompt" class="form-input" placeholder="Provide initial instructions and information for the OpenAI Assistant for performing the analysis. Providing research questions and/or objectives is recommendable. Also e.g. relevant context and/or information about the analysis can be provided." required class="prompt-input" rows="7">{{ user_prompt }}</textarea>
                 <div id="prompt-info" class="info-box">
-                    <span class="close" onclick="hideInfo('prompt-info')">&times;</span>
-                    Provide initial instructions and information for the OpenAI Assistant for performing the analysis. Providing research questions and/or objectives is recommendable. Also e.g. relevant context and/or information about the analysis can be provided.
+                    <span class="close" onclick="hideInfo('file-info')"><i class="fas fa-times"></i></span>
+                    <h4>Write Prompt</h4>
+                    <p>Provide initial instructions and information for the OpenAI Assistant for performing the analysis. Providing research questions and/or objectives is recommendable. Also e.g. relevant context and/or information about the analysis can be provided.</p>
+                    <br>
+                    <p>You can give information about the number of codes, categories etc. you wish to have.</p>
+                    <br>
+                    <p>You can give information about the previous iterations. E.g. results, instructions regarding the desired outcome, etc.</p>
                 </div>
             </div>
             <div class="form-section">
