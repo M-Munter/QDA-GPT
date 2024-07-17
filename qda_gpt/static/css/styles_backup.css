@@ -58,22 +58,7 @@ h1 {
     border: 2px solid #001f3f;
     border-radius: 3px; /* Add border-radius for rounding */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-    height: 34px; /* Set height for active button */
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s; /* Add animation for background, color, border, and box-shadow */
-}
-
-button:hover, .form-section select:hover, .form-section input[type="file"]::file-selector-button:hover {
-    border-color: #999; /* Darker border color on hover */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
-    background-color: #f0f0f0; /* Slightly lighter background on hover */
-    color: #333; /* Slightly darker text color on hover */
-}
-
-button:active, .form-section select:active, .form-section input[type="file"]::file-selector-button:active {
-    border-color: #666; /* Even darker border color when pressed */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Add deeper shadow when pressed */
-    background-color: #e0e0e0; /* Even lighter background when pressed */
-    color: #000; /* Darker text color when pressed */
+    height: 24px; /* Set height for active button */
 }
 
 .form-section {
@@ -84,7 +69,7 @@ button:active, .form-section select:active, .form-section input[type="file"]::fi
 }
 
 .form-section label {
-    flex: 0 0 213px; /* Fixed width for labels */
+    flex: 0 0 226px; /* Fixed width for labels */
     text-align: left;
     align-self: flex-start; /* Align labels to the top */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
@@ -95,9 +80,8 @@ button:active, .form-section select:active, .form-section input[type="file"]::fi
     border: 1px solid #ccc; /* Ensure consistent border color */
     border-radius: 3px; /* Add border-radius for rounding */
     padding: 5px;
-    width: 200px; /* Set width to match Analyze and Download CSV buttons */
-    height: 34px; /* Set height to match other buttons */
-    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s; /* Add animation for border, box-shadow, background, and color */
+    width: 200px; /* Set width to match Analyze and Download Excel buttons */
+    height: 24px; /* Set height to match other buttons */
 }
 
 .form-section input[type="file"] {
@@ -115,9 +99,8 @@ button:active, .form-section select:active, .form-section input[type="file"]::fi
     border-radius: 3px; /* Add border-radius for rounding */
     border: 1px solid #ccc; /* Add consistent border color and width */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
-    height: 34px; /* Set height to match Analyze and Download CSV buttons */
+    height: 24px; /* Set height to match Analyze and Download Excel buttons */
     max-width: 200px; /* Set a max-width for dropdown and buttons */
-    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s; /* Add animation for border, box-shadow, background, and color */
 }
 
 .form-section textarea {
@@ -181,6 +164,52 @@ button:disabled {
     cursor: not-allowed;
     border-radius: 3px; /* Add border-radius for rounding */
 }
+
+
+
+/* Info button styles */
+.info-button {
+    cursor: pointer;
+    margin-left: 0px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; /* Ensure it's a circle */
+    height: 18px; /* Ensure it's a circle */
+}
+
+.info-box {
+    display: none;
+    background-color: #f8f8f8;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 40px; /* Increase padding for more margin around text */
+    position: fixed;
+    z-index: 1000;
+    max-width: 300px;
+    left: 50%;
+    top: 200px;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-box .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+}
+
+
+
+
+
+
 
 .loader {
     position: relative;

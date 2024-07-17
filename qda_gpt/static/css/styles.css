@@ -69,7 +69,7 @@ h1 {
 }
 
 .form-section label {
-    flex: 0 0 213px; /* Fixed width for labels */
+    flex: 0 0 226px; /* Fixed width for labels */
     text-align: left;
     align-self: flex-start; /* Align labels to the top */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
@@ -164,6 +164,52 @@ button:disabled {
     cursor: not-allowed;
     border-radius: 3px; /* Add border-radius for rounding */
 }
+
+
+
+/* Info button styles */
+.info-button {
+    cursor: pointer;
+    margin-left: 0px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; /* Ensure it's a circle */
+    height: 18px; /* Ensure it's a circle */
+}
+
+.info-box {
+    display: none;
+    background-color: #f8f8f8;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 40px; /* Increase padding for more margin around text */
+    position: fixed;
+    z-index: 1000;
+    max-width: 300px;
+    left: 50%;
+    top: 200px;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-box .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+}
+
+
+
+
+
+
 
 .loader {
     position: relative;

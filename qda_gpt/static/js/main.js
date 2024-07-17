@@ -119,6 +119,23 @@ function downloadXLSX() {
 }
 
 
+function showInfo(event, infoId) {
+    event.preventDefault(); // Prevent default action
+    event.stopPropagation(); // Prevent the file explorer from opening
+    var infoBox = document.getElementById(infoId);
+    if (infoBox.style.display === "none" || infoBox.style.display === "") {
+        infoBox.style.display = "block";
+    } else {
+        infoBox.style.display = "none";
+    }
+}
+
+function hideInfo(infoId) {
+    var infoBox = document.getElementById(infoId);
+    infoBox.style.display = "none";
+}
+
+
 
 function validateForm() {
     console.log("[DEBUG] validateForm called.");
@@ -142,6 +159,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelector('textarea[name="user_prompt"]').addEventListener('input', validateForm);
 
+    // Add event listeners to info buttons
+    document.querySelectorAll('.info-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            const infoId = this.getAttribute('data-info-id');
+            showInfo(event, infoId);
+        });
+    });
+
     // Initially disable the Analyze button
     validateForm();
 
@@ -154,5 +179,12 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadButton.classList.remove('disabled-button');
         console.log("[DEBUG] Download button enabled initially.");
     }
+
+    // Hide all info boxes initially
+    var infoBoxes = document.querySelectorAll('.info-box');
+    infoBoxes.forEach(function(infoBox) {
+        infoBox.style.display = 'none';
+    });
+
 });
 
