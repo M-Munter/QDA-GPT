@@ -75,6 +75,13 @@ h1 {
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 
+
+.spacer {
+    flex-grow: 1; /* This will make the spacer take up all available space */
+    height: 24px; /* Ensure it matches the height of the input */
+}
+
+
 /* Ensure consistent border color for the "Choose File" button */
 .form-section input[type="file"]::file-selector-button {
     border: 1px solid #ccc; /* Ensure consistent border color */
@@ -183,29 +190,37 @@ button:disabled {
 .info-box {
     display: none;
     background-color: #f8f8f8;
-    color: #333;
+    color: #000; /* Set text color to black */
     border: 1px solid #ccc;
     border-radius: 3px;
-    padding: 40px; /* Increase padding for more margin around text */
+    padding: 45px; /* Adjust padding for better margin */
     position: fixed;
     z-index: 1000;
-    max-width: 300px;
+    max-width: 450px;
     left: 50%;
-    top: 200px;
-    transform: translate(-50%, -50%);
+    top: 136px;
+    transform: translateX(-50%); /* Center horizontally only */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Align text to left */
 }
 
 .info-box .close {
     position: absolute;
     top: 10px;
     right: 10px;
+    margin-right: 5px;
     cursor: pointer;
     font-size: 16px;
-    color: #666;
+    color: #000;
 }
 
+.info-box h4 {
+    font-weight: bold; /* Bold header */
+}
 
+.info-box p {
+    margin: 0; /* Remove default margin for paragraphs */
+}
 
 
 
