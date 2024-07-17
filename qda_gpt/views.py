@@ -167,6 +167,79 @@ def download_xlsx(request):
 
 
 
+# Function to wrap text
+def wrap_text(text, max_length):
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        if len(current_line) + len(word) + 1 <= max_length:
+            if current_line:
+                current_line += " "
+            current_line += word
+        else:
+            lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
+    return "\n".join(lines)
+
+
+# Function to create the combined flowchart
+def create_combined_flowchart(data):
+    # Function to clean and parse JSON data
+    def clean_and_parse_json(response_text):
+        start = response_text.find('{')
+        end = response_text.rfind('}') + 1
+        if start == -1 or end == -1:
+            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
+        response_text = response_text[start:end]
+        return json.loads(response_text)
+
+    # Parse JSON data
+    json_data = clean_and_parse_json(data)
+
+    # Filter the data to only include tables with "visualization" in their name
+    filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
+
+    # Create a single Digraph instance
+    dot = Digraph()
+
+    # Set global graph attributes for spacing
+    dot.attr(rankdir='TB')  # Ensure top-to-bottom direction for entire graph
+
+    # Process each CoreCategory in the filtered tables
+    for i, table_data in enumerate(filtered_data["table_format_visualization"]):
+        core_category = table_data["CoreCategory"]
+        relationships = table_data["Relationships"]
+
+        # Add a subgraph for each CoreCategory to maintain separation
+        with dot.subgraph(name=f'cluster_{i}') as sub:
+            sub.attr(label=core_category, rank='same', style='invis')
+            nodes = set()
+            for relation in relationships:
+                description = wrap_text(relation["Description"], 40)
+                # Create a left-aligned label with HTML-like line breaks
+                formatted_description = '<' + description.replace('\n', '<br align="left"/>') + '>'
+                sub.edge(relation["From"], relation["To"], label=formatted_description)
+                nodes.add(relation["From"])
+                nodes.add(relation["To"])
+
+            # Set all nodes to be rectangles
+            for node in nodes:
+                sub.node(node, shape='rect')
+
+    return dot
+
+
+# Function to save the flowchart as a PNG file
+def save_flowchart_as_png(dot, filename):
+    # Render the combined flowchart as a PNG file
+    dot.render(filename, format='png', cleanup=True)
+    print(f"Combined flowchart image generated and saved as {filename}.png")
+
+
+
 
 
 
