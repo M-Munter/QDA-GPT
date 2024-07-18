@@ -25,6 +25,7 @@ def phase4(request):
 def phase5(request):
     formatted_prompt5 = gt_prompt5
     response5_json = get_openai_response(formatted_prompt5, request.session['assistant_id'], request.session['thread_id'])
+    print(f"[DEBUG] response5_json: {response5_json}\n")  # Debug print
     return response5_json, formatted_prompt5
 
 def phase6(request):

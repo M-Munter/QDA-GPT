@@ -264,7 +264,7 @@ button:disabled {
     top: 15px; /* Adjusted positioning for the gap */
     left: 15px;
     border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.2s; /* Faster speed for inner ring */
+    animation-duration: 1.3s; /* Faster speed for inner ring */
 }
 
 .loader .inner-ring:nth-child(4) {
@@ -273,8 +273,8 @@ button:disabled {
     top: 15px; /* Adjusted positioning for the gap */
     left: 15px;
     border-top: 10px solid #001f3f; /* Navy blue */
-    animation-duration: 1.2s; /* Faster speed for inner ring */
-    animation-delay: -0.6s; /* Opposite phase */
+    animation-duration: 1.3s; /* Faster speed for inner ring */
+    animation-delay: -0.65s; /* Opposite phase */
 }
 
 @keyframes spin {

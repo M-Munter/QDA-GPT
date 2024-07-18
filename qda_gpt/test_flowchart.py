@@ -73,7 +73,7 @@ def wrap_text(text, max_length):
     current_line = ""
     for word in words:
         if len(current_line) + len(word) + 1 <= max_length:
-            if current_line:
+            if (current_line):
                 current_line += " "
             current_line += word
         else:
@@ -83,23 +83,20 @@ def wrap_text(text, max_length):
         lines.append(current_line)
     return "\n".join(lines)
 
-
-# Function to create the combined flowchart
 def create_combined_flowchart(data):
-    # Function to clean and parse JSON data
-    def clean_and_parse_json(response_text):
-        start = response_text.find('{')
-        end = response_text.rfind('}') + 1
-        if start == -1 or end == -1:
-            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
-        response_text = response_text[start:end]
-        return json.loads(response_text)
+    print(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
 
-    # Parse JSON data
-    json_data = clean_and_parse_json(data)
+    # Clean and parse JSON data
+    start = data.find('{')
+    end = data.rfind('}') + 1
+    if start == -1 or end == -1:
+        raise json.JSONDecodeError("Invalid JSON format", data, 0)
+    data = data[start:end]
+    json_data = json.loads(data)
 
     # Filter the data to only include tables with "visualization" in their name
     filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
+    print(f"[DEBUG] Filtered data: {filtered_data}\n")  # Debug print
 
     # Create a single Digraph instance
     dot = Digraph()

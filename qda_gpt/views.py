@@ -12,7 +12,9 @@ from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
 from openpyxl import Workbook
+from graphviz import Digraph
 import pandas as pd
+import inspect
 import os
 import time
 import json
@@ -22,7 +24,7 @@ def clear_session_data(request):
     session_keys = [
         'response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
         'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response',
-        'eighth_response', 'analysis_type', 'user_prompt', 'file_name', 'tables', 'prompt_table_pairs'
+        'eighth_response', 'analysis_type', 'user_prompt', 'file_name', 'tables', 'prompt_table_pairs', 'flowchart_path'
     ]
     for key in session_keys:
         request.session.pop(key, None)
@@ -186,21 +188,36 @@ def wrap_text(text, max_length):
 
 
 # Function to create the combined flowchart
-def create_combined_flowchart(data):
-    # Function to clean and parse JSON data
-    def clean_and_parse_json(response_text):
-        start = response_text.find('{')
-        end = response_text.rfind('}') + 1
-        if start == -1 or end == -1:
-            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
-        response_text = response_text[start:end]
-        return json.loads(response_text)
+def wrap_text(text, max_length):
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        if len(current_line) + len(word) + 1 <= max_length:
+            if (current_line):
+                current_line += " "
+            current_line += word
+        else:
+            lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
+    return "\n".join(lines)
 
-    # Parse JSON data
-    json_data = clean_and_parse_json(data)
+def create_combined_flowchart(data):
+    print(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
+
+    # Clean and parse JSON data
+    start = data.find('{')
+    end = data.rfind('}') + 1
+    if start == -1 or end == -1:
+        raise json.JSONDecodeError("Invalid JSON format", data, 0)
+    data = data[start:end]
+    json_data = json.loads(data)
 
     # Filter the data to only include tables with "visualization" in their name
     filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
+    print(f"[DEBUG] Filtered data: {filtered_data}\n")  # Debug print
 
     # Create a single Digraph instance
     dot = Digraph()
@@ -234,9 +251,14 @@ def create_combined_flowchart(data):
 
 # Function to save the flowchart as a PNG file
 def save_flowchart_as_png(dot, filename):
-    # Render the combined flowchart as a PNG file
-    dot.render(filename, format='png', cleanup=True)
-    print(f"Combined flowchart image generated and saved as {filename}.png")
+    try:
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        # Render the combined flowchart as a PNG file
+        dot.render(filename, format='png', cleanup=True)
+        print(f"[DEBUG] Combined flowchart image generated and saved as {filename}.png\n")  # Debug print
+    except Exception as e:
+        print(f"[DEBUG] Error saving flowchart as PNG: {e}\n")  # Debug print
 
 
 
@@ -297,10 +319,6 @@ def handle_setup(request, setup_form):
     return False
 
 
-import inspect
-
-import inspect
-
 
 def handle_analysis(request, analysis_type):
     analysis_funcs = {
@@ -309,12 +327,14 @@ def handle_analysis(request, analysis_type):
         'grounded': grounded_theory
     }
 
+
     if analysis_type in analysis_funcs:
         analysis_module = analysis_funcs[analysis_type]
         formatted_prompts = []
         prompt_table_pairs = []
         phases = [func for name, func in analysis_module.__dict__.items() if name.startswith('phase')]
         responses = {}
+        flowchart_path = None  # Initialize flowchart_path here
 
         for idx, phase in enumerate(phases):
             phase_name = phase.__name__
@@ -347,8 +367,30 @@ def handle_analysis(request, analysis_type):
             tables = generate_tables_from_response(response_json)
             prompt_table_pairs.append({'prompt': formatted_prompt, 'tables': tables})
 
+            # Handle the response and create the flowchart if needed
+            try:
+                # Check if any table name contains "visualization"
+                if "table_format_visualization" in response_json:
+                    print("[DEBUG] Visualization data found in response JSON\n")  # Debug print
+                    print(f"[DEBUG] Passing response_json to create_combined_flowchart: {response_json}\n")
+                    flowchart = create_combined_flowchart(response_json)
+                    if flowchart:
+                        flowchart_path = f"static/flowcharts/flowchart_{int(time.time())}"
+                        save_flowchart_as_png(flowchart, flowchart_path)
+                        flowchart_path = '/' + flowchart_path + ".png"
+                        print(f"[DEBUG] Flowchart path: {flowchart_path}\n")  # Debug print
+            except json.JSONDecodeError as e:
+                print(f"[DEBUG] Failed to parse response JSON: {e}\n")
+            except Exception as e:
+                print(f"[DEBUG] Error generating flowchart: {e}\n")
+            # Ensure flowchart_path is retained if it is set
+            if flowchart_path:
+                print(f"[DEBUG] Flowchart path updated: {flowchart_path}\n")
+
+        print(f"[DEBUG] Flowchart path before return: {flowchart_path}\n")  # Debug print
         return {
             'prompt_table_pairs': prompt_table_pairs,
+            'flowchart_path': flowchart_path,
             'analysis_status': analysis_status if 'analysis_status' in locals() else "",
             'deletion_results': deletion_results if 'deletion_results' in locals() else ""
         }
@@ -377,7 +419,9 @@ def dashboard(request):
         'file_name': file_name,
         'tables': request.session.get('tables', []),
         'prompt_table_pairs': request.session.get('prompt_table_pairs', []),
-        'prompt_table_pairs_json': json.dumps(request.session.get('prompt_table_pairs', []), cls=DjangoJSONEncoder)
+        'prompt_table_pairs_json': json.dumps(request.session.get('prompt_table_pairs', []), cls=DjangoJSONEncoder),
+        'flowchart_path': request.session.get('flowchart_path', '')
+
     }
 
     if request.method == 'POST':
@@ -387,10 +431,13 @@ def dashboard(request):
             if setup_success:
                 context_update = handle_analysis(request, analysis_type)
                 context.update(context_update)
+                print(f"[DEBUG] Flowchart path in context update BEFORE: {context['flowchart_path']}\n")  # Debug print
                 request.session['prompt_table_pairs'] = context.get('prompt_table_pairs', [])
                 context['prompt_table_pairs_json'] = json.dumps(
                     context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
                 )
+                print(f"[DEBUG] Flowchart path in context update: {context['flowchart_path']}\n")  # Debug print
+
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
 

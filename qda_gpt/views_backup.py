@@ -11,11 +11,12 @@ from urllib.parse import quote
 from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
+from openpyxl import Workbook
 import pandas as pd
 import os
 import time
 import json
-import csv
+
 
 def clear_session_data(request):
     session_keys = [
@@ -102,10 +103,10 @@ def explode_nested_columns(df):
 
 
 
-def download_csv(request):
+def download_xlsx(request):
     analysis_type = request.session.get('analysis_type', 'N/A')
     user_prompt = request.session.get('user_prompt', 'N/A')
-    file_name = request.GET.get('file_name', 'qda.csv')  # Get the filename from the query parameters
+    file_name = request.GET.get('file_name', 'qda.xlsx')  # Get the filename from the query parameters
 
     # Map analysis type to full names
     analysis_type_full_name = {
@@ -128,37 +129,114 @@ def download_csv(request):
     # Sanitize the filename for use in Content-Disposition
     file_name = quote(file_name)
 
-    response = HttpResponse(content_type='text/csv')
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 
-    writer = csv.writer(response, delimiter=';')
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Overview"
 
-    # Write analysis type and instructions at the beginning
-    writer.writerow(['Analysis Type', analysis_type_full_name])
-    writer.writerow([])  # Add an empty row for separation
-    writer.writerow(['Instructions'])
+    # Write analysis type and instructions in the first sheet
+    ws.append(['Analysis Type', analysis_type_full_name])
+    ws.append([])  # Add an empty row for separation
+    ws.append(['Instructions'])
     for line in instructions.split('\n'):
-        writer.writerow([line])
-    writer.writerow([])  # Add an empty row for separation
-    writer.writerow([])  # Add an empty row for separation
+        ws.append([line])
+    ws.append([])  # Add an empty row for separation
 
     for index, pair in enumerate(prompt_table_pairs):
-        writer.writerow([f'Prompt {index + 1}'])
+        sheet_title = f'Prompt {index + 1}'
+        ws = wb.create_sheet(title=sheet_title)
+        ws.append(['Prompt'])
         for line in pair.get('prompt', 'N/A').split('\n'):
-            writer.writerow([line])
-        writer.writerow([])  # Add an empty row for separation
+            ws.append([line])
+        ws.append([])  # Add an empty row for separation
         for table in pair['tables']:
-            writer.writerow([table['table_name']])
-            writer.writerow(table['columns'])
+            ws.append([table['table_name']])
+            ws.append(table['columns'])
             for row in table['data']:
                 if isinstance(row, list):
-                    writer.writerow(row)
+                    ws.append(row)
                 elif isinstance(row, dict):
-                    writer.writerow([row.get(col, '') for col in table['columns']])
-            writer.writerow([])  # Add an empty row for separation
+                    ws.append([row.get(col, '') for col in table['columns']])
+            ws.append([])  # Add an empty row for separation
+
+    wb.save(response)
 
     return response
 
+
+
+# Function to wrap text
+def wrap_text(text, max_length):
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        if len(current_line) + len(word) + 1 <= max_length:
+            if current_line:
+                current_line += " "
+            current_line += word
+        else:
+            lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
+    return "\n".join(lines)
+
+
+# Function to create the combined flowchart
+def create_combined_flowchart(data):
+    # Function to clean and parse JSON data
+    def clean_and_parse_json(response_text):
+        start = response_text.find('{')
+        end = response_text.rfind('}') + 1
+        if start == -1 or end == -1:
+            raise json.JSONDecodeError("Invalid JSON format", response_text, 0)
+        response_text = response_text[start:end]
+        return json.loads(response_text)
+
+    # Parse JSON data
+    json_data = clean_and_parse_json(data)
+
+    # Filter the data to only include tables with "visualization" in their name
+    filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
+
+    # Create a single Digraph instance
+    dot = Digraph()
+
+    # Set global graph attributes for spacing
+    dot.attr(rankdir='TB')  # Ensure top-to-bottom direction for entire graph
+
+    # Process each CoreCategory in the filtered tables
+    for i, table_data in enumerate(filtered_data["table_format_visualization"]):
+        core_category = table_data["CoreCategory"]
+        relationships = table_data["Relationships"]
+
+        # Add a subgraph for each CoreCategory to maintain separation
+        with dot.subgraph(name=f'cluster_{i}') as sub:
+            sub.attr(label=core_category, rank='same', style='invis')
+            nodes = set()
+            for relation in relationships:
+                description = wrap_text(relation["Description"], 40)
+                # Create a left-aligned label with HTML-like line breaks
+                formatted_description = '<' + description.replace('\n', '<br align="left"/>') + '>'
+                sub.edge(relation["From"], relation["To"], label=formatted_description)
+                nodes.add(relation["From"])
+                nodes.add(relation["To"])
+
+            # Set all nodes to be rectangles
+            for node in nodes:
+                sub.node(node, shape='rect')
+
+    return dot
+
+
+# Function to save the flowchart as a PNG file
+def save_flowchart_as_png(dot, filename):
+    # Render the combined flowchart as a PNG file
+    dot.render(filename, format='png', cleanup=True)
+    print(f"Combined flowchart image generated and saved as {filename}.png")
 
 
 

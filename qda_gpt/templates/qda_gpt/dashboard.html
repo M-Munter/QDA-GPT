@@ -114,6 +114,13 @@
         </div>
         <div class="left-align">
             {% include "qda_gpt/response_table.html" %}
+            <br>
+            {% load static %}
+            {% if flowchart_path %}
+                <div><strong>Generated Flowchart:</strong></div>
+                <img src="{{ flowchart_path }}" alt="Flowchart" style="margin-top: 6px; margin-bottom: 12px;">
+            {% endif %}
+            <br>
             {% if deletion_results %}
                 <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
                 <div id="deletion-results" data-results="true"></div>
