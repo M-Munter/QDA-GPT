@@ -289,7 +289,7 @@ def handle_setup(request, setup_form):
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Running analysis. This will take a while."
                 request.session.save()  # Explicitly save the session
 
                 time.sleep(1)

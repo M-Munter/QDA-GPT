@@ -14,11 +14,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import dj_database_url
 
 
 load_dotenv()  # This loads the .env file at the project root into environment variables
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+DATABASES = {
+    'default': dj_database_url.config(default='postgres://localhost')
+}
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,9 +35,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+^3va&8@w%(og5gl596@yrvt7l6x3scf2f0yk(7#v2ia!gy$!l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['qda-gpt-app.herokuapp.com']
 
 # Application definition
 
