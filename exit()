@@ -1,0 +1,498 @@
+[33mcommit fad9e436e3eda6f4bbf0933e230f88e3ff1e593b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mVersion-0.7.4_website[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 23:01:56 2024 +0300
+
+    Add requirements.txt
+
+[33mcommit 320d3de9b96ce661e2a9792a3cf67cd4c8117a17[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 22:56:54 2024 +0300
+
+    Adjust static files configuration
+
+[33mcommit d1d72b80f0d58095cd7adca5b30f6a45800c3b9d[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 22:54:43 2024 +0300
+
+    Add .env to .gitignore
+
+[33mcommit e1d7ead46bf4032cdddc7fae1a87d5e23e23ff73[m[33m ([m[1;31mheroku/master[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 22:35:41 2024 +0300
+
+    Configure static files with WhiteNoise
+
+[33mcommit 42a8d3165721b29ebfb77276125c39ac7194d18f[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 22:17:30 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit 05f812516ed12f8ef14f92d29bd38d00b0187c11[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 20:59:34 2024 +0300
+
+    Initial commit
+
+[33mcommit e48ccddd73e5d103fc0f5cd765e07d1a1842edd9[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 19:28:39 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit c0a8168052e17bb0a7d02c134506a8d830095f94[m[33m ([m[1;32mVersion-0.7.3_website[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 19:27:12 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit 899d39de527b1ee469820718a16214c287294956[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 19:16:47 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit bafc30e82f7d8326bb0ce8353b393d0776678237[m[33m ([m[1;31morigin/Version-0.7.2_first_extra[m[33m, [m[1;32mVersion-0.7.2_first_extra[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 19:15:14 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit f2c28c8649780864368fe15498a98b0668350145[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 19:14:54 2024 +0300
+
+    KAIKKI TOIMII
+    
+    LOGIN LUOTU
+
+[33mcommit 99f3856bb1b4db5e78d49637f1a59286a7c15013[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 14:45:26 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit af7006307a2f436c32e1cfc8198806f44a86f407[m[33m ([m[1;32mVersion-0.7.1_first_final_version[m[33m, [m[1;32mVersion-0.6.7_first_working_version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 29 14:42:44 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit 9a8bbb0837c3154f8a0dc20916863b4945f52162[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Thu Jul 18 03:50:56 2024 +0300
+
+    KAIKKI TOIMII
+    
+    PNG TOIMII
+
+[33mcommit 1bd611fac4314124fe879f890857f0bb0865d918[m[33m ([m[1;32mVersion-0.6.6_first_working_version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Thu Jul 18 03:50:24 2024 +0300
+
+    KAIKKI TOIMII
+    
+    PNG TOIMII
+
+[33mcommit 6571a59db75f8a967a9670675c0d0d87ad33d34b[m[33m ([m[1;32mVersion-0.6.4_first_working_version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 17 22:55:17 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit 3c03301bb3316576c242d0bb8f45164d03fc0b0e[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 17 18:12:14 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit e0c81f4e9a28563d331b910009fa79fce45e23a6[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 17 17:18:35 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit 4a12904d840df586b6cc2e673d3dc69627508fa8[m[33m ([m[1;32mVersion-0.6.3_first_working_version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 17 17:18:12 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit f409c7483ba7befc2b261862cd68389d7e126eca[m[33m ([m[1;32mVersion-0.6.2_first_working_version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 17 14:57:10 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit b8c883ea8156616bd69b18cb3428de2f40f0f03c[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 16 23:58:09 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit 5b985eac926937d1c842d36d604b5f19927bbe66[m[33m ([m[1;32mVersion-0.6.1-CSV-process-promots[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 16 23:57:15 2024 +0300
+
+    KAIKKI TOIMII
+
+[33mcommit 37787fcc2fc2267a2ca1a82386b6011e5b5d6a99[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 16 23:32:52 2024 +0300
+
+    CSV EI TOIMI KUNNOLLA
+
+[33mcommit 31433b81982a08af6d6e497d681f28bd8e03e726[m[33m ([m[1;32mVersion-0.5.6-promts-vs-process[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 16 23:32:04 2024 +0300
+
+    CSV EI TOIMI KUNNOLLA
+
+[33mcommit bdc88244d4453e9fe4421555e45cb0219ecdc4b6[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 14 21:58:54 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+    
+    CA promptit uusittu, CA ei toimi
+    
+    GT promptit uusittu, CA ei toimi
+
+[33mcommit 347dd3ae34d371e9491b3749524f8dfcd960eec8[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 14 21:48:18 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+    
+    CA promptit uusittu, CA ei toimi
+    
+    GT promptit uusittu, CA ei toimi
+
+[33mcommit 08a8ed0d3ef4778589fe220fe38650e92fcf6478[m[33m ([m[1;32mVersion-0.5.6-GT-promt-updates[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 14 21:29:08 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+    
+    CA promptit uusittu, CA ei toimi
+    
+    GT promptit uusittu, CA ei toimi
+
+[33mcommit af3b91c1e9c056c37ec790be3420bffd28f1bd34[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 13 19:53:39 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+    
+    CA promptit uusittu, CA ei toimi
+
+[33mcommit 4236ee78dd5ae84973aac8126776b65551ae0ece[m[33m ([m[1;32mVersion-0.5.6-GT-CA-promt-updates[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 13 19:33:59 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+
+[33mcommit c9cf3fd8ab166bb8351fd30ad8284693756dbfa6[m[33m ([m[1;32mVersion-0.5.5-promt-updates[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Fri Jul 12 02:25:39 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+
+[33mcommit d105502eaecda8cd50847942f8302224548c0373[m[33m ([m[1;32mVersion-0.5.4-nice-style[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 22:52:36 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+    
+    TA promptit uusittu, TA ei toimi
+
+[33mcommit 9311b01a23a4c83e37cc957e0f5d8ba192657b40[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 03:02:54 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit 1b23678643bf1281b469e8cf270f303f04248053[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 02:32:31 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit ad1f5d5afd80c6f3067816f0a1dc75c26a09ec00[m[33m ([m[1;32mVersion-0.5.3-nice-style[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 02:08:27 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit 04f01ee98a409202ebde09410bed3725ab14822c[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 01:44:35 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit 5b1630240801a05a3f4b00e7625cf1bbc24c034d[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 01:37:31 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit b3d2c8d56ee5e860fdc25acf86982c91a7e266dd[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 00:27:13 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit 7bf9228f41b898efd3751e1ffc785e338ea5a4ee[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 00:26:53 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit d3a4b36d56b89711f3f4c03cf1d576dbebefadfc[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Wed Jul 10 00:08:03 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+    
+    Toimivuutta ei ole testattu, mutta näyttää hyvältä
+
+[33mcommit d67b323f298f270b0daec8999bfabb0bd1a09a53[m[33m ([m[1;32mVersion-0.5.2-nice-style[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 23:37:35 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit 60695da4ae32b32330bdd917e121531d2577beea[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 22:40:41 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit a8dd7a10b6ab72b91f1bb797a5bb51ff92383c54[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 22:40:26 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit ed6a8c81fcf06dc779880496df3ff52ad691f689[m[33m ([m[1;32mVersion-0.5.1-working-version[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 22:38:39 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit a4865c291ac3ba50cc43484d1b8ea74aebceeec7[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 20:48:05 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit 29066e4fdda30c5ab716b36fcdb48f9a4f27d87c[m[33m ([m[1;32mVersion-0.4.14-fetch-status[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 20:46:50 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit 7ddea09ed496221c532609dffd174f00763c3b39[m[33m ([m[1;32mVersion-0.4.13-fetch-status[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 20:42:03 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit 2eba1b29ed6d1e586279757455b22e534b70f091[m[33m ([m[1;32mVersion-0.4.12-scriptit[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 20:23:24 2024 +0300
+
+    fetch status ei toimi, muuten kaikki toimii
+
+[33mcommit 766abc639de1861aaf838340de506fdecf53970d[m[33m ([m[1;32mVersion-0.4.11-CSV-valmis[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 18:27:16 2024 +0300
+
+    JSON toimii
+    views.py uusi rakenne toimii
+    CSV toimii
+    seuraavaksi scriptit kuntoon
+
+[33mcommit af7054dbcd301fd22bf96681329751a3d2996e95[m[33m ([m[1;32mVersion-0.4.10-CSV-valmis[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 18:25:46 2024 +0300
+
+    JSON toimii
+    views.py uusi rakenne toimii
+    CSV toimii
+
+[33mcommit 4c99046c43e4412bfacc283142c39e90ba036144[m[33m ([m[1;32mVersion-0.4.9-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 17:42:14 2024 +0300
+
+    JSON toimii
+    views.py uusi rakenne toimii
+    CSV toimii
+
+[33mcommit f236b74af0ae5c251a556df4ad65144cd4dd8aa9[m[33m ([m[1;32mVersion-0.4.8-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 05:28:45 2024 +0300
+
+    JSON toimii
+    views.py uusi rakenne toimii
+
+[33mcommit 02fe32a44e4f1d87f4d91389c5e5f961593059a0[m[33m ([m[1;32mVersion-0.4.7-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 03:46:13 2024 +0300
+
+    JSON toimii
+    views.py uusi rakenne toimii
+
+[33mcommit 87190a56e66c3b3a03fa445667ffe2e1f9d5f4c2[m[33m ([m[1;32mVersion-0.4.6-CSV-WIP[m[33m, [m[1;32mVersion-0.4.5-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 03:15:32 2024 +0300
+
+    JSON toimii
+
+[33mcommit ed06c47ffa8c3431233a0d370142b614da2b8262[m[33m ([m[1;32mVersion-0.4.4-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Tue Jul 9 00:58:52 2024 +0300
+
+    JSON toimii
+
+[33mcommit ba3dec8f5a52596cd396836a9ffc8ff45c9b9e1f[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 8 23:59:53 2024 +0300
+
+    JSON toimii
+
+[33mcommit 582b3737e9f0bc8cbde2c455fb4ac0b2b1b0b5ba[m[33m ([m[1;32mVersion-0.4.3-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 8 23:23:48 2024 +0300
+
+    JSON toimii
+
+[33mcommit d92525875de39e50ad8245f1ffbc0156f3365f86[m[33m ([m[1;32mVersion-0.4.2-CSV-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 8 21:34:05 2024 +0300
+
+    JSON toimii
+
+[33mcommit 50cb1c52c12e6c7629720d7b59fe4f967bb678ee[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 8 21:11:00 2024 +0300
+
+    JSON toimii
+
+[33mcommit 7c893e9c994b77b403a7b4bcf1a28b33cddcdaa8[m[33m ([m[1;32mVersion-0.3.11-JSON-WIP[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Mon Jul 8 20:38:45 2024 +0300
+
+    JSON toimii
+
+[33mcommit 6cb05a7b24cd20a675dda18bddcdcc5d50bcf179[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 7 23:46:38 2024 +0300
+
+    JSON toimii
+
+[33mcommit 21f0235260bd762bce8c306b0c9b7234d25b6a28[m[33m ([m[1;32mVersion-0.3.10-progress-working[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 7 16:13:37 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit d3108d7643744db08c68ddc64d5beb749baa574a[m[33m ([m[1;32mVersion-0.3.9-progress-not-working[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Jul 7 03:43:16 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit 7d0b49b756e131d22f79428f93024448c4f6e33e[m[33m ([m[1;32mVersion-0.3.8-progress-not-working[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 6 22:15:32 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit 063b81b6d188765dab47ab42c0c4f389d583b57c[m[33m ([m[1;32mVersion-0.3.7-fine-tuning[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 6 20:16:53 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit 1a0f96195ca7bffeef92bac5afa5ce53aa8245b9[m[33m ([m[1;32mVersion-0.3.6-fine-tuning[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 6 19:22:27 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit 560f7d77be06a0dd8fd2e7b74864ec1cf45820d5[m[33m ([m[1;31morigin/Version-0.3.5[m[33m, [m[1;32mVersion-0.3.5[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sat Jul 6 18:04:50 2024 +0300
+
+    Peruskoodi toimii ihan ok.
+
+[33mcommit d1e6f62abfc5e9984fb95e960714f5de8b2e65d0[m[33m ([m[1;31morigin/multiple_messages_phase4[m[33m, [m[1;32mmultiple_messages_phase4[m[33m, [m[1;32mVersion-0.3.4[m[33m, [m[1;32mVersion-0.3.3[m[33m, [m[1;32mVersion-0.3.2[m[33m, [m[1;32mVersion-0.3.1[m[33m, [m[1;32mVersion-0.2.3[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Apr 21 20:28:20 2024 +0300
+
+    Add initial project structure and dependencies
+    
+    - Setup Django project structure
+    - Include necessary initial migrations
+    - Add basic models and admin setup for user management
+
+[33mcommit 3a2ef6548693ff2effa8397442b34ebfc760973d[m[33m ([m[1;31morigin/multiple_messages[m[33m, [m[1;32mmultiple_messages[m[33m)[m
+Author: M-Munter <markus.munter@gmail.com>
+Date:   Sun Apr 21 18:41:22 2024 +0300
+
+    Add initial project structure and dependencies
+    
+    - Setup Django project structure
+    - Include necessary initial migrations
+    - Add basic models and admin setup for user management
