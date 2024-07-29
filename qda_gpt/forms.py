@@ -20,4 +20,7 @@ class SetupForm(forms.Form):
 class AnalyzeForm(forms.Form):
     user_prompt = forms.CharField(label="Enter your prompt", max_length=1000)
 
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
 

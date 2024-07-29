@@ -1,16 +1,19 @@
 # views.py
 from django.shortcuts import render, redirect
-from .forms import SetupForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-from .openai_api import initialize_openai_resources, create_thread
-from .__version__ import __version__
-from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
-from collections import OrderedDict
 from django.core.serializers.json import DjangoJSONEncoder
-from urllib.parse import quote
 from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
+from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
+from .openai_api import initialize_openai_resources, create_thread
+from .forms import LoginForm
+from .forms import SetupForm
+from .__version__ import __version__
+from collections import OrderedDict
+from urllib.parse import quote
 from openpyxl import Workbook
 from graphviz import Digraph
 import pandas as pd
@@ -18,6 +21,26 @@ import inspect
 import os
 import time
 import json
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'registration/login.html')
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
+
 
 
 def clear_session_data(request):
@@ -379,6 +402,7 @@ def handle_analysis(request, analysis_type):
     return {}
 
 
+@login_required
 def dashboard(request):
     if request.method == 'GET':
         clear_session_data(request)

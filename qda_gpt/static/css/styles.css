@@ -24,12 +24,26 @@ body {
 
 /* Specific styles for the header container */
 .header-container {
-    background-color: #001f3f; /* Dark navy blue */
-    color: #ffffff; /* White text */
-    margin-top: 10px; /* Reduce the top margin to half */
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #001f3f;
+    color: #ffffff;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 74%;
+    min-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.header-title {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    text-align: center;
+    flex: 1;
 }
 
 h1 {
@@ -327,4 +341,177 @@ button:disabled {
 .generated-table td {
     font-size: 13px; /* Smaller font size for normal text */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+}
+
+
+
+/* Specific styles for login form */
+.login-title {
+    margin-top: 0;
+    padding-top: 0;
+    font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
+    text-align: center; /* Center the login title */
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-fields-container {
+    max-width: 300px; /* Set max width for the container */
+    width: 100%;
+}
+
+.login-form-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.login-label {
+    margin-bottom: 5px;
+    text-align: left;
+    width: 100%;  /* Ensure the label takes the full width */
+}
+
+.login-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 100%; /* Ensure input takes full width of the container */
+}
+
+.login-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    background-color: #001f3f;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    align-self: center; /* Center the button */
+}
+
+.login-button:hover {
+    background-color: #001a35;
+}
+
+
+
+
+/* Additional styles for user info in header */
+.user-info {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.user-info p {
+    margin: 0;
+}
+
+.user-info .separator {
+    margin: 0 10px;
+}
+
+.user-info form {
+    display: inline-block;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.logout-button i {
+    margin-right: 5px;
+}
+
+
+
+
+/* Additional styles for user info in header */
+.user-info {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.user-info p {
+    margin: 0;
+}
+
+.user-info .separator {
+    margin: 0 10px;
+}
+
+.user-info form {
+    display: inline-block;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.logout-button i {
+    margin-right: 5px;
+}
+
+
+
+
+
+
+.user-info {
+    position: absolute;
+    right: 20px;
+    text-align: right;
+    display: flex;
+    align-items: center;
+}
+
+.user-info p {
+    margin: 0;
+}
+
+.user-info .separator {
+    margin: 0 10px;
+}
+
+.user-info form {
+    display: inline-block;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.logout-button i {
+    margin-right: 5px;
 }
