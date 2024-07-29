@@ -1,5 +1,5 @@
 from qda_gpt.prompts.prompts_ta import ta_instruction, ta_prompt1, ta_prompt2, ta_prompt3, ta_prompt4, ta_prompt5, ta_prompt6, ta_prompt7, ta_prompt8
-from qda_gpt.openai_api import create_thread, get_openai_client, get_openai_response, create_thread, delete_openai_resources
+from qda_gpt.openai_api import create_thread, initialize_openai_resources, get_openai_client, get_openai_response, create_thread, delete_openai_resources
 from qda_gpt.deletion import handle_deletion
 import time
 
@@ -21,8 +21,7 @@ def phase3(request):
     print(f"response3_json: {response3_json}\n")  # Debugging print statement
     return response3_json, formatted_prompt3
 
-from qda_gpt.openai_api import create_thread, initialize_openai_resources, get_openai_response, delete_openai_resources
-from qda_gpt.prompts.prompts_ta import ta_prompt4
+
 
 def phase4(request):
     # Retrieve existing information from session

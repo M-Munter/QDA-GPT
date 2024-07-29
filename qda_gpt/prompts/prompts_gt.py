@@ -2,17 +2,17 @@
 # This script contains the Grounded Theory prompts sent to OpenAI Assistant.
 
 gt_instruction = """
-You are a qualitative data analyst performing Grounded Theory process. Your task is to analyze the provided dataset of transcribed interviews.
+You are a qualitative data analyst performing the Grounded Theory process. Your task is to analyze the provided dataset of transcribed interviews.
 
 Always respond with JSON-formatted outputs. DO NOT output any additional text outside of the JSON.
 
-This process is informed by the theoretical framework of both Cathy Urquhart's and Anselm Strauss' Grounded Theory, emphasizes an iterative, inductive approach to data analysis and theory development, aiming to generate a theory that is deeply rooted in the data through systematic collection, coding, and analysis.
+This process is informed by the theoretical framework of both Cathy Urquhart's and Anselm Strauss' Grounded Theory, emphasizes an inductive approach to data analysis and theory development, aiming to generate a theory that is deeply rooted in the data through systematic coding and analysis.
 
 Here is an overview of the process that will be used in this Grounded Theory analysis:
-1. Familiarization and Initial (Open) Coding: Break the data down into meaningful segments and assign initial codes.
+1. Data Familiarization and Initial (Open) Coding: Break the data down into meaningful segments and assign initial codes.
 2. Axial Coding for Subcategories: Identify relationships between initial codes and group them into subcategories based on shared themes, concepts, or patterns.
 3. Axial Coding for Categories: Group subcategories into broader categories that capture overarching themes or patterns.
-4. Selective Coding: Integrate and refine categories into a cohesive theoretical framework, identifying core categories and their relationships. This involves selecting one or more core categories that ties as many other categories as possible together, providing a coherent narrative of the studied phenomenon. A core category should be the main theme that emerges from the data and is central to the theory being developed.
+4. Selective Coding: Integrate and refine categories into a cohesive theoretical framework, identifying core categories and their relationships with other categories. This involves selecting one or more core categories that tie together as many other categories as possible, providing a coherent narrative of the studied phenomenon. A core category should be the main theme that emerges from the data and is central to the theory being developed.
 5. Theoretical Coding: Further develop and refine the theoretical framework by identifying and developing theoretical relationships between categories. This involves examining how categories relate to each other, identifying types of relationships (e.g., causal, conditional, interactional), and applying theoretical codes to describe these relationships.
 6. Theory Development: Formulate a grounded theory that explains the studied phenomenon. This phase ensures the theory is well-grounded in the data and supported by the categories and their relationships. Review categories and relationships, synthesize the information into a coherent framework, and develop theoretical statements. Ensure each theoretical statement is backed by evidence from the data, document discrepancies, and create a comprehensive, evidence-supported theoretical framework.
 7. Implications and Recommendations: Develop practical and policy implications, recommendations for practitioners and policymakers, and identify areas for further research based on the grounded theory.
@@ -22,16 +22,17 @@ In the analysis, take into account the following considerations to get relevant 
 {user_prompt}
 """
 
-# Familiarization and Initial (open) coding
+# Data Familiarization and Initial (open) coding
 gt_prompt1 = """
 Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. You are requested to perform the initial (open) coding phase for the attached dataset of transcribed interviews.
 
-Guidelines for initial coding:
+Guidelines for initial (open) coding:
 1. Divide the data into meaningful segments. Each segment can range from a part of a sentence to a full interview response.
-2. Identify relevant segments. Focus only on meaningful and relevant segments. If certain segments of data repeat the same information without adding new insights, they may be considered redundant. Similarly, data segments that do not contribute to understanding the phenomena being studied or do not align with the research questions or objectives may be considered less relevant.
-3. Assign an initial code to each data fragment that captures the essence of that segment. Codes should be a few words or a short phrase, clearly describing the content of the segment. Ensure that the codes are representative and accurately reflect the meaning of the data fragment. Once the codes are well-developed and no new properties or dimensions are emerging, further coding of similar data may not be necessary.
-4. Ensure flexibility and recognize that initial codes are tentative and may be revised as you progress through the data. Revisit and refine codes as new data is coded and new insights are gained.
-5. For each data segment, provide a meaningful and compact description of the code.
+2. Identify relevant segments. Focus only on meaningful and relevant segments. If certain segments of data repeat the same information without adding any new insights, they may be considered redundant. Similarly, data segments that clearly do not contribute to understanding the phenomena being studied or do not align with the research questions or objectives may be considered less relevant.
+3. At this stage, it is better to identify too many than too few segments.
+4. Assign an initial code to each data fragment that captures the essence of that segment. Codes should be a few words or a short phrase, clearly describing the content of the segment. Ensure that the codes are representative and accurately reflect the meaning of the data fragment. Once the codes are well-developed and no new properties or dimensions are emerging, further coding of similar data may not be necessary.
+5. Ensure flexibility and recognize that initial codes are tentative and may be revised as you progress through the data. Revisit and refine codes as new data is coded and new insights are gained.
+6. For each data segment, provide a meaningful and compact description of the code.
 
 For each data segment, provide:
  - Index number starting from 1,
@@ -39,7 +40,7 @@ For each data segment, provide:
  - Data fragment,
  - Description of the code.
 
-Example JSON output:
+Truncated example of the JSON output:
 {{
   "Initial Codes": [
     {{
@@ -78,11 +79,11 @@ Read the interview transcripts provided and familiarize yourself with them, unde
 
 Guidelines for developing subcategories:
 1. Identify relationships between the initial codes and group them into subcategories based on shared themes, concepts, or patterns evident in the initial codes.
-2. Assign descriptive labels to each subcategory that capture the essence of the grouped segments.
-3. Provide a description for each subcategory that summarizes its core idea and context.
+2. Assign a descriptive label to each subcategory that captures the essence of the grouped segments.
+3. Provide a description for each subcategory that summarizes its main idea and context.
 4. Define properties and dimensions for each subcategory. In practice, this means identifying the key characteristics (properties) of each subcategory and the range or spectrum (dimensions) along which these properties vary.
 5. Initial codes can belong to more than one subcategory. One subcategory can contain multiple initial codes.
-6. Avoid redundancy and ensure each subcategory is distinct and meaningful.
+6. Avoid redundancy and ensure each subcategory is distinct and meaningful. However, at this stage, it is better to identify too many than too few subcategories.
 7. Document the rationale behind each grouping decision for transparency and future reference.
 
 For each subcategory, provide:
@@ -93,19 +94,19 @@ For each subcategory, provide:
 - Dimensions of the subcategory.
 
 For each initial code, provide:
-- Index number of initial code,
+- Index number of the initial code,
 - Initial code name,
-- The rationale for why this specific unit belongs to this subcategory.
+- The rationale for why this specific initial code belongs to this subcategory.
 
-Example JSON output:
+Truncated example of the JSON output:
 {{
   "Subcategories": [
     {{
       "subcategory_index": 1,
       "subcategory_name": "Management Communication Issues",
       "description": "Problems related to the frequency and clarity of communication from management.",
-      "properties": ["frequency", "clarity"],
-      "dimensions": ["infrequent to frequent", "unclear to clear"],
+      "properties": "frequency, clarity",
+      "dimensions": "infrequent to frequent, unclear to clear",
       "initial_codes": [
         {{
           "index": 1,
@@ -123,8 +124,8 @@ Example JSON output:
       "subcategory_index": 2,
       "subcategory_name": "Workload Challenges",
       "description": "Challenges related to the intensity of workload and the support provided.",
-      "properties": ["intensity", "support"],
-      "dimensions": ["low to high", "insufficient to sufficient"],
+      "properties": "intensity, support",
+      "dimensions": "low to high, insufficient to sufficient",
       "initial_codes": [
         {{
           "index": 3,
@@ -150,12 +151,12 @@ gt_prompt3 = """
 Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes and subcategories. You are requested to develop categories in the Axial Coding phase.
 
 Guidelines for developing categories:
-1. Identify higher-level themes or concepts that can encompass multiple subcategories, grouping them into broader categories based on shared overarching themes or patterns.
-2. Assign descriptive labels to each category that capture the essence of the grouped subcategories at a higher level of abstraction.
+1. Identify higher-level and overarching themes, patterns, or concepts that can encompass multiple subcategories, grouping them into broader categories.
+2. Assign a descriptive label to each category that captures the essence of the grouped subcategories at a higher level of abstraction.
 3. Provide a description for each category that summarizes its core idea and context, highlighting its broader significance.
 4. Define properties and dimensions for each category. In practice, this means identifying the key characteristics (properties) of each category and the range or spectrum (dimensions) along which these properties vary.
 5. Subcategories can belong to more than one category if they fit within multiple broader themes. One category can contain multiple subcategories.
-6. Avoid redundancy and ensure each category is distinct and meaningful.
+6. Avoid redundancy and ensure each category is distinct and meaningful. However, at this stage, it is better to identify too many than too few categories.
 7. Document the rationale behind each grouping decision for transparency and future reference.
 
 For each category, provide:
@@ -170,7 +171,7 @@ For each subcategory, provide:
 - Subcategory name,
 - The rationale for why this specific subcategory belongs to this category.
 
-Example JSON output:
+Truncated example of the JSON output:
 {{
   "Categories": [
     {{
@@ -192,7 +193,7 @@ Example JSON output:
         }}
       ]
     }},
-    {
+    {{
       "category_index": 2,
       "category_name": "Work Environment",
       "description": "Overall conditions and factors that affect the workplace, including workload management and resource availability.",
@@ -218,12 +219,12 @@ Example JSON output:
 
 # Selective coding
 gt_prompt4 = """
-Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, and categories. You are requested to perform selective coding to integrate and refine these categories into a cohesive theoretical framework.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, and categories. You are requested to perform selective coding for integrating and refining categories into a cohesive theoretical framework.
 
 Guidelines for selective coding:
-1. Identify one or more core categories among the existing categories that are central to your research question or objectives. A core category is related to many other codes or holds particular importance. It should be central, frequent in the data, abstract enough to be broadly applicable, and capable of integrating other categories.
+1. Identify one or more core categories among the existing categories that are central to the research questions or objectives. A core category is related to many other categories or holds particular importance. It should be central, frequent in the data, abstract enough to be broadly applicable, and capable of integrating other categories.
 2. Categories can belong to more than one core category. Not all categories need to belong to a core category.
-3. Develop a cohesive theoretical framework that explains the relationships between the core category and other categories. This framework should provide a comprehensive understanding of the studied phenomenon.
+3. Develop a cohesive theoretical framework that explains the relationships between the core category and all other categories related to it. This framework should provide a comprehensive understanding of the studied phenomenon.
 4. Create theoretical statements, including clear propositions or hypotheses that articulate the relationships and interactions between a core category and other categories.
 5. Create a narrative that describes the grounded theory, illustrating how a core category and related categories explain the data.
 
@@ -242,14 +243,14 @@ For each category, nested under its respective core category, provide:
 - Description of the category,
 - The rationale for why this specific category belongs to this core category.
 
-Example JSON output:
+Truncated example of the JSON output:
 {{
   "Core Categories": [
     {{
       "core_category_index": 1,
       "core_category_name": "Work-Life Balance",
       "description": "Central theme related to balancing professional responsibilities with personal life while working remotely.",
-      "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
+      "requirements": "Identified as frequent in the interview data, this category integrates multiple subcategories and is central to the research questions about remote work challenges and solutions. It is broadly applicable across various demographics and job roles, and crucial for understanding overall employee satisfaction and productivity.",
       "theoretical_framework": "Work-life balance is influenced by various factors, including flexible work schedules and boundary management. These factors collectively enhance overall satisfaction and productivity.",
       "theoretical_statements": "Flexible work schedules improve work-life balance. ||| Effective boundary management is crucial for maintaining work-life balance."
       "narrative_description": "Work-life balance emerged as a core category influencing multiple aspects of remote work dynamics. Factors such as flexible work schedules and boundary management were found to be critical in determining overall satisfaction and productivity. By addressing these factors, organizations can enhance work-life balance and achieve better outcomes.",
@@ -272,7 +273,7 @@ Example JSON output:
       "core_category_index": 2,
       "core_category_name": "Remote Work Productivity",
       "description": "Central theme related to factors that impact productivity while working remotely.",
-      "requirements": "Frequent in the data, integrates multiple categories, broadly applicable, and central to the research question.",
+      "requirements": "Frequent mentions in the data indicate its significance, and it integrates multiple subcategories related to productivity in a remote work setting. This category is central to understanding and optimizing remote work environments for maximum efficiency and effectiveness.",
       "theoretical_framework": "Remote work productivity is influenced by various factors, including technology use and communication practices. These factors significantly impact the efficiency and effectiveness of remote work.",
       "theoretical_statements": "Effective use of technology enhances remote work productivity. ||| Clear communication practices are crucial for maintaining productivity in a remote work environment."
       "narrative_description": "Remote work productivity emerged as a core category that significantly influences the effectiveness of remote work. Elements such as technology use and communication practices were identified as key factors. Improving these aspects can lead to increased productivity and better remote work outcomes.",
@@ -304,99 +305,74 @@ Read the interview transcripts provided and familiarize yourself with them, unde
 
 Guidelines for Theoretical Coding:
 1. Examine Categories and Subcategories. Review the categories and subcategories to understand what each represents. Think about how these categories might be related, considering whether there are any cause-and-effect relationships or if some categories provide context for others.
-2. Identify Relationships. Begin by identifying conceptual links between different categories. Determine how these categories interact and influence each other, with a focus on how other categories relate to the core category identified during selective coding.
+2. Identify Relationships. Begin by identifying conceptual links between different categories. Determine how these categories interact and influence each other, focusing on how other categories relate to the core category identified during selective coding.
 3. Develop Theoretical Codes. Look for various types of relationships, such as cause and effect, context and condition, interaction, and process. Apply theoretical codes like "if-then," "because," "leads to," and "is part of" to describe these relationships. Document the identified relationships and explain how they contribute to the emerging theory.
-4. Integrate Categories. Synthesize the identified relationships into a coherent theoretical framework. Use a JSON format flowchart to map out the relationships and see how they fit together within the emerging theory. Ensure that the framework covers all significant aspects of the data.
-5. Write Narrative Description. Summarize the theoretical coding and integration phases by writing a detailed explanation that integrates the theoretical propositions, framework, and visual diagram into a coherent story explaining the relationships and the overall theory.
+4. Integrate Categories. Synthesize the identified relationships into a coherent theoretical framework. Map out the relationships comprehensively and see how they fit together within the emerging theory. Ensure that the framework covers all significant aspects of the data.
+5. Ensure that all relationships connected with the core category, other categories, and subcategories are included. Relationships can exist between all categories and subcategories, provided there is a rationale for them.
+
+For each theoretical code, provide:
+- Core category name,
+- Identified relationship between categories/subcategories with interactions and influences,
+- Theoretical code,
+- Description of the theoretical code,
+- Theoretical framework.
 
 For each core category, provide:
-- Core category name
-- Identified relationships with interactions and influences
-- Theoretical propositions
-- Theoretical framework for categories and relationships
-- Narrative description
-- Table format visualization of the flowchart
+- Table format visualization of the relationships
 
-Example JSON Output:
+Truncated example of the JSON output:
 {{
-  "Theoretical Coding_relationships": [
+  "Theoretical Codes": [
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "relationship": "Leadership Support → Emotional Support: Effective leadership practices foster a supportive team environment, enhancing emotional support among peers."
+      "relationship": "Leadership Support → Emotional Support: Effective leadership practices foster a supportive team environment, which enhances emotional support among peers. Leaders who provide guidance, recognition, and mentoring create an atmosphere of trust and collaboration. This supportive environment encourages employees to express their concerns and seek help from their colleagues, thereby strengthening emotional bonds and reducing feelings of isolation.",
+      "theoretical_code": "If leadership provides guidance and mentoring, then team cohesion and peer empathy will improve.",
+      "description": "Leadership support plays a critical role in building a cohesive team. When leaders actively provide guidance and mentoring, it fosters a supportive environment where employees feel emotionally supported by their peers. This, in turn, enhances the overall well-being of employees by reducing stress and increasing job satisfaction.",
+      "theoretical_framework": "This theoretical code emphasizes the importance of leadership in creating a supportive work environment, which is crucial for employee well-being. Effective leadership practices not only improve team dynamics but also contribute to the emotional health of employees."
     }},
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "relationship": "Emotional Support ↔ Professional Development: A supportive team environment encourages employees to engage in professional development opportunities."
+      "relationship": "Emotional Support ↔ Professional Development: A supportive team environment encourages employees to engage in professional development opportunities. When employees feel emotionally supported by their peers and supervisors, they are more likely to pursue further training and skill development. This mutual reinforcement between emotional support and professional growth creates a positive feedback loop, leading to continuous personal and professional development.",
+      "theoretical_code": "Because a supportive team environment exists, employees are more likely to participate in professional development.",
+      "description": "In a work environment where emotional support is prevalent, employees are more inclined to take advantage of professional development opportunities. This mutual reinforcement between emotional support and professional growth leads to a more engaged and satisfied workforce.",
+      "theoretical_framework": "The relationship between emotional support and professional development highlights their synergistic effect on employee well-being. By fostering a supportive atmosphere, organizations can encourage continuous learning and growth among their employees."
     }},
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "relationship": "Professional Development → Employee Well-being: Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being."
+      "relationship": "Professional Development → Employee Well-being: Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being. Employees who have opportunities for professional growth feel valued and motivated, which enhances their sense of achievement and fulfillment. This, in turn, boosts their overall job satisfaction and contributes positively to their mental and emotional well-being.",
+      "theoretical_code": "Professional development opportunities lead to increased job satisfaction and well-being.",
+      "description": "When employees have access to training and career advancement opportunities, they experience a greater sense of achievement and job satisfaction. This sense of growth and advancement is a key component of overall well-being, as it fulfills employees' aspirations and professional goals.",
+      "theoretical_framework": "Professional development is a crucial factor in enhancing employee well-being. Organizations that invest in the growth of their employees not only boost job satisfaction but also improve overall organizational health."
     }},
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "relationship": "Work-Life Balance → Employee Well-being: Flexible work arrangements help employees manage stress and improve their overall well-being."
-    }}
-  ],
-  "Theoretical Coding_theoretical_codes": [
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "theoretical_code": "If leadership provides guidance and mentoring, then team cohesion and peer empathy will improve."
+      "relationship": "Work-Life Balance → Employee Well-being: Flexible work arrangements help employees manage stress and improve their overall well-being. Employees with flexible work schedules can better balance their work and personal lives, leading to reduced stress levels and increased job satisfaction. This balance is essential for maintaining mental health and preventing burnout.",
+      "theoretical_code": "Flexible work hours reduce stress, which is part of improving overall employee well-being.",
+      "description": "Flexible work arrangements allow employees to balance their professional and personal lives more effectively. This reduction in work-related stress leads to improved mental health and job satisfaction, contributing to overall well-being.",
+      "theoretical_framework": "Work-life balance is an essential aspect of employee well-being. By offering flexible work arrangements, organizations can help employees manage stress better and maintain a healthier work-life balance."
     }},
     {{
       "core_category_index": 1,
       "coreCategoryName": "Employee Well-being",
-      "theoretical_code": "Because a supportive team environment exists, employees are more likely to participate in professional development."
-    }},
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "theoretical_code": "Professional development opportunities lead to increased job satisfaction and well-being."
-    }},
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "theoretical_code": "Flexible work hours reduce stress, which is part of improving overall employee well-being."
-    }}
-  ],
-  "Theoretical Coding_theoretical_framework": [
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "framework_component": "Leadership Support",
-      "description": "Leads to Emotional Support and Professional Development."
-    }},
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "framework_component": "Emotional Support",
-      "description": "Reduces stress and increases job satisfaction."
-    }},
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "framework_component": "Professional Development",
-      "description": "Enhances sense of growth and job satisfaction."
-    }},
-    {{
-      "core_category_index": 1,
-      "coreCategoryName": "Employee Well-being",
-      "framework_component": "Work-Life Balance",
-      "description": "Reduces burnout and enhances job satisfaction."
+      "relationship": "Professional Development → Emotional Support: Professional development activities can strengthen emotional support among employees by providing shared learning experiences and fostering a culture of mutual encouragement. Employees who engage in professional growth together often develop stronger bonds and are more likely to support each other's emotional needs.",
+      "theoretical_code": "If employees engage in professional development activities together, then their emotional support for each other will strengthen.",
+      "description": "Shared professional development experiences can enhance emotional bonds between employees. When employees learn and grow together, they build a culture of mutual support and encouragement, which contributes to their overall emotional well-being.",
+      "theoretical_framework": "Professional development not only advances skills and career growth but also fosters a supportive work environment by strengthening emotional connections among employees."
     }}
   ],
   "table_format_visualization": [
     {{
-      "CoreCategory": "Employee Well-being",
-      "Relationships": [
-        {{"From": "Leadership Support", "To": "Emotional Support", "Description": "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers."}},
-        {{"From": "Emotional Support", "To": "Professional Development", "Description": "A supportive team environment encourages employees to engage in professional development opportunities."}},
-        {{"From": "Professional Development", "To": "Employee Well-being", "Description": "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being."}},
-        {{"From": "Work-Life Balance", "To": "Employee Well-being", "Description": "Flexible work arrangements help employees manage stress and improve their overall well-being."}}
+      "core_category": "Employee Well-being",
+      "relationships": [
+        {{"From": "Leadership Support", "To": "Emotional Support", "Description": "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers. Leaders who provide guidance, recognition, and mentoring create an atmosphere of trust and collaboration."}},
+        {{"From": "Emotional Support", "To": "Professional Development", "Description": "A supportive team environment encourages employees to engage in professional development opportunities. Emotional support from peers and supervisors motivates employees to pursue further training and skill development."}},
+        {{"From": "Professional Development", "To": "Employee Well-being", "Description": "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being. Professional growth enhances employees' sense of achievement and fulfillment."}},
+        {{"From": "Work-Life Balance", "To": "Employee Well-being", "Description": "Flexible work arrangements help employees manage stress and improve their overall well-being. A balanced work schedule reduces stress and increases job satisfaction."}},
+        {{"From": "Professional Development", "To": "Emotional Support", "Description": "Shared professional development experiences can enhance emotional bonds between employees. Engaging in professional growth together fosters mutual encouragement and emotional support."}}
       ]
     }}
   ]
@@ -409,7 +385,7 @@ Example JSON Output:
 
 # Theory development
 gt_prompt6 = """
-Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, categories, selective coding, and theoretical coding. You are requested to perform theory development to formulate a grounded theory that explains the studied phenomenon and to ensure the theory is well-grounded in the data and supported by the categories and their relationships.
+Read the interview transcripts provided and familiarize yourself with them, understanding the context, themes, concepts, patterns, and notable differences. Review the previous phases regarding initial codes, subcategories, categories, selective coding, and theoretical coding. You are requested to perform theory development to formulate a grounded theory that explains the studied phenomenon and ensure the theory is well-grounded in the data and supported by the categories and their relationships.
 
 Guidelines for Theory Development:
 1. Formulate the Theory by synthesizing the categories and their relationships into a coherent theory that explains the core phenomenon. Review categories and relationships by examining all the categories and their identified relationships. Ensure you have a comprehensive understanding of how each category relates to the core phenomenon. Synthesize information by integrating these categories and relationships into a coherent framework. This involves combining the different elements in a way that they form a unified explanation of the phenomenon. Develop theoretical statements by creating theoretical statements or propositions that encapsulate the synthesized information. These statements should clearly articulate how different categories interact to explain the core phenomenon.
@@ -417,22 +393,24 @@ Guidelines for Theory Development:
 3. Ensure that the relationships between categories support the overall theory. Each aspect of the theory should be backed by evidence from the data. For each relationship identified in the theoretical framework, find supporting data. This can be quotes from interviews, observed behaviors, or other relevant data points. Create a document or table where each relationship is listed alongside the supporting evidence from the data. If supporting evidence cannot be found, document the discrepancies by noting which relationships are not supported by the data, what specific issues exist, and why these issues are not supported by the data.
 
 For each core category, provide:
-- Theoretical statements
-- Discrepancies regarding statements
-- Discrepancies regarding relationships
+- Core phenomenon summarizing and describing the characteristics and properties of the developed theory,
+- Theoretical statements,
+- Discrepancies regarding statements,
+- Discrepancies regarding relationships.
 
-Example JSON Output:
+Truncated example of the JSON output:
 {{
   "Theory Development": [
     {{
       "coreCategoryIndex": 1,
       "coreCategoryName": "Employee Well-being",
+      "Core phenomenon": "Employee well-being is significantly enhanced by effective leadership, access to professional development, and flexible work arrangements, which together foster a supportive environment, reduce stress, and increase job satisfaction.",
       "Theoretical Statements": [
-        "Effective leadership practices foster a supportive team environment, enhancing emotional support among peers.",
-        "A supportive team environment encourages employees to engage in professional development opportunities.",
+        "Effective leadership practices foster a supportive team environment, which enhances emotional support among peers.",
+        "A supportive team environment encourages employees to engage in professional development opportunities, leading to increased job satisfaction.",
         "Access to training and career advancement opportunities directly contributes to higher job satisfaction and overall well-being.",
         "Flexible work arrangements help employees manage stress and improve their overall well-being.",
-        "Emotional Support → Work-Life Balance: Emotional support from peers and leaders helps employees manage work-related stress, contributing to a better work-life balance."
+        "Emotional support from peers and leaders helps employees manage work-related stress, contributing to a better work-life balance."
       ]
     }}
   ],
@@ -494,7 +472,7 @@ Recommendations for Further Research. Identify areas for further research and re
 - What questions remain unanswered that future research could address?
 - Suggest potential research directions or methodologies that could build on the current findings.
 
-Example Output:
+Truncated example of the JSON output:
 {{
   "Implications And Recommendations": {{
     "Practical Implications": "The findings suggest that effective leadership practices can significantly enhance employee well-being. By fostering a supportive team environment and providing opportunities for professional development, organizations can reduce stress and increase job satisfaction among employees. Specific strategies derived from the theory include implementing mentorship programs, regular feedback sessions, and team-building activities. These practices can lead to improved employee morale, higher retention rates, and better overall performance.",

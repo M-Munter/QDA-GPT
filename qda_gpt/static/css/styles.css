@@ -196,7 +196,7 @@ button:disabled {
     padding: 45px; /* Adjust padding for better margin */
     position: fixed;
     z-index: 1000;
-    max-width: 450px;
+    max-width: 460px;
     left: 50%;
     top: 136px;
     transform: translateX(-50%); /* Center horizontally only */

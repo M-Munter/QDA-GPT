@@ -14,6 +14,7 @@ function showLoader(type) {
     }
 }
 
+
 function selectAnalysisType(type) {
     document.getElementById('analysis_type').value = type;
     document.getElementById('analysis_type_hidden').value = type;

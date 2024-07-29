@@ -186,24 +186,6 @@ def wrap_text(text, max_length):
         lines.append(current_line)
     return "\n".join(lines)
 
-
-# Function to create the combined flowchart
-def wrap_text(text, max_length):
-    words = text.split()
-    lines = []
-    current_line = ""
-    for word in words:
-        if len(current_line) + len(word) + 1 <= max_length:
-            if (current_line):
-                current_line += " "
-            current_line += word
-        else:
-            lines.append(current_line)
-            current_line = word
-    if current_line:
-        lines.append(current_line)
-    return "\n".join(lines)
-
 def create_combined_flowchart(data):
     print(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
 
@@ -227,8 +209,8 @@ def create_combined_flowchart(data):
 
     # Process each CoreCategory in the filtered tables
     for i, table_data in enumerate(filtered_data["table_format_visualization"]):
-        core_category = table_data["CoreCategory"]
-        relationships = table_data["Relationships"]
+        core_category = table_data["core_category"]
+        relationships = table_data["relationships"]
 
         # Add a subgraph for each CoreCategory to maintain separation
         with dot.subgraph(name=f'cluster_{i}') as sub:
