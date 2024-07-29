@@ -27,9 +27,12 @@
     </div>
     {% block content %}
     {% endblock %}
+    {% block footer %}
     <footer>
         <p>Version: {{ version }}</p>
     </footer>
+    {% endblock %}
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
+

@@ -1,4 +1,3 @@
-<!-- templates/registration/logout.html -->
 {% extends "qda_gpt/base.html" %}
 
 {% block title %}Logged Out - QDA-GPT{% endblock %}
@@ -8,4 +7,8 @@
     <h2>You have been logged out.</h2>
     <p>Click <a href="{% url 'login' %}">here</a> to log in again.</p>
 </div>
+{% endblock %}
+
+{% block footer %}
+<!-- No footer for logout page -->
 {% endblock %}
