@@ -15,6 +15,18 @@ function showLoader(type) {
 }
 
 
+function selectAnalysisType(type) {
+    document.getElementById('analysis_type').value = type;
+    document.getElementById('analysis_type_hidden').value = type;
+    var buttons = document.querySelectorAll('.analysis-button');
+    buttons.forEach(function(button) {
+        button.classList.remove('active-button');
+    });
+    document.getElementById(type + '-button').classList.add('active-button');
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
+}
+
 
 function selectAnalysisType(type) {
     document.getElementById('analysis_type_hidden').value = type; // Update this line to ensure the correct ID

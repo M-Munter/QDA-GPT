@@ -14,9 +14,10 @@ function showLoader(type) {
     }
 }
 
+
+
 function selectAnalysisType(type) {
-    document.getElementById('analysis_type').value = type; // Ensure this line has the correct ID
-    document.getElementById('analysis_type_hidden').value = type;
+    document.getElementById('analysis_type_hidden').value = type; // Update this line to ensure the correct ID
     var buttons = document.querySelectorAll('.analysis-button');
     buttons.forEach(function(button) {
         button.classList.remove('active-button');
@@ -79,16 +80,17 @@ function clearSessionData() {
     });
 }
 
-function downloadCSV() {
+function downloadXLSX() {
+    console.log("[DEBUG] downloadExcel called.");
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.csv`;
+    const fileName = `qda_${year}_${month}_${day}_${hours}${minutes}.xlsx`;
 
-    const url = `/download_csv/?file_name=${fileName}`;
+    const url = `/download_xlsx/?file_name=${fileName}`;
     fetch(url)
         .then(response => response.blob())
         .then(blob => {
@@ -102,12 +104,30 @@ function downloadCSV() {
             window.URL.revokeObjectURL(downloadUrl);
             document.body.removeChild(a);
         })
-        .catch(error => console.error('Error downloading CSV:', error));
+        .catch(error => console.error('Error downloading Excel:', error));
+}
+
+
+function showInfo(event, infoId) {
+    event.preventDefault(); // Prevent default action
+    event.stopPropagation(); // Prevent the file explorer from opening
+    var infoBox = document.getElementById(infoId);
+    if (infoBox.style.display === "none" || infoBox.style.display === "") {
+        infoBox.style.display = "block";
+    } else {
+        infoBox.style.display = "none";
+    }
+}
+
+function hideInfo(infoId) {
+    var infoBox = document.getElementById(infoId);
+    infoBox.style.display = "none";
 }
 
 
 
 function validateForm() {
+    console.log("[DEBUG] validateForm called.");
     const fileInput = document.querySelector('input[type="file"]').files.length > 0;
     const analysisType = document.getElementById('analysis_type_hidden').value !== "";
     const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
@@ -117,24 +137,59 @@ function validateForm() {
 
     analyzeButton.disabled = !isValid;
     console.log("Analyze button disabled state:", analyzeButton.disabled);
+
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
     document.querySelectorAll('.analysis-button').forEach(button => {
         button.addEventListener('click', validateForm);
     });
     document.querySelector('textarea[name="user_prompt"]').addEventListener('input', validateForm);
 
+    // Add event listeners to info buttons
+    document.querySelectorAll('.info-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            const infoId = this.getAttribute('data-info-id');
+            showInfo(event, infoId);
+        });
+    });
+
+    // Prevent entire row from being clickable
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.addEventListener('click', function(event) {
+            if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA' && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'LABEL' && event.target.className !== 'file-name') {
+                event.stopPropagation();
+            }
+        });
+    });
+
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+
+
     // Initially disable the Analyze button
     validateForm();
 
-    // Enable the Download CSV button if deletion_results is present
+    // Enable the Download Excel button if deletion_results is present
     const deletionResults = document.getElementById('deletion-results').getAttribute('data-results');
+    console.log("[DEBUG] Initial deletionResults:", deletionResults);
     if (deletionResults === 'true') {
-        const downloadButton = document.getElementById('download-csv-btn');
+        const downloadButton = document.getElementById('download-xlsx-btn');
         downloadButton.disabled = false;
         downloadButton.classList.remove('disabled-button');
+        console.log("[DEBUG] Download button enabled initially.");
     }
+
+    // Hide all info boxes initially
+    var infoBoxes = document.querySelectorAll('.info-box');
+    infoBoxes.forEach(function(infoBox) {
+        infoBox.style.display = 'none';
+    });
+
 });
 
