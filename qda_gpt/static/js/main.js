@@ -184,8 +184,6 @@ window.onload = function() {
 
 
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
