@@ -65,7 +65,7 @@ function fetchStatus() {
         if (data.setup_status) {
             document.getElementById('setup-status').innerText = data.setup_status;
         }
-        if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
+        if (data.setup_status !== "OpenAI Assistant initialized successfully. Running analysis. This will take a while.") {
             setTimeout(fetchStatus, 500); // Poll half a second
         }
     });
