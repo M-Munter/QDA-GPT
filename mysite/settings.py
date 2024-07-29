@@ -37,7 +37,8 @@ SECRET_KEY = 'django-insecure-+^3va&8@w%(og5gl596@yrvt7l6x3scf2f0yk(7#v2ia!gy$!l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['qda-gpt-app.herokuapp.com']
+ALLOWED_HOSTS = ['qda-gpt-321ef8ef83f6.herokuapp.com']
+
 
 # Application definition
 
