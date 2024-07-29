@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-
 import os
 from dotenv import load_dotenv
 from pathlib import Path
@@ -20,6 +19,7 @@ import dj_database_url
 load_dotenv()  # This loads the .env file at the project root into environment variables
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 
 DATABASES = {
     'default': dj_database_url.config(default='postgres://localhost')
@@ -155,4 +155,13 @@ else:  # Local
 LOGIN_REDIRECT_URL = 'dashboard'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
 

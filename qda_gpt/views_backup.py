@@ -9,6 +9,8 @@ from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from .openai_api import initialize_openai_resources, create_thread
+from .tasks import run_analysis_task
+from celery.result import AsyncResult
 from .forms import LoginForm
 from .forms import SetupForm
 from .__version__ import __version__
@@ -289,7 +291,7 @@ def handle_setup(request, setup_form):
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Running analysis. This will take a while."
                 request.session.save()  # Explicitly save the session
 
                 time.sleep(1)

@@ -9,6 +9,8 @@ from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from .openai_api import initialize_openai_resources, create_thread
+from .tasks import run_analysis_task
+from celery.result import AsyncResult
 from .forms import LoginForm
 from .forms import SetupForm
 from .__version__ import __version__
@@ -41,6 +43,20 @@ def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
 
+
+@login_required
+def check_task_status(request):
+    task_id = request.session.get('task_id')
+    if task_id:
+        task_result = AsyncResult(task_id)
+        if task_result.state == 'SUCCESS':
+            # Update the session with the task result
+            request.session['prompt_table_pairs'] = task_result.result.get('prompt_table_pairs', [])
+            request.session['flowchart_path'] = task_result.result.get('flowchart_path', '')
+            return JsonResponse({'status': 'SUCCESS', 'result': task_result.result})
+        else:
+            return JsonResponse({'status': task_result.state})
+    return JsonResponse({'status': 'No task found'})
 
 
 def clear_session_data(request):
@@ -435,15 +451,10 @@ def dashboard(request):
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
-                context_update = handle_analysis(request, analysis_type)
-                context.update(context_update)
-                print(f"[DEBUG] Flowchart path in context update BEFORE: {context['flowchart_path']}\n")  # Debug print
-                request.session['prompt_table_pairs'] = context.get('prompt_table_pairs', [])
-                context['prompt_table_pairs_json'] = json.dumps(
-                    context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
-                )
-                print(f"[DEBUG] Flowchart path in context update: {context['flowchart_path']}\n")  # Debug print
-
+                # Start the Celery task instead of running the analysis synchronously
+                task = run_analysis_task.delay(request.session['assistant_id'], request.session['thread_id'], analysis_type)
+                request.session['task_id'] = task.id
+                context['analysis_status'] = 'Analysis started. Please check back later for the results.'
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
 
