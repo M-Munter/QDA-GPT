@@ -9,10 +9,7 @@ from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
 from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
 from .openai_api import initialize_openai_resources, create_thread
-from .tasks import run_analysis_task
-from celery.result import AsyncResult
-from .forms import LoginForm
-from .forms import SetupForm
+from .forms import LoginForm, SetupForm
 from .__version__ import __version__
 from collections import OrderedDict
 from urllib.parse import quote
@@ -23,8 +20,10 @@ import inspect
 import os
 import time
 import json
+import logging
 
 
+logger = logging.getLogger(__name__)
 
 def login_view(request):
     if request.method == 'POST':
@@ -44,19 +43,6 @@ def logout_view(request):
     return render(request, 'registration/logout.html')
 
 
-@login_required
-def check_task_status(request):
-    task_id = request.session.get('task_id')
-    if task_id:
-        task_result = AsyncResult(task_id)
-        if task_result.state == 'SUCCESS':
-            # Update the session with the task result
-            request.session['prompt_table_pairs'] = task_result.result.get('prompt_table_pairs', [])
-            request.session['flowchart_path'] = task_result.result.get('flowchart_path', '')
-            return JsonResponse({'status': 'SUCCESS', 'result': task_result.result})
-        else:
-            return JsonResponse({'status': task_result.state})
-    return JsonResponse({'status': 'No task found'})
 
 
 def clear_session_data(request):
@@ -125,10 +111,10 @@ def generate_tables_from_response(response_text):
         return tables
 
     except json.JSONDecodeError as e:
-        print(f"JSONDecodeError: {e}")
+        logger.error(f"JSONDecodeError: {e}")
         return []
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
         return []
 
 def explode_nested_columns(df):
@@ -401,14 +387,14 @@ def handle_analysis(request, analysis_type):
                         flowchart_path = '/' + flowchart_path + ".png"
                         print(f"[DEBUG] Flowchart path: {flowchart_path}\n")  # Debug print
             except json.JSONDecodeError as e:
-                print(f"[DEBUG] Failed to parse response JSON: {e}\n")
+                logger.error(f"Failed to parse response JSON: {e}")
             except Exception as e:
-                print(f"[DEBUG] Error generating flowchart: {e}\n")
+                logger.error(f"Error generating flowchart: {e}")
             # Ensure flowchart_path is retained if it is set
             if flowchart_path:
-                print(f"[DEBUG] Flowchart path updated: {flowchart_path}\n")
+                logger.debug(f"Flowchart path updated: {flowchart_path}")
 
-        print(f"[DEBUG] Flowchart path before return: {flowchart_path}\n")  # Debug print
+        logger.debug(f"Flowchart path before return: {flowchart_path}")
         return {
             'prompt_table_pairs': prompt_table_pairs,
             'flowchart_path': flowchart_path,
@@ -451,10 +437,15 @@ def dashboard(request):
         if action == 'analyze':
             setup_success = handle_setup(request, setup_form)
             if setup_success:
-                # Start the Celery task instead of running the analysis synchronously
-                task = run_analysis_task.delay(request.session['assistant_id'], request.session['thread_id'], analysis_type)
-                request.session['task_id'] = task.id
-                context['analysis_status'] = 'Analysis started. Please check back later for the results.'
+                context_update = handle_analysis(request, analysis_type)
+                context.update(context_update)
+                print(f"[DEBUG] Flowchart path in context update BEFORE: {context['flowchart_path']}\n")  # Debug print
+                request.session['prompt_table_pairs'] = context.get('prompt_table_pairs', [])
+                context['prompt_table_pairs_json'] = json.dumps(
+                    context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
+                )
+                logger.debug(f"Flowchart path in context update: {context['flowchart_path']}")
+
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
 

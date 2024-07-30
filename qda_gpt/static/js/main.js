@@ -154,35 +154,6 @@ function validateForm() {
 
 
 
-function checkTaskStatus() {
-    fetch('/check-task-status/')
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'SUCCESS') {
-                // Handle the successful completion of the task
-                console.log('Task completed:', data.result);
-                // Update the UI with the result
-                // You might want to reload the page or update specific elements
-            } else if (data.status === 'FAILURE') {
-                // Handle the failure of the task
-                console.error('Task failed');
-            } else {
-                // Task is still in progress, check again after a delay
-                setTimeout(checkTaskStatus, 5000);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching task status:', error);
-        });
-}
-
-// Start checking the task status after the page loads
-window.onload = function() {
-    setTimeout(checkTaskStatus, 5000);
-};
-
-
-
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("[DEBUG] DOMContentLoaded event triggered.");
