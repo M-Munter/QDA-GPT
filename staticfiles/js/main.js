@@ -65,7 +65,7 @@ function fetchStatus() {
         if (data.setup_status) {
             document.getElementById('setup-status').innerText = data.setup_status;
         }
-        if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
+        if (data.setup_status !== "OpenAI Assistant initialized successfully. Running analysis. This will take a while.") {
             setTimeout(fetchStatus, 500); // Poll half a second
         }
     });
@@ -152,6 +152,9 @@ function validateForm() {
 
 }
 
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
@@ -204,4 +207,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+
+
+// Establish WebSocket connection to the specified path
+const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    console.log(data.message);
+};
+
+socket.onclose = function(e) {
+    console.error('WebSocket closed unexpectedly');
+};
+
+function sendMessage(message) {
+    socket.send(JSON.stringify({
+        'message': message
+    }));
+}
 

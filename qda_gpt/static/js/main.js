@@ -1,3 +1,5 @@
+//main.js
+
 // Function to get the CSRF token from the meta tag
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -206,5 +208,110 @@ document.addEventListener('DOMContentLoaded', function() {
         infoBox.style.display = 'none';
     });
 
+
 });
+
+// Establish WebSocket connection to the specified path
+const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+
+socket.onopen = function() {
+    console.log('WebSocket connection opened');
+    // Send a simple message to trigger the server response
+    socket.send(JSON.stringify({message: 'Test message'}));
+};
+
+socket.send(JSON.stringify({message: 'Test message'}));
+
+
+const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+
+socket.onopen = function() {
+    console.log('WebSocket connection opened');
+    // No need to send a message on open unless you have a specific need
+};
+
+socket.onmessage = function(e) {
+    console.log('WebSocket message received:', e.data);
+    const data = JSON.parse(e.data);
+
+    if (data.prompt_table_pairs) {
+        updateResults(data.prompt_table_pairs);
+    }
+    if (data.flowchart_path) {
+        updateFlowchart(data.flowchart_path);
+    }
+    if (data.analysis_status) {
+        updateAnalysisStatus(data.analysis_status);
+    }
+};
+
+socket.onclose = function(e) {
+    console.error('WebSocket closed unexpectedly');
+};
+
+socket.onerror = function(error) {
+    console.error('WebSocket error:', error);
+};
+
+
+function updateResults(promptTablePairs) {
+    const resultContainer = document.getElementById('websocket-data');
+    resultContainer.innerHTML = ''; // Clear previous results
+
+    promptTablePairs.forEach(pair => {
+        const promptDiv = document.createElement('div');
+        promptDiv.innerHTML = `<strong>User Prompt:</strong> ${pair.prompt}`;
+        resultContainer.appendChild(promptDiv);
+
+        pair.tables.forEach(table => {
+            const tableDiv = document.createElement('div');
+            tableDiv.innerHTML = `<strong>${table.table_name}</strong>`;
+            const tableElement = document.createElement('table');
+            tableElement.classList.add('generated-table');
+
+            const headerRow = document.createElement('tr');
+            table.columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+            tableElement.appendChild(headerRow);
+
+            table.data.forEach(row => {
+                const rowElement = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    rowElement.appendChild(td);
+                });
+                tableElement.appendChild(rowElement);
+            });
+
+            resultContainer.appendChild(tableDiv);
+            resultContainer.appendChild(tableElement);
+        });
+    });
+}
+
+
+function updateFlowchart(flowchartPath) {
+    const flowchartContainer = document.getElementById('websocket-data');
+    const imgElement = document.createElement('img');
+    imgElement.src = flowchartPath;
+    imgElement.alt = 'Generated Flowchart';
+    imgElement.style.marginTop = '6px';
+    imgElement.style.marginBottom = '12px';
+    flowchartContainer.appendChild(imgElement);
+}
+
+function updateAnalysisStatus(status) {
+    const statusContainer = document.getElementById('status-container');
+    statusContainer.innerHTML = `<strong>${status}</strong>`;
+}
+
+
+
+
+
+
 

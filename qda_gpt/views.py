@@ -1,9 +1,11 @@
 # views.py
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from asgiref.sync import sync_to_async
 from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
@@ -11,10 +13,14 @@ from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theor
 from .openai_api import initialize_openai_resources, create_thread
 from .forms import LoginForm, SetupForm
 from .__version__ import __version__
+from channels.layers import get_channel_layer
+from channels.db import database_sync_to_async
 from collections import OrderedDict
 from urllib.parse import quote
 from openpyxl import Workbook
 from graphviz import Digraph
+from asgiref.sync import async_to_sync
+import asyncio
 import pandas as pd
 import inspect
 import os
@@ -111,10 +117,10 @@ def generate_tables_from_response(response_text):
         return tables
 
     except json.JSONDecodeError as e:
-        logger.error(f"JSONDecodeError: {e}")
+        logger.error(f"JSONDecodeError: {e}\n")
         return []
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}\n")
         return []
 
 def explode_nested_columns(df):
@@ -212,7 +218,7 @@ def wrap_text(text, max_length):
     return "\n".join(lines)
 
 def create_combined_flowchart(data):
-    print(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
+    logger.debug(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
 
     # Clean and parse JSON data
     start = data.find('{')
@@ -224,7 +230,7 @@ def create_combined_flowchart(data):
 
     # Filter the data to only include tables with "visualization" in their name
     filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
-    print(f"[DEBUG] Filtered data: {filtered_data}\n")  # Debug print
+    logger.debug(f"[DEBUG] Filtered data: {filtered_data}\n")  # Debug print
 
     # Create a single Digraph instance
     dot = Digraph()
@@ -326,14 +332,16 @@ def handle_setup(request, setup_form):
     return False
 
 
+def truncate_message(message, max_length=100):
+    return (message[:max_length] + '...') if len(message) > max_length else message
 
-def handle_analysis(request, analysis_type):
+async def run_analysis_async(analysis_data):
+    analysis_type = analysis_data['analysis_type']
     analysis_funcs = {
         'thematic': thematic_analysis,
         'content': content_analysis,
         'grounded': grounded_theory
     }
-
 
     if analysis_type in analysis_funcs:
         analysis_module = analysis_funcs[analysis_type]
@@ -341,24 +349,25 @@ def handle_analysis(request, analysis_type):
         prompt_table_pairs = []
         phases = [func for name, func in analysis_module.__dict__.items() if name.startswith('phase')]
         responses = {}
-        flowchart_path = None  # Initialize flowchart_path here
+        flowchart_path = None
 
         for idx, phase in enumerate(phases):
             phase_name = phase.__name__
+            logger.debug(f"Running phase: {phase_name}")
             phase_params = inspect.signature(phase).parameters
 
             # Prepare the arguments for the current phase
-            args = [request]
+            args = [analysis_data]
             if idx == 0:
                 result = phase(*args)
             elif analysis_type == 'content' and phase_name == 'phase5':
-                result = phase(request, responses['phase1'])
+                result = phase(analysis_data, responses['phase1'])
             elif analysis_type == 'thematic' and phase_name == 'phase5':
-                result = phase(request, responses['phase4'])
+                result = phase(analysis_data, responses['phase4'])
             elif analysis_type == 'thematic' and phase_name == 'phase6':
-                result = phase(request, responses['phase2'])
+                result = phase(analysis_data, responses['phase2'])
             elif analysis_type == 'thematic' and phase_name == 'phase7':
-                result = phase(request, responses['phase1'])
+                result = phase(analysis_data, responses['phase1'])
             else:
                 result = phase(*args)
 
@@ -369,39 +378,95 @@ def handle_analysis(request, analysis_type):
             else:
                 response_json = result
 
+            if response_json is None:
+                logger.error(f"Phase {phase_name} returned None")
+                continue
+
             responses[phase_name] = response_json
             formatted_prompts.append(formatted_prompt)
+
+            logger.debug(f"Latest response after phase {phase_name}: {response_json}")
+
             tables = generate_tables_from_response(response_json)
             prompt_table_pairs.append({'prompt': formatted_prompt, 'tables': tables})
 
-            # Handle the response and create the flowchart if needed
-            try:
-                # Check if any table name contains "visualization"
-                if "table_format_visualization" in response_json:
-                    print("[DEBUG] Visualization data found in response JSON\n")  # Debug print
-                    print(f"[DEBUG] Passing response_json to create_combined_flowchart: {response_json}\n")
+            if "table_format_visualization" in response_json:
+                logger.debug(f"Key 'table_format_visualization' found in response_json")
+                try:
+                    logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
                     if flowchart:
                         flowchart_path = f"static/flowcharts/flowchart_{int(time.time())}"
                         save_flowchart_as_png(flowchart, flowchart_path)
                         flowchart_path = '/' + flowchart_path + ".png"
-                        print(f"[DEBUG] Flowchart path: {flowchart_path}\n")  # Debug print
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse response JSON: {e}")
-            except Exception as e:
-                logger.error(f"Error generating flowchart: {e}")
-            # Ensure flowchart_path is retained if it is set
-            if flowchart_path:
-                logger.debug(f"Flowchart path updated: {flowchart_path}")
+                        logger.debug(f"Flowchart path: {flowchart_path}\n")
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse response JSON: {e}\n")
+                except Exception as e:
+                    logger.error(f"Error generating flowchart: {e}\n")
+            else:
+                logger.debug(f"Key 'table_format_visualization' not found in response_json\n")
 
-        logger.debug(f"Flowchart path before return: {flowchart_path}")
-        return {
+            if flowchart_path:
+                logger.debug(f"Flowchart path updated: {flowchart_path}\n")
+
+        analysis_result = {
             'prompt_table_pairs': prompt_table_pairs,
             'flowchart_path': flowchart_path,
-            'analysis_status': analysis_status if 'analysis_status' in locals() else "",
-            'deletion_results': deletion_results if 'deletion_results' in locals() else ""
+            'analysis_status': analysis_status,
+            'deletion_results': deletion_results
         }
+
+        # Send the results to the WebSocket consumer
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(
+            "analysis_group",
+            {
+                "type": "send_analysis_result",
+                "content": analysis_result,
+            }
+        )
+
+        return analysis_result
+    logger.debug("Invalid analysis type")
     return {}
+
+
+@csrf_exempt
+async def run_analysis_view(request):
+    logger.debug("Attempting to start analysis...")
+    analysis_data = {
+        'analysis_type': request.POST.get('analysis_type'),
+        'user_prompt': request.POST.get('user_prompt'),
+        'file_name': request.POST.get('file_name'),
+        'assistant_id': request.POST.get('assistant_id'),
+        'thread_id': request.POST.get('thread_id'),
+        'vector_store_id': request.POST.get('vector_store_id'),
+        'file_id': request.POST.get('file_id')  # Ensure file_id is passed here
+    }
+    logger.debug(f"Analysis data: {analysis_data}")
+
+    channel_layer = get_channel_layer()
+    await channel_layer.send("analysis_channel", {
+        "type": "run_analysis",
+        "analysis_data": analysis_data
+    })
+
+    return JsonResponse({"status": "Task dispatched successfully"})
+
+
+@csrf_exempt
+def update_session(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        request.session['prompt_table_pairs'] = data.get('prompt_table_pairs', [])
+        request.session['flowchart_path'] = data.get('flowchart_path', '')
+        request.session['analysis_status'] = data.get('analysis_status', '')
+        request.session['deletion_results'] = data.get('deletion_results', '')
+
+        return JsonResponse({'status': 'Session updated successfully'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 
 @login_required
@@ -429,24 +494,32 @@ def dashboard(request):
         'prompt_table_pairs': request.session.get('prompt_table_pairs', []),
         'prompt_table_pairs_json': json.dumps(request.session.get('prompt_table_pairs', []), cls=DjangoJSONEncoder),
         'flowchart_path': request.session.get('flowchart_path', '')
-
     }
 
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'analyze':
+            logger.debug("Analyze action triggered")
             setup_success = handle_setup(request, setup_form)
             if setup_success:
-                context_update = handle_analysis(request, analysis_type)
-                context.update(context_update)
-                print(f"[DEBUG] Flowchart path in context update BEFORE: {context['flowchart_path']}\n")  # Debug print
-                request.session['prompt_table_pairs'] = context.get('prompt_table_pairs', [])
-                context['prompt_table_pairs_json'] = json.dumps(
-                    context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
-                )
-                logger.debug(f"Flowchart path in context update: {context['flowchart_path']}")
-
+                analysis_data = {
+                    'analysis_type': analysis_type,
+                    'assistant_id': request.session.get('assistant_id'),
+                    'thread_id': request.session.get('thread_id'),
+                    'vector_store_id': request.session.get('vector_store_id'),
+                    'file_name': request.session.get('file_name'),
+                    'user_prompt': request.session.get('user_prompt')
+                }
+                logger.debug(f"Dispatching analysis task: {analysis_data}")
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.send)("analysis_channel", {
+                    "type": "run_analysis",
+                    "analysis_data": analysis_data
+                })
+                context['setup_status'] = "Analysis task dispatched."
+                request.session.save()
             else:
                 context['setup_status'] = request.session.get('setup_status', '')
 
     return render(request, 'qda_gpt/dashboard.html', context)
+

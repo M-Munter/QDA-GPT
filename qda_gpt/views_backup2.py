@@ -1,16 +1,18 @@
 # views.py
 from django.shortcuts import render, redirect
-from .forms import SetupForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-from .openai_api import initialize_openai_resources, create_thread
-from .__version__ import __version__
-from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
-from collections import OrderedDict
 from django.core.serializers.json import DjangoJSONEncoder
-from urllib.parse import quote
 from qda_gpt.prompts.prompts_ca import ca_instruction
 from qda_gpt.prompts.prompts_gt import gt_instruction
 from qda_gpt.prompts.prompts_ta import ta_instruction
+from qda_gpt.analyses import thematic_analysis, content_analysis, grounded_theory
+from .openai_api import initialize_openai_resources, create_thread
+from .forms import LoginForm, SetupForm
+from .__version__ import __version__
+from collections import OrderedDict
+from urllib.parse import quote
 from openpyxl import Workbook
 from graphviz import Digraph
 import pandas as pd
@@ -18,6 +20,29 @@ import inspect
 import os
 import time
 import json
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'registration/login.html')
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
+
+
 
 
 def clear_session_data(request):
@@ -86,10 +111,10 @@ def generate_tables_from_response(response_text):
         return tables
 
     except json.JSONDecodeError as e:
-        print(f"JSONDecodeError: {e}")
+        logger.error(f"JSONDecodeError: {e}")
         return []
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
         return []
 
 def explode_nested_columns(df):
@@ -266,7 +291,7 @@ def handle_setup(request, setup_form):
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Sending messages to the Assistant."
+                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Running analysis. This will take a while."
                 request.session.save()  # Explicitly save the session
 
                 time.sleep(1)
@@ -362,14 +387,14 @@ def handle_analysis(request, analysis_type):
                         flowchart_path = '/' + flowchart_path + ".png"
                         print(f"[DEBUG] Flowchart path: {flowchart_path}\n")  # Debug print
             except json.JSONDecodeError as e:
-                print(f"[DEBUG] Failed to parse response JSON: {e}\n")
+                logger.error(f"Failed to parse response JSON: {e}")
             except Exception as e:
-                print(f"[DEBUG] Error generating flowchart: {e}\n")
+                logger.error(f"Error generating flowchart: {e}")
             # Ensure flowchart_path is retained if it is set
             if flowchart_path:
-                print(f"[DEBUG] Flowchart path updated: {flowchart_path}\n")
+                logger.debug(f"Flowchart path updated: {flowchart_path}")
 
-        print(f"[DEBUG] Flowchart path before return: {flowchart_path}\n")  # Debug print
+        logger.debug(f"Flowchart path before return: {flowchart_path}")
         return {
             'prompt_table_pairs': prompt_table_pairs,
             'flowchart_path': flowchart_path,
@@ -379,6 +404,7 @@ def handle_analysis(request, analysis_type):
     return {}
 
 
+@login_required
 def dashboard(request):
     if request.method == 'GET':
         clear_session_data(request)
@@ -418,7 +444,7 @@ def dashboard(request):
                 context['prompt_table_pairs_json'] = json.dumps(
                     context.get('prompt_table_pairs', []), cls=DjangoJSONEncoder
                 )
-                print(f"[DEBUG] Flowchart path in context update: {context['flowchart_path']}\n")  # Debug print
+                logger.debug(f"Flowchart path in context update: {context['flowchart_path']}")
 
             else:
                 context['setup_status'] = request.session.get('setup_status', '')

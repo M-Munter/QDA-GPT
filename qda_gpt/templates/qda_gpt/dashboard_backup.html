@@ -41,6 +41,7 @@
                     <p>Select the OpenAI language model to use for the analysis:</p>
                     <p>- GPT-3.5 Turbo: A fast, inexpensive model for simple tasks</p>
                     <p>- GPT-4 Turbo and GPT-4: The previous set of high-intelligence models</p>
+                    <p>- GPT-4 mini: The most cost-efficient model that’s smarter and cheaper than GPT-3.5 Turbo</p>
                     <p>- GPT-4o: The fastest and most affordable flagship model</p>
                 </div>
             </div>
@@ -114,6 +115,13 @@
         </div>
         <div class="left-align">
             {% include "qda_gpt/response_table.html" %}
+            <br>
+            {% load static %}
+            {% if flowchart_path %}
+                <div><strong>Generated Flowchart:</strong></div>
+                <img src="{{ flowchart_path }}" alt="Flowchart" style="margin-top: 6px; margin-bottom: 12px;">
+            {% endif %}
+            <br>
             {% if deletion_results %}
                 <div><strong>OpenAI API call termination status:</strong> {{ deletion_results }}</div>
                 <div id="deletion-results" data-results="true"></div>

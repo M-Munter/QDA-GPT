@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('qda_gpt.urls')),  # Include the urls from the qda_gpt app
+    path('', include('qda_gpt.urls')),  # Include app urls
 ]
