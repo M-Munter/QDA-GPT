@@ -353,8 +353,8 @@ async def run_analysis_async(analysis_data):
         flowchart_path = None
 
         for idx, phase in enumerate(phases):
-            # Add 0.5 second delay before each phase starts
-            await asyncio.sleep(0.5)
+            # Add 0.2 second delay before each phase starts
+            await asyncio.sleep(0.2)
 
             # Send phase update through WebSocket
             await channel_layer.group_send(
@@ -490,6 +490,8 @@ def dashboard(request):
     user_prompt = request.POST.get('user_prompt', request.session.get('user_prompt', ''))
     file_name = request.session.get('file_name', '')
     uploaded_file_name = request.session.get('uploaded_file_name', '')
+    file_id = request.session.get('file_id')
+    model_choice = request.session.get('model_choice')
 
     if analysis_type:
         request.session['analysis_type'] = analysis_type
@@ -498,6 +500,8 @@ def dashboard(request):
         'setup_form': setup_form,
         'uploaded_file_name': uploaded_file_name,
         'version': __version__,
+        'file_id': file_id,
+        'model_choice': model_choice,
         'analysis_status': request.session.get('analysis_status', ''),
         'deletion_results': request.session.get('deletion_results', ''),
         'analysis_type': request.session.get('analysis_type', ''),
@@ -516,6 +520,8 @@ def dashboard(request):
             setup_success = handle_setup(request, setup_form)
             if setup_success:
                 analysis_data = {
+                    'file_id': file_id,
+                    'model_choice': model_choice,
                     'analysis_type': analysis_type,
                     'assistant_id': request.session.get('assistant_id'),
                     'thread_id': request.session.get('thread_id'),
