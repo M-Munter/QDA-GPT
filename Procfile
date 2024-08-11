@@ -1,2 +1,3 @@
-release: python manage.py collectstatic --noinput
-web: gunicorn mysite.wsgi --timeout 600 --log-file -
+web: daphne -p $PORT mysite.asgi:application
+worker: python manage.py runworker analysis_channel
+
