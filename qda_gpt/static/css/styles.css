@@ -210,9 +210,9 @@ button:disabled {
     padding: 45px; /* Adjust padding for better margin */
     position: fixed;
     z-index: 1000;
-    max-width: 460px;
+    max-width: 520px;
     left: 50%;
-    top: 136px;
+    top: 160px;
     transform: translateX(-50%); /* Center horizontally only */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left; /* Align text to left */
@@ -342,6 +342,42 @@ button:disabled {
     font-size: 13px; /* Smaller font size for normal text */
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
+
+
+.collapsible-section {
+    margin-bottom: 10px;
+}
+
+.collapsible-header {
+    background-color: #001f3f;
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.collapsible-content {
+    padding: 10px;
+    display: none;
+    border: 1px solid #ccc;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.table-name {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+
+.arrow-icon {
+    margin-right: 8px;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
 
 
 
@@ -515,3 +551,10 @@ button:disabled {
 .logout-button i {
     margin-right: 5px;
 }
+
+
+
+
+
+
+

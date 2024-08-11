@@ -316,59 +316,92 @@ socket.onerror = function(error) {
 
 
 
-function updateResults(promptTablePairs) {
+// This function will update the results and manage the collapsible sections
+function updateResults(promptTablePairs, flowchartPath) {
     const resultContainer = document.getElementById('websocket-data');
-
     resultContainer.innerHTML = ''; // Clear previous results
 
-    promptTablePairs.forEach(pair => {
-        // Add the "User Prompt" header only if there's a prompt
-        if (pair.prompt) {
-            const promptDiv = document.createElement('div');
-            promptDiv.innerHTML = `<strong>User Prompt:</strong> ${pair.prompt}`;
-            promptDiv.classList.add('left-align');
-            resultContainer.appendChild(promptDiv);
+    promptTablePairs.forEach((pair, index) => {
+        // Create and append collapsible section for Prompt
+        const promptSection = createCollapsibleSection(`Prompt ${index + 1}`, pair.prompt, `prompt-${index + 1}`);
+        resultContainer.appendChild(promptSection);
+
+        // Prepare the response content and append it inside a collapsible section
+        let responseContent = '';
+        pair.tables.forEach((table) => {
+            responseContent += `<div class="table-name">${table.table_name}</div>`;
+            responseContent += generateTableHtml(table);
+        });
+        const responseSection = createCollapsibleSection(`Response ${index + 1} from OpenAI Assistant`, responseContent, `response-${index + 1}`);
+        resultContainer.appendChild(responseSection);
+    });
+
+    // Handle the flowchart separately
+    if (flowchartPath) {
+        // First, remove any existing standalone flowchart
+        const existingFlowchart = document.querySelector('#websocket-data img[src="' + flowchartPath + '"]');
+        if (existingFlowchart) {
+            existingFlowchart.remove(); // Remove the existing flowchart if it is outside of a collapsible section
         }
 
-        // Add the "Response from OpenAI Assistant" header
-        const responseDiv = document.createElement('div');
-        responseDiv.innerHTML = `<strong>Response from OpenAI Assistant:</strong>`;
-        responseDiv.classList.add('left-align');
-        resultContainer.appendChild(responseDiv);
+        // Wrap the flowchart in a collapsible section
+        const flowchartSection = createCollapsibleSection("Flowchart", `<img src="${flowchartPath}" alt="Flowchart" style="max-width: 100%; height: auto;">`, 'flowchart-section');
+        resultContainer.appendChild(flowchartSection);
+    }
+}
 
-        // Add tables if present
-        pair.tables.forEach(table => {
-            const tableDiv = document.createElement('div');
-            tableDiv.innerHTML = `<strong>${table.table_name}</strong>`;
-            tableDiv.classList.add('left-align');
-            const tableElement = document.createElement('table');
-            tableElement.classList.add('generated-table');
+// Create a collapsible section with the provided title, content, and id
+function createCollapsibleSection(title, content, id) {
+    const sectionDiv = document.createElement('div');
+    sectionDiv.classList.add('collapsible-section');
 
-            // Add table headers
-            const headerRow = document.createElement('tr');
-            table.columns.forEach(column => {
-                const th = document.createElement('th');
-                th.textContent = column;
-                headerRow.appendChild(th);
-            });
-            tableElement.appendChild(headerRow);
+    const headerDiv = document.createElement('div');
+    headerDiv.classList.add('collapsible-header');
+    headerDiv.innerHTML = `<span class="arrow-icon">&#9660;</span><strong>${title}</strong>`;
+    headerDiv.setAttribute('data-target', `#collapsible-content-${id}`);
 
-            // Add table rows
-            table.data.forEach(row => {
-                const rowElement = document.createElement('tr');
-                row.forEach(cell => {
-                    const td = document.createElement('td');
-                    td.textContent = cell;
-                    td.style.textAlign = "left"; // Ensure left alignment
-                    rowElement.appendChild(td);
-                });
-                tableElement.appendChild(rowElement);
-            });
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('collapsible-content');
+    contentDiv.id = `collapsible-content-${id}`;
+    contentDiv.style.display = 'none';
+    contentDiv.innerHTML = content;
 
-            resultContainer.appendChild(tableDiv);
-            resultContainer.appendChild(tableElement);
-        });
+    sectionDiv.appendChild(headerDiv);
+    sectionDiv.appendChild(contentDiv);
+
+    // Add click event to toggle visibility
+    headerDiv.addEventListener('click', function () {
+        const contentElement = document.querySelector(this.getAttribute('data-target'));
+        if (contentElement.style.display === 'none') {
+            contentElement.style.display = 'block';
+            this.querySelector('.arrow-icon').innerHTML = '&#9650;'; // Change to up arrow
+        } else {
+            contentElement.style.display = 'none';
+            this.querySelector('.arrow-icon').innerHTML = '&#9660;'; // Change to down arrow
+        }
     });
+
+    return sectionDiv;
+}
+
+
+
+
+function generateTableHtml(table) {
+    let html = `<table class="generated-table"><thead><tr>`;
+    table.columns.forEach(column => {
+        html += `<th>${column}</th>`;
+    });
+    html += `</tr></thead><tbody>`;
+    table.data.forEach(row => {
+        html += `<tr>`;
+        row.forEach(cell => {
+            html += `<td>${cell}</td>`;
+        });
+        html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    return html;
 }
 
 
@@ -391,13 +424,20 @@ function updateDeletionResults(deletionResults) {
 
 
 function updateFlowchart(flowchartPath) {
-    const flowchartContainer = document.getElementById('websocket-data');
-    const imgElement = document.createElement('img');
-    imgElement.src = flowchartPath;
-    imgElement.alt = 'Generated Flowchart';
-    imgElement.style.marginTop = '6px';
-    imgElement.style.marginBottom = '12px';
-    flowchartContainer.appendChild(imgElement);
+    // Ensure that we are only handling the flowchart inside a collapsible section
+    const resultContainer = document.getElementById('websocket-data');
+
+    // Remove any existing flowchart (if directly added before)
+    const existingFlowchart = document.querySelector('#websocket-data img[src="' + flowchartPath + '"]');
+    if (existingFlowchart) {
+        existingFlowchart.remove();
+    }
+
+    // Now handle the flowchart inside the collapsible section
+    if (flowchartPath && flowchartPath.trim() !== '') {
+        const flowchartSection = createCollapsibleSection("Flowchart", `<img src="${flowchartPath}" alt="Flowchart" style="max-width: 100%; height: auto;">`, 'flowchart-section');
+        resultContainer.appendChild(flowchartSection);
+    }
 }
 
 
@@ -410,9 +450,6 @@ function updateAnalysisStatus(status) {
         console.error("[DEBUG] Element with ID 'analysis-status' not found.");
     }
 }
-
-
-
 
 
 

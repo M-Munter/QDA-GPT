@@ -156,6 +156,7 @@ def download_xlsx(request):
 
     instructions = instructions_template.format(user_prompt=user_prompt)
 
+    logger.debug(f"[DEBUG] Session prompt_table_pairs: {request.session.get('prompt_table_pairs', [])}")
     prompt_table_pairs = request.session.get('prompt_table_pairs', [])
 
     # Sanitize the filename for use in Content-Disposition
@@ -177,21 +178,25 @@ def download_xlsx(request):
     ws.append([])  # Add an empty row for separation
 
     for index, pair in enumerate(prompt_table_pairs):
-        sheet_title = f'Prompt {index + 1}'
-        ws = wb.create_sheet(title=sheet_title)
-        ws.append(['Prompt'])
+        # Create a new sheet for the prompt
+        prompt_sheet_title = f'Prompt {index + 1}'
+        prompt_ws = wb.create_sheet(title=prompt_sheet_title)
+        prompt_ws.append(['Prompt'])
         for line in pair.get('prompt', 'N/A').split('\n'):
-            ws.append([line])
-        ws.append([])  # Add an empty row for separation
+            prompt_ws.append([line])
+
+        # Create a new sheet for the response
+        response_sheet_title = f'Response {index + 1}'
+        response_ws = wb.create_sheet(title=response_sheet_title)
         for table in pair['tables']:
-            ws.append([table['table_name']])
-            ws.append(table['columns'])
+            response_ws.append([table['table_name']])
+            response_ws.append(table['columns'])
             for row in table['data']:
                 if isinstance(row, list):
-                    ws.append(row)
+                    response_ws.append(row)
                 elif isinstance(row, dict):
-                    ws.append([row.get(col, '') for col in table['columns']])
-            ws.append([])  # Add an empty row for separation
+                    response_ws.append([row.get(col, '') for col in table['columns']])
+            response_ws.append([])  # Add an empty row for separation
 
     wb.save(response)
 
@@ -353,7 +358,7 @@ async def run_analysis_async(analysis_data):
         flowchart_path = None
 
         for idx, phase in enumerate(phases):
-            # Add 0.3 second delay before each phase starts
+            # Add delay before each phase starts
             await asyncio.sleep(0.3)
 
             # Send phase update through WebSocket
@@ -366,7 +371,7 @@ async def run_analysis_async(analysis_data):
             )
 
             phase_name = phase.__name__
-            logger.debug(f"Running phase: {phase_name}")
+            logger.debug(f"Running phase: {phase_name}\n")
             phase_params = inspect.signature(phase).parameters
 
             # Prepare the arguments for the current phase
@@ -392,19 +397,17 @@ async def run_analysis_async(analysis_data):
                 response_json = result
 
             if response_json is None:
-                logger.error(f"Phase {phase_name} returned None")
+                logger.error(f"Phase {phase_name} returned None\n")
                 continue
 
             responses[phase_name] = response_json
             formatted_prompts.append(formatted_prompt)
 
-            logger.debug(f"Latest response after phase {phase_name}: {response_json}")
-
             tables = generate_tables_from_response(response_json)
             prompt_table_pairs.append({'prompt': formatted_prompt, 'tables': tables})
 
             if "table_format_visualization" in response_json:
-                logger.debug(f"Key 'table_format_visualization' found in response_json")
+                logger.debug(f"Key 'table_format_visualization' found in response_json\n")
                 try:
                     logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
@@ -423,12 +426,25 @@ async def run_analysis_async(analysis_data):
             if flowchart_path:
                 logger.debug(f"Flowchart path updated: {flowchart_path}\n")
 
+        logger.debug(f"Deletion results: {deletion_results}\n")
+
         analysis_result = {
             'prompt_table_pairs': prompt_table_pairs,
             'flowchart_path': flowchart_path,
             'analysis_status': analysis_status,
             'deletion_results': deletion_results
         }
+
+
+        # Directly update the session within this function
+        request = analysis_data.get('request')
+        if request:
+            session = request.session
+            session['prompt_table_pairs'] = analysis_result.get('prompt_table_pairs', [])
+            session['flowchart_path'] = analysis_result.get('flowchart_path', '')
+            session['analysis_status'] = analysis_result.get('analysis_status', '')
+            session['deletion_results'] = analysis_result.get('deletion_results', '')
+            session.save()
 
         # Send the results to the WebSocket consumer
         await channel_layer.group_send(
@@ -440,31 +456,8 @@ async def run_analysis_async(analysis_data):
         )
 
         return analysis_result
-    logger.debug("Invalid analysis type")
+    logger.debug("Invalid analysis type\n")
     return {}
-
-
-@csrf_exempt
-async def run_analysis_view(request):
-    logger.debug("Attempting to start analysis...")
-    analysis_data = {
-        'analysis_type': request.POST.get('analysis_type'),
-        'user_prompt': request.POST.get('user_prompt'),
-        'file_name': request.POST.get('file_name'),
-        'assistant_id': request.POST.get('assistant_id'),
-        'thread_id': request.POST.get('thread_id'),
-        'vector_store_id': request.POST.get('vector_store_id'),
-        'file_id': request.POST.get('file_id')  # Ensure file_id is passed here
-    }
-    logger.debug(f"Analysis data: {analysis_data}")
-
-    channel_layer = get_channel_layer()
-    await channel_layer.send("analysis_channel", {
-        "type": "run_analysis",
-        "analysis_data": analysis_data
-    })
-
-    return JsonResponse({"status": "Task dispatched successfully"})
 
 
 @csrf_exempt
@@ -516,7 +509,7 @@ def dashboard(request):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'analyze':
-            logger.debug("Analyze action triggered")
+            logger.debug("Analyze action triggered\n")
             setup_success = handle_setup(request, setup_form)
             if setup_success:
                 analysis_data = {
@@ -529,7 +522,7 @@ def dashboard(request):
                     'file_name': request.session.get('file_name'),
                     'user_prompt': request.session.get('user_prompt')
                 }
-                logger.debug(f"Dispatching analysis task: {analysis_data}")
+                logger.debug(f"Dispatching analysis task: {analysis_data}\n")
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.send)("analysis_channel", {
                     "type": "run_analysis",
