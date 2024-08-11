@@ -151,14 +151,36 @@ ASGI_APPLICATION = 'mysite.asgi.application'
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [REDIS_URL],
+import os
+
+# Determine if the environment is Heroku
+ON_HEROKU = 'DYNO' in os.environ
+
+
+if ON_HEROKU:
+    # Heroku Redis configuration
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [{
+                    "address": os.getenv('REDIS_URL'),
+                    "ssl_cert_reqs": None  # Disable SSL certificate verification on Heroku
+                }],
+            },
         },
-    },
-}
+    }
+else:
+    # Local Redis configuration
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')],  # Use local Redis without SSL
+            },
+        },
+    }
+
 
 
 LOGGING = {

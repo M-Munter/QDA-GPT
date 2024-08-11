@@ -248,7 +248,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Establish WebSocket connection to the specified path
-const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+//const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+// Establish WebSocket connection to the specified path
+let socketUrl;
+if (window.location.host.includes('localhost') || window.location.host.includes('127.0.0.1')) {
+    socketUrl = 'ws://127.0.0.1:8000/ws/analysis/';
+} else {
+    socketUrl = `wss://${window.location.host}/ws/analysis/`;
+}
+
+const socket = new WebSocket(socketUrl);
+
 
 socket.onopen = function() {
     console.log('WebSocket connection opened');
@@ -357,7 +367,7 @@ function createCollapsibleSection(title, content, id) {
 
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('collapsible-header');
-    headerDiv.innerHTML = `<strong>${title}</strong>`;
+    headerDiv.innerHTML = `<span class="arrow-icon">&#9660;</span><strong>${title}</strong>`;
     headerDiv.setAttribute('data-target', `#collapsible-content-${id}`);
 
     const contentDiv = document.createElement('div');
@@ -374,8 +384,10 @@ function createCollapsibleSection(title, content, id) {
         const contentElement = document.querySelector(this.getAttribute('data-target'));
         if (contentElement.style.display === 'none') {
             contentElement.style.display = 'block';
+            this.querySelector('.arrow-icon').innerHTML = '&#9650;'; // Change to up arrow
         } else {
             contentElement.style.display = 'none';
+            this.querySelector('.arrow-icon').innerHTML = '&#9660;'; // Change to down arrow
         }
     });
 
@@ -422,13 +434,20 @@ function updateDeletionResults(deletionResults) {
 
 
 function updateFlowchart(flowchartPath) {
-    const flowchartContainer = document.getElementById('websocket-data');
-    const imgElement = document.createElement('img');
-    imgElement.src = flowchartPath;
-    imgElement.alt = 'Generated Flowchart';
-    imgElement.style.marginTop = '6px';
-    imgElement.style.marginBottom = '12px';
-    flowchartContainer.appendChild(imgElement);
+    // Ensure that we are only handling the flowchart inside a collapsible section
+    const resultContainer = document.getElementById('websocket-data');
+
+    // Remove any existing flowchart (if directly added before)
+    const existingFlowchart = document.querySelector('#websocket-data img[src="' + flowchartPath + '"]');
+    if (existingFlowchart) {
+        existingFlowchart.remove();
+    }
+
+    // Now handle the flowchart inside the collapsible section
+    if (flowchartPath && flowchartPath.trim() !== '') {
+        const flowchartSection = createCollapsibleSection("Flowchart", `<img src="${flowchartPath}" alt="Flowchart" style="max-width: 100%; height: auto;">`, 'flowchart-section');
+        resultContainer.appendChild(flowchartSection);
+    }
 }
 
 
