@@ -248,7 +248,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Establish WebSocket connection to the specified path
-const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+//const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+// Establish WebSocket connection to the specified path
+let socketUrl;
+if (window.location.host.includes('localhost') || window.location.host.includes('127.0.0.1')) {
+    socketUrl = 'ws://127.0.0.1:8000/ws/analysis/';
+} else {
+    socketUrl = `wss://${window.location.host}/ws/analysis/`;
+}
+
+const socket = new WebSocket(socketUrl);
+
 
 socket.onopen = function() {
     console.log('WebSocket connection opened');
