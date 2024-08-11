@@ -1,5 +1,5 @@
 # qda_gpt/__version__.py
-__version__ = '0.7.19 (The Prompt Knight Rises)'
+__version__ = '0.8.2 (The Prompt Knight Rises)'
 
 # Into the Data-Verse
 # Byte Panther: Data Forever                            x
