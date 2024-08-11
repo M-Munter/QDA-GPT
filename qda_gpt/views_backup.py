@@ -53,7 +53,7 @@ def logout_view(request):
 
 def clear_session_data(request):
     session_keys = [
-        'response', 'setup_status', 'deletion_results', 'console_output', 'analysis_status',
+        'response', 'deletion_results', 'console_output', 'analysis_status', 'uploaded_file_name', 'first_response',
         'second_response', 'third_response', 'fourth_response', 'fifth_response', 'sixth_response', 'seventh_response',
         'eighth_response', 'analysis_type', 'user_prompt', 'file_name', 'tables', 'prompt_table_pairs', 'flowchart_path'
     ]
@@ -66,11 +66,10 @@ def clear_session(request):
     return redirect('dashboard')
 
 
-def get_setup_status(request):
-    status = request.session.get('setup_status', '')
-    analysis_status = request.session.get('analysis_status', '')
-    print(f"[DEBUG] Current setup_status: {status}\n", flush=True)  # Debugging print statement
-    return JsonResponse({'setup_status': status})
+def get_analysis_status(request):
+    status = request.session.get('analysis_status', '')
+    print(f"[DEBUG] Current analysis_status: {status}\n", flush=True)  # Debugging print statement
+    return JsonResponse({'analysis_status': status})
 
 def handle_uploaded_file(f):
     file_path = os.path.join('uploads', f.name)
@@ -288,7 +287,7 @@ def handle_setup(request, setup_form):
         file_path = handle_uploaded_file(file)
         try:
             # Create thread and assign correct thread ID
-            request.session['setup_status'] = "Initializing OpenAI Assistant."
+            request.session['analysis_status'] = "Initializing OpenAI Assistant."
             request.session.save()  # Explicitly save the session
             time.sleep(0.25)
             thread_id = create_thread()
@@ -297,7 +296,7 @@ def handle_setup(request, setup_form):
                 resources = initialize_openai_resources(
                     file_path, model_choice, request.session['analysis_type'], user_prompt
                 )
-                request.session['setup_status'] = "OpenAI Assistant initialized successfully. Running analysis. This will take a while."
+                request.session['analysis_status'] = "OpenAI Assistant initialized successfully. Running analysis. This will take a while."
                 request.session.save()  # Explicitly save the session
 
                 time.sleep(1)
@@ -321,12 +320,12 @@ def handle_setup(request, setup_form):
 
                 return True  # Return early to immediately show the setup status. Indicate success immediately
             else:
-                request.session['setup_status'] = "Failed to create thread."
+                request.session['analysis_status'] = "Failed to create thread."
                 request.session.save()  # Explicitly save the session
                 return False # Indicate failure immediately
 
         except Exception as e:
-            request.session['setup_status'] = f"Error initializing OpenAI resources: {str(e)}"
+            request.session['analysis_status'] = f"Error initializing OpenAI resources: {str(e)}"
             request.session.save()  # Explicitly save the session
             return False
     return False
@@ -343,6 +342,8 @@ async def run_analysis_async(analysis_data):
         'grounded': grounded_theory
     }
 
+    channel_layer = get_channel_layer()
+
     if analysis_type in analysis_funcs:
         analysis_module = analysis_funcs[analysis_type]
         formatted_prompts = []
@@ -352,6 +353,18 @@ async def run_analysis_async(analysis_data):
         flowchart_path = None
 
         for idx, phase in enumerate(phases):
+            # Add 0.3 second delay before each phase starts
+            await asyncio.sleep(0.3)
+
+            # Send phase update through WebSocket
+            await channel_layer.group_send(
+                "analysis_group",
+                {
+                    "type": "send_analysis_result",
+                    "content": {"analysis_status": f"Performing phase {idx + 1} of the analysis..."}
+                }
+            )
+
             phase_name = phase.__name__
             logger.debug(f"Running phase: {phase_name}")
             phase_params = inspect.signature(phase).parameters
@@ -418,7 +431,6 @@ async def run_analysis_async(analysis_data):
         }
 
         # Send the results to the WebSocket consumer
-        channel_layer = get_channel_layer()
         await channel_layer.group_send(
             "analysis_group",
             {
@@ -477,14 +489,19 @@ def dashboard(request):
     analysis_type = request.POST.get('analysis_type', request.session.get('analysis_type', ''))
     user_prompt = request.POST.get('user_prompt', request.session.get('user_prompt', ''))
     file_name = request.session.get('file_name', '')
+    uploaded_file_name = request.session.get('uploaded_file_name', '')
+    file_id = request.session.get('file_id')
+    model_choice = request.session.get('model_choice')
 
     if analysis_type:
         request.session['analysis_type'] = analysis_type
 
     context = {
         'setup_form': setup_form,
+        'uploaded_file_name': uploaded_file_name,
         'version': __version__,
-        'setup_status': request.session.get('setup_status', ''),
+        'file_id': file_id,
+        'model_choice': model_choice,
         'analysis_status': request.session.get('analysis_status', ''),
         'deletion_results': request.session.get('deletion_results', ''),
         'analysis_type': request.session.get('analysis_type', ''),
@@ -503,6 +520,8 @@ def dashboard(request):
             setup_success = handle_setup(request, setup_form)
             if setup_success:
                 analysis_data = {
+                    'file_id': file_id,
+                    'model_choice': model_choice,
                     'analysis_type': analysis_type,
                     'assistant_id': request.session.get('assistant_id'),
                     'thread_id': request.session.get('thread_id'),
@@ -516,10 +535,9 @@ def dashboard(request):
                     "type": "run_analysis",
                     "analysis_data": analysis_data
                 })
-                context['setup_status'] = "Analysis task dispatched."
                 request.session.save()
             else:
-                context['setup_status'] = request.session.get('setup_status', '')
+                context['analysis_status'] = request.session.get('analysis_status', '')
 
     return render(request, 'qda_gpt/dashboard.html', context)
 

@@ -353,8 +353,8 @@ async def run_analysis_async(analysis_data):
         flowchart_path = None
 
         for idx, phase in enumerate(phases):
-            # Add 0.2 second delay before each phase starts
-            await asyncio.sleep(0.2)
+            # Add delay before each phase starts
+            await asyncio.sleep(0.3)
 
             # Send phase update through WebSocket
             await channel_layer.group_send(
@@ -366,7 +366,7 @@ async def run_analysis_async(analysis_data):
             )
 
             phase_name = phase.__name__
-            logger.debug(f"Running phase: {phase_name}")
+            logger.debug(f"Running phase: {phase_name}\n")
             phase_params = inspect.signature(phase).parameters
 
             # Prepare the arguments for the current phase
@@ -392,19 +392,17 @@ async def run_analysis_async(analysis_data):
                 response_json = result
 
             if response_json is None:
-                logger.error(f"Phase {phase_name} returned None")
+                logger.error(f"Phase {phase_name} returned None\n")
                 continue
 
             responses[phase_name] = response_json
             formatted_prompts.append(formatted_prompt)
 
-            logger.debug(f"Latest response after phase {phase_name}: {response_json}")
-
             tables = generate_tables_from_response(response_json)
             prompt_table_pairs.append({'prompt': formatted_prompt, 'tables': tables})
 
             if "table_format_visualization" in response_json:
-                logger.debug(f"Key 'table_format_visualization' found in response_json")
+                logger.debug(f"Key 'table_format_visualization' found in response_json\n")
                 try:
                     logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
@@ -423,6 +421,8 @@ async def run_analysis_async(analysis_data):
             if flowchart_path:
                 logger.debug(f"Flowchart path updated: {flowchart_path}\n")
 
+        logger.debug(f"Deletion results: {deletion_results}\n")
+
         analysis_result = {
             'prompt_table_pairs': prompt_table_pairs,
             'flowchart_path': flowchart_path,
@@ -440,13 +440,13 @@ async def run_analysis_async(analysis_data):
         )
 
         return analysis_result
-    logger.debug("Invalid analysis type")
+    logger.debug("Invalid analysis type\n")
     return {}
 
 
 @csrf_exempt
 async def run_analysis_view(request):
-    logger.debug("Attempting to start analysis...")
+    logger.debug("Attempting to start analysis...\n")
     analysis_data = {
         'analysis_type': request.POST.get('analysis_type'),
         'user_prompt': request.POST.get('user_prompt'),
@@ -456,7 +456,7 @@ async def run_analysis_view(request):
         'vector_store_id': request.POST.get('vector_store_id'),
         'file_id': request.POST.get('file_id')  # Ensure file_id is passed here
     }
-    logger.debug(f"Analysis data: {analysis_data}")
+    logger.debug(f"Analysis data: {analysis_data}\n")
 
     channel_layer = get_channel_layer()
     await channel_layer.send("analysis_channel", {
@@ -516,7 +516,7 @@ def dashboard(request):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'analyze':
-            logger.debug("Analyze action triggered")
+            logger.debug("Analyze action triggered\n")
             setup_success = handle_setup(request, setup_form)
             if setup_success:
                 analysis_data = {
@@ -529,7 +529,7 @@ def dashboard(request):
                     'file_name': request.session.get('file_name'),
                     'user_prompt': request.session.get('user_prompt')
                 }
-                logger.debug(f"Dispatching analysis task: {analysis_data}")
+                logger.debug(f"Dispatching analysis task: {analysis_data}\n")
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.send)("analysis_channel", {
                     "type": "run_analysis",

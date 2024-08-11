@@ -34,43 +34,52 @@ function fetchStatus() {
             'X-CSRFToken': getCsrfToken()
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        const analysisStatusElement = document.getElementById('analysis-status');
-        if (analysisStatusElement && data.analysis_status) {
-            analysisStatusElement.innerText = data.analysis_status;
-        } else {
-            console.error('Element with ID "analysis-status" not found or no status in response.');
-        }
+        updateAnalysisStatus(data.analysis_status);
+
+        // Keep polling until the analysis is completed
         if (!data.analysis_status.includes("Analysis completed")) {
-            setTimeout(fetchStatus, 500); // Continue polling
+            setTimeout(fetchStatus, 500);  // Continue polling
         } else {
-            hideLoader();  // Hide loader when analysis is complete
+            hideLoader();  // Hide the loader when the analysis is complete
         }
     })
     .catch(error => {
         console.error('Error fetching status:', error);
-        hideLoader();  // Hide loader on error to avoid it hanging indefinitely
+        hideLoader();  // Hide the loader on error to avoid it hanging indefinitely
     });
+}
+
+
+
+function handleSubmit(event) {
+    var action = event.submitter.value;
+    if (action === 'analyze') {
+        var fileInput = document.querySelector('input[type="file"]');
+        if (!fileInput.files.length) {
+            alert("Please select a file.");
+            event.preventDefault();
+            return false;
+        }
+        fetchStatus();  // Start polling for status updates
+        showLoader('analyze');   // Show loader when the form is submitted
+    }
+    return true;
 }
 
 
 
 
 function selectAnalysisType(type) {
-    document.getElementById('analysis_type').value = type;
+    document.getElementById('analysis_type_hidden').value = type; // Update the hidden input field with the selected type
     document.getElementById('analysis_type_hidden').value = type;
     var buttons = document.querySelectorAll('.analysis-button');
     buttons.forEach(function(button) {
-        button.classList.remove('active-button');
+        button.classList.remove('active-button');  // Remove active state from all buttons
     });
-    document.getElementById(type + '-button').classList.add('active-button');
-    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    document.getElementById(type + '-button').classList.add('active-button');  // Add active state to the selected button
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';  // Update the display with the selected type
     console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
 
@@ -87,20 +96,7 @@ function selectAnalysisType(type) {
 }
 
 
-function handleSubmit(event) {
-    var action = event.submitter.value;
-    if (action === 'analyze') {
-        var fileInput = document.querySelector('input[type="file"]');
-        if (!fileInput.files.length) {
-            alert("Please select a file.");
-            event.preventDefault();
-            return false;
-        }
-        fetchStatus();  // Start polling when the form is submitted
-        showLoader();
-    }
-    return true;
-}
+
 
 
 
@@ -239,8 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
         infoBox.style.display = 'none';
     });
 
-
 });
+
+
 
 // Establish WebSocket connection to the specified path
 const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
@@ -265,6 +262,8 @@ socket.onmessage = function(e) {
     }
     if (data.analysis_status) {
         updateAnalysisStatus(data.analysis_status);
+        showLoader();  // Keep loader visible for every phase of the analysis
+
         if (data.analysis_status.includes("Analysis completed")) {
             hideLoader();  // Hide loader when analysis is complete
         }
@@ -330,9 +329,15 @@ function updateFlowchart(flowchartPath) {
     flowchartContainer.appendChild(imgElement);
 }
 
+
 function updateAnalysisStatus(status) {
-    const statusContainer = document.getElementById('status-container');
-    statusContainer.innerHTML = `<strong>${status}</strong>`;
+    const statusContainer = document.getElementById('analysis-status');
+    if (statusContainer) {
+        statusContainer.innerText = status || "No status available";
+        console.log('[DEBUG] Updated status:', status);
+    } else {
+        console.error("[DEBUG] Element with ID 'analysis-status' not found.");
+    }
 }
 
 

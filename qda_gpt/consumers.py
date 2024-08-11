@@ -14,7 +14,7 @@ class AnalysisConsumer(AsyncWebsocketConsumer):
         # Join the group
         await self.channel_layer.group_add("analysis_group", self.channel_name)
         await self.accept()
-        logger.debug("WebSocket connection accepted")
+        logger.debug("WebSocket connection accepted\n")
 
     async def disconnect(self, close_code):
         # Leave the group
@@ -22,11 +22,11 @@ class AnalysisConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        logger.debug(f"WebSocket received data: {data}")
+        logger.debug(f"WebSocket received data: {data}\n")
 
     async def run_analysis(self, event):
         analysis_data = event['analysis_data']
-        logger.debug(f"Running analysis with data: {analysis_data}")
+        logger.debug(f"Running analysis with data: {analysis_data}\n")
 
         # Perform the analysis
         result = await run_analysis_async(analysis_data)
@@ -42,8 +42,6 @@ class AnalysisConsumer(AsyncWebsocketConsumer):
 
     async def send_analysis_result(self, event):
         content = event['content']
-        logger.debug(f"Sending analysis result: {content}")
-
         # Send the content as JSON over WebSocket
         await self.send(text_data=json.dumps(content))
 

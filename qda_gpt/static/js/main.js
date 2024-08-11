@@ -268,6 +268,10 @@ socket.onmessage = function(e) {
             hideLoader();  // Hide loader when analysis is complete
         }
     }
+    // Handle deletion results
+    if (data.deletion_results) {
+        updateDeletionResults(data.deletion_results);
+    }
 };
 
 socket.onclose = function(e) {
@@ -341,6 +345,20 @@ function updateAnalysisStatus(status) {
 }
 
 
+function updateDeletionResults(deletionResults) {
+    console.log("[DEBUG] Deletion results received:", deletionResults); // Add this line to debug
+    const deletionContainer = document.getElementById('deletion-results');
+    if (deletionContainer) {
+        deletionContainer.innerHTML = `<strong>OpenAI API call termination status:</strong> ${deletionResults}`;
+        deletionContainer.setAttribute('data-results', 'true');
+        const downloadButton = document.getElementById('download-xlsx-btn');
+        downloadButton.disabled = false;
+        downloadButton.classList.remove('disabled-button');
+        console.log("[DEBUG] Deletion results displayed.");
+    } else {
+        console.error("[DEBUG] Element with ID 'deletion-results' not found.");
+    }
+}
 
 
 
