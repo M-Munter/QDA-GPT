@@ -184,3 +184,9 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://qda-gpt-11509cd6d17d.herokuapp.com',
+]
+
+
