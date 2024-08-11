@@ -178,21 +178,25 @@ def download_xlsx(request):
     ws.append([])  # Add an empty row for separation
 
     for index, pair in enumerate(prompt_table_pairs):
-        sheet_title = f'Prompt {index + 1}'
-        ws = wb.create_sheet(title=sheet_title)
-        ws.append(['Prompt'])
+        # Create a new sheet for the prompt
+        prompt_sheet_title = f'Prompt {index + 1}'
+        prompt_ws = wb.create_sheet(title=prompt_sheet_title)
+        prompt_ws.append(['Prompt'])
         for line in pair.get('prompt', 'N/A').split('\n'):
-            ws.append([line])
-        ws.append([])  # Add an empty row for separation
+            prompt_ws.append([line])
+
+        # Create a new sheet for the response
+        response_sheet_title = f'Response {index + 1}'
+        response_ws = wb.create_sheet(title=response_sheet_title)
         for table in pair['tables']:
-            ws.append([table['table_name']])
-            ws.append(table['columns'])
+            response_ws.append([table['table_name']])
+            response_ws.append(table['columns'])
             for row in table['data']:
                 if isinstance(row, list):
-                    ws.append(row)
+                    response_ws.append(row)
                 elif isinstance(row, dict):
-                    ws.append([row.get(col, '') for col in table['columns']])
-            ws.append([])  # Add an empty row for separation
+                    response_ws.append([row.get(col, '') for col in table['columns']])
+            response_ws.append([])  # Add an empty row for separation
 
     wb.save(response)
 
