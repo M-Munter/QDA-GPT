@@ -107,11 +107,17 @@
 
     <div class="container form-container">
         <h2>Results</h2>
-        <div id="analyze-loader" class="loader">
+        <div id="analyze-loader" class="loader" style="display: none;">
             <div class="outer-ring"></div>
             <div class="outer-ring"></div>
             <div class="inner-ring"></div>
             <div class="inner-ring"></div>
+        </div>
+        <div id="websocket-data">
+            <!-- WebSocket data will be displayed here -->
+        </div>
+        <div id="status-container">
+            <!-- Analysis status updates will be displayed here -->
         </div>
         <div class="left-align">
             {% include "qda_gpt/response_table.html" %}

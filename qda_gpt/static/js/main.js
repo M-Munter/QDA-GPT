@@ -5,27 +5,81 @@ function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-function showLoader(type) {
+
+function showLoader() {
     const loader = document.getElementById("analyze-loader");
-    if (loader && type === 'analyze') {
+    if (loader) {
         loader.style.display = "block";
-        const analysisStatus = document.getElementById("analysis-status");
-        if (analysisStatus) {
-            analysisStatus.style.display = "none";
-        }
+        console.log("Loader should now be visible");  // Debugging statement
+    } else {
+        console.error("Loader element not found or type mismatch");  // Debugging in case of issues
     }
 }
 
 
+function hideLoader() {
+    const loader = document.getElementById("analyze-loader");
+    if (loader) {
+        loader.style.display = "none";
+        console.log("Loader is now hidden");  // Debugging statement
+    }
+}
+
+
+// Start fetching the analysis status
+function fetchStatus() {
+    fetch('/analysis-status/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateAnalysisStatus(data.analysis_status);
+
+        // Keep polling until the analysis is completed
+        if (!data.analysis_status.includes("Analysis completed")) {
+            setTimeout(fetchStatus, 500);  // Continue polling
+        } else {
+            hideLoader();  // Hide the loader when the analysis is complete
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching status:', error);
+        hideLoader();  // Hide the loader on error to avoid it hanging indefinitely
+    });
+}
+
+
+
+function handleSubmit(event) {
+    var action = event.submitter.value;
+    if (action === 'analyze') {
+        var fileInput = document.querySelector('input[type="file"]');
+        if (!fileInput.files.length) {
+            alert("Please select a file.");
+            event.preventDefault();
+            return false;
+        }
+        fetchStatus();  // Start polling for status updates
+        showLoader('analyze');   // Show loader when the form is submitted
+    }
+    return true;
+}
+
+
+
+
 function selectAnalysisType(type) {
-    document.getElementById('analysis_type').value = type;
+    document.getElementById('analysis_type_hidden').value = type; // Update the hidden input field with the selected type
     document.getElementById('analysis_type_hidden').value = type;
     var buttons = document.querySelectorAll('.analysis-button');
     buttons.forEach(function(button) {
-        button.classList.remove('active-button');
+        button.classList.remove('active-button');  // Remove active state from all buttons
     });
-    document.getElementById(type + '-button').classList.add('active-button');
-    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    document.getElementById(type + '-button').classList.add('active-button');  // Add active state to the selected button
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';  // Update the display with the selected type
     console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
 
@@ -42,36 +96,9 @@ function selectAnalysisType(type) {
 }
 
 
-function handleSubmit(event) {
-    var action = event.submitter.value;
-    if (action === 'analyze') {
-        var fileInput = document.querySelector('input[type="file"]');
-        if (!fileInput.files.length) {
-            alert("Please select a file.");
-            event.preventDefault();
-            return false;
-        }
-        fetchStatus();  // Start polling when the form is submitted
-        showLoader('analyze');
-    }
-    return true;
-}
 
-function fetchStatus() {
-    fetch('/setup-status/', {
-        method: 'GET',
-        headers: {
-            'X-CSRFToken': getCsrfToken()
-        }
-    }).then(response => response.json()).then(data => {
-        if (data.setup_status) {
-            document.getElementById('setup-status').innerText = data.setup_status;
-        }
-        if (data.setup_status !== "OpenAI Assistant initialized successfully. Running analysis. This will take a while.") {
-            setTimeout(fetchStatus, 500); // Poll half a second
-        }
-    });
-}
+
+
 
 function clearSessionData() {
 
@@ -208,8 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
         infoBox.style.display = 'none';
     });
 
-
 });
+
+
 
 // Establish WebSocket connection to the specified path
 const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
@@ -220,15 +248,7 @@ socket.onopen = function() {
     socket.send(JSON.stringify({message: 'Test message'}));
 };
 
-socket.send(JSON.stringify({message: 'Test message'}));
 
-
-const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
-
-socket.onopen = function() {
-    console.log('WebSocket connection opened');
-    // No need to send a message on open unless you have a specific need
-};
 
 socket.onmessage = function(e) {
     console.log('WebSocket message received:', e.data);
@@ -242,6 +262,11 @@ socket.onmessage = function(e) {
     }
     if (data.analysis_status) {
         updateAnalysisStatus(data.analysis_status);
+        showLoader();  // Keep loader visible for every phase of the analysis
+
+        if (data.analysis_status.includes("Analysis completed")) {
+            hideLoader();  // Hide loader when analysis is complete
+        }
     }
 };
 
@@ -304,9 +329,15 @@ function updateFlowchart(flowchartPath) {
     flowchartContainer.appendChild(imgElement);
 }
 
+
 function updateAnalysisStatus(status) {
-    const statusContainer = document.getElementById('status-container');
-    statusContainer.innerHTML = `<strong>${status}</strong>`;
+    const statusContainer = document.getElementById('analysis-status');
+    if (statusContainer) {
+        statusContainer.innerText = status || "No status available";
+        console.log('[DEBUG] Updated status:', status);
+    } else {
+        console.error("[DEBUG] Element with ID 'analysis-status' not found.");
+    }
 }
 
 

@@ -1,18 +1,65 @@
+//main.js
+
 // Function to get the CSRF token from the meta tag
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-function showLoader(type) {
+
+function showLoader() {
     const loader = document.getElementById("analyze-loader");
-    if (loader && type === 'analyze') {
+    if (loader) {
         loader.style.display = "block";
-        const analysisStatus = document.getElementById("analysis-status");
-        if (analysisStatus) {
-            analysisStatus.style.display = "none";
-        }
+        console.log("Loader should now be visible");  // Debugging statement
+    } else {
+        console.error("Loader element not found or type mismatch");  // Debugging in case of issues
     }
 }
+
+
+function hideLoader() {
+    const loader = document.getElementById("analyze-loader");
+    if (loader) {
+        loader.style.display = "none";
+        console.log("Loader is now hidden");  // Debugging statement
+    }
+}
+
+
+// Start fetching the analysis status
+function fetchStatus() {
+    fetch('/analysis-status/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const analysisStatusElement = document.getElementById('analysis-status');
+        if (analysisStatusElement && data.analysis_status) {
+            analysisStatusElement.innerText = data.analysis_status;
+        } else {
+            console.error('Element with ID "analysis-status" not found or no status in response.');
+        }
+        if (!data.analysis_status.includes("Analysis completed")) {
+            setTimeout(fetchStatus, 500); // Continue polling
+        } else {
+            hideLoader();  // Hide loader when analysis is complete
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching status:', error);
+        hideLoader();  // Hide loader on error to avoid it hanging indefinitely
+    });
+}
+
+
 
 
 function selectAnalysisType(type) {
@@ -50,26 +97,12 @@ function handleSubmit(event) {
             return false;
         }
         fetchStatus();  // Start polling when the form is submitted
-        showLoader('analyze');
+        showLoader();
     }
     return true;
 }
 
-function fetchStatus() {
-    fetch('/setup-status/', {
-        method: 'GET',
-        headers: {
-            'X-CSRFToken': getCsrfToken()
-        }
-    }).then(response => response.json()).then(data => {
-        if (data.setup_status) {
-            document.getElementById('setup-status').innerText = data.setup_status;
-        }
-        if (data.setup_status !== "OpenAI Assistant initialized successfully. Sending messages to the Assistant.") {
-            setTimeout(fetchStatus, 500); // Poll half a second
-        }
-    });
-}
+
 
 function clearSessionData() {
 
@@ -152,6 +185,9 @@ function validateForm() {
 
 }
 
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
@@ -203,5 +239,105 @@ document.addEventListener('DOMContentLoaded', function() {
         infoBox.style.display = 'none';
     });
 
+
 });
+
+// Establish WebSocket connection to the specified path
+const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+
+socket.onopen = function() {
+    console.log('WebSocket connection opened');
+    // Send a simple message to trigger the server response
+    socket.send(JSON.stringify({message: 'Test message'}));
+};
+
+
+
+socket.onmessage = function(e) {
+    console.log('WebSocket message received:', e.data);
+    const data = JSON.parse(e.data);
+
+    if (data.prompt_table_pairs) {
+        updateResults(data.prompt_table_pairs);
+    }
+    if (data.flowchart_path) {
+        updateFlowchart(data.flowchart_path);
+    }
+    if (data.analysis_status) {
+        updateAnalysisStatus(data.analysis_status);
+        if (data.analysis_status.includes("Analysis completed")) {
+            hideLoader();  // Hide loader when analysis is complete
+        }
+    }
+};
+
+socket.onclose = function(e) {
+    console.error('WebSocket closed unexpectedly');
+};
+
+socket.onerror = function(error) {
+    console.error('WebSocket error:', error);
+};
+
+
+function updateResults(promptTablePairs) {
+    const resultContainer = document.getElementById('websocket-data');
+    resultContainer.innerHTML = ''; // Clear previous results
+
+    promptTablePairs.forEach(pair => {
+        const promptDiv = document.createElement('div');
+        promptDiv.innerHTML = `<strong>User Prompt:</strong> ${pair.prompt}`;
+        resultContainer.appendChild(promptDiv);
+
+        pair.tables.forEach(table => {
+            const tableDiv = document.createElement('div');
+            tableDiv.innerHTML = `<strong>${table.table_name}</strong>`;
+            const tableElement = document.createElement('table');
+            tableElement.classList.add('generated-table');
+
+            const headerRow = document.createElement('tr');
+            table.columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+            tableElement.appendChild(headerRow);
+
+            table.data.forEach(row => {
+                const rowElement = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    rowElement.appendChild(td);
+                });
+                tableElement.appendChild(rowElement);
+            });
+
+            resultContainer.appendChild(tableDiv);
+            resultContainer.appendChild(tableElement);
+        });
+    });
+}
+
+
+function updateFlowchart(flowchartPath) {
+    const flowchartContainer = document.getElementById('websocket-data');
+    const imgElement = document.createElement('img');
+    imgElement.src = flowchartPath;
+    imgElement.alt = 'Generated Flowchart';
+    imgElement.style.marginTop = '6px';
+    imgElement.style.marginBottom = '12px';
+    flowchartContainer.appendChild(imgElement);
+}
+
+function updateAnalysisStatus(status) {
+    const statusContainer = document.getElementById('status-container');
+    statusContainer.innerHTML = `<strong>${status}</strong>`;
+}
+
+
+
+
+
+
 

@@ -76,7 +76,7 @@ def phase7(analysis_data):
         deletion_results = handle_deletion(request_data)
 
         if "Deletion successful" in deletion_results:
-            analysis_status = "Analysis completed. All OpenAI elements deleted successfully."
+            analysis_status = "Analysis completed successfully. All OpenAI elements deleted successfully."
         else:
             analysis_status = "Analysis completed successfully. Deletion of all OpenAI elements failed."
 

@@ -137,7 +137,7 @@ h1 {
     resize: vertical;
 }
 
-#setup-status {
+#analysis-status {
     font-family: inherit;
     font-weight: normal; /* Match the font weight of "Analysis Status:" */
     border: none; /* Remove border */

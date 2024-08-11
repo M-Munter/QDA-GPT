@@ -15,9 +15,9 @@
                         <text x="12" y="18" font-family="Consolas, monospace" font-size="18" fill="#001f3f" text-anchor="middle" font-weight="900">i</text>
                     </svg>
                 </label>
-                <input type="file" name="file" id="file-input" class="form-input" {% if file_name %} disabled {% endif %}>
-                {% if file_name %}
-                    <p>File selected: {{ file_name }}</p>
+                <input type="file" name="file" id="file-input" class="form-input" {% if uploaded_file_name %} disabled {% endif %}>
+                {% if uploaded_file_name %}
+                    <p>File selected: {{ uploaded_file_name }}</p>
                 {% endif %}
                 <div class="spacer"></div>
                 <div id="file-info" class="info-box">
@@ -89,7 +89,7 @@
                         {% if analysis_status %}
                             {{ analysis_status }}
                         {% else %}
-                            <span id="setup-status">Waiting...</span>
+                            <span id="analysis-status">Waiting...</span>
                         {% endif %}
                     </strong>
                 </div>
