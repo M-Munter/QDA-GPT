@@ -12,7 +12,7 @@ urlpatterns = [
     path('download_xlsx/', views.download_xlsx, name='download_xlsx'),  # For downloading Excel
     path('accounts/logout/', views.logout_view, name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('run_analysis/', views.run_analysis_view, name='run_analysis'),  # Ensure this line is included
+    # path('run_analysis/', views.run_analysis_view, name='run_analysis'),  # Ensure this line is included
     path('update-session/', views.update_session, name='update_session'),  # New path for updating session data
 ]
 

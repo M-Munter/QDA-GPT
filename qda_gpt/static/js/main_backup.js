@@ -200,6 +200,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Ensure info windows close on clicking 'X'
+    document.querySelectorAll('.close').forEach(closeButton => {
+        closeButton.addEventListener('click', function() {
+            var infoBox = this.closest('.info-box');
+            infoBox.style.display = 'none';
+        });
+    });
+
     // Prevent entire row from being clickable
     document.querySelectorAll('.form-section').forEach(section => {
         section.addEventListener('click', function(event) {
@@ -257,6 +265,7 @@ socket.onmessage = function(e) {
     if (data.prompt_table_pairs) {
         updateResults(data.prompt_table_pairs);
     }
+
     if (data.flowchart_path) {
         updateFlowchart(data.flowchart_path);
     }
@@ -267,6 +276,10 @@ socket.onmessage = function(e) {
         if (data.analysis_status.includes("Analysis completed")) {
             hideLoader();  // Hide loader when analysis is complete
         }
+    }
+    // Handle deletion results
+    if (data.deletion_results) {
+        updateDeletionResults(data.deletion_results);
     }
 };
 
@@ -279,21 +292,36 @@ socket.onerror = function(error) {
 };
 
 
+
 function updateResults(promptTablePairs) {
     const resultContainer = document.getElementById('websocket-data');
+
     resultContainer.innerHTML = ''; // Clear previous results
 
     promptTablePairs.forEach(pair => {
-        const promptDiv = document.createElement('div');
-        promptDiv.innerHTML = `<strong>User Prompt:</strong> ${pair.prompt}`;
-        resultContainer.appendChild(promptDiv);
+        // Add the "User Prompt" header only if there's a prompt
+        if (pair.prompt) {
+            const promptDiv = document.createElement('div');
+            promptDiv.innerHTML = `<strong>User Prompt:</strong> ${pair.prompt}`;
+            promptDiv.classList.add('left-align');
+            resultContainer.appendChild(promptDiv);
+        }
 
+        // Add the "Response from OpenAI Assistant" header
+        const responseDiv = document.createElement('div');
+        responseDiv.innerHTML = `<strong>Response from OpenAI Assistant:</strong>`;
+        responseDiv.classList.add('left-align');
+        resultContainer.appendChild(responseDiv);
+
+        // Add tables if present
         pair.tables.forEach(table => {
             const tableDiv = document.createElement('div');
             tableDiv.innerHTML = `<strong>${table.table_name}</strong>`;
+            tableDiv.classList.add('left-align');
             const tableElement = document.createElement('table');
             tableElement.classList.add('generated-table');
 
+            // Add table headers
             const headerRow = document.createElement('tr');
             table.columns.forEach(column => {
                 const th = document.createElement('th');
@@ -302,11 +330,13 @@ function updateResults(promptTablePairs) {
             });
             tableElement.appendChild(headerRow);
 
+            // Add table rows
             table.data.forEach(row => {
                 const rowElement = document.createElement('tr');
                 row.forEach(cell => {
                     const td = document.createElement('td');
                     td.textContent = cell;
+                    td.style.textAlign = "left"; // Ensure left alignment
                     rowElement.appendChild(td);
                 });
                 tableElement.appendChild(rowElement);
@@ -317,6 +347,23 @@ function updateResults(promptTablePairs) {
         });
     });
 }
+
+
+function updateDeletionResults(deletionResults) {
+    const deletionContainer = document.getElementById('deletion-results');
+    if (deletionContainer) {
+        deletionContainer.innerHTML = `<strong>OpenAI API call termination status:</strong> ${deletionResults}`;
+        deletionContainer.classList.add('left-align');
+        deletionContainer.setAttribute('data-results', 'true');
+        const downloadButton = document.getElementById('download-xlsx-btn');
+        downloadButton.disabled = false;
+        downloadButton.classList.remove('disabled-button');
+        console.log("[DEBUG] Deletion results displayed.");
+    } else {
+        console.error("[DEBUG] Element with ID 'deletion-results' not found.");
+    }
+}
+
 
 
 function updateFlowchart(flowchartPath) {

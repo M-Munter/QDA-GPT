@@ -155,8 +155,8 @@ h1 {
 
 .left-align {
     text-align: left;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
     font-family: 'Open Sans', sans-serif; /* Apply Open Sans font */
 }
 

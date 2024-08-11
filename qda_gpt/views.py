@@ -156,6 +156,7 @@ def download_xlsx(request):
 
     instructions = instructions_template.format(user_prompt=user_prompt)
 
+    logger.debug(f"[DEBUG] Session prompt_table_pairs: {request.session.get('prompt_table_pairs', [])}")
     prompt_table_pairs = request.session.get('prompt_table_pairs', [])
 
     # Sanitize the filename for use in Content-Disposition
@@ -430,6 +431,17 @@ async def run_analysis_async(analysis_data):
             'deletion_results': deletion_results
         }
 
+
+        # Directly update the session within this function
+        request = analysis_data.get('request')
+        if request:
+            session = request.session
+            session['prompt_table_pairs'] = analysis_result.get('prompt_table_pairs', [])
+            session['flowchart_path'] = analysis_result.get('flowchart_path', '')
+            session['analysis_status'] = analysis_result.get('analysis_status', '')
+            session['deletion_results'] = analysis_result.get('deletion_results', '')
+            session.save()
+
         # Send the results to the WebSocket consumer
         await channel_layer.group_send(
             "analysis_group",
@@ -442,29 +454,6 @@ async def run_analysis_async(analysis_data):
         return analysis_result
     logger.debug("Invalid analysis type\n")
     return {}
-
-
-@csrf_exempt
-async def run_analysis_view(request):
-    logger.debug("Attempting to start analysis...\n")
-    analysis_data = {
-        'analysis_type': request.POST.get('analysis_type'),
-        'user_prompt': request.POST.get('user_prompt'),
-        'file_name': request.POST.get('file_name'),
-        'assistant_id': request.POST.get('assistant_id'),
-        'thread_id': request.POST.get('thread_id'),
-        'vector_store_id': request.POST.get('vector_store_id'),
-        'file_id': request.POST.get('file_id')  # Ensure file_id is passed here
-    }
-    logger.debug(f"Analysis data: {analysis_data}\n")
-
-    channel_layer = get_channel_layer()
-    await channel_layer.send("analysis_channel", {
-        "type": "run_analysis",
-        "analysis_data": analysis_data
-    })
-
-    return JsonResponse({"status": "Task dispatched successfully"})
 
 
 @csrf_exempt
