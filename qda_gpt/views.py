@@ -14,6 +14,7 @@ from .openai_api import initialize_openai_resources, create_thread
 from .forms import LoginForm, SetupForm
 from .__version__ import __version__
 from channels.layers import get_channel_layer
+from django.conf import settings
 from channels.db import database_sync_to_async
 from collections import OrderedDict
 from urllib.parse import quote
@@ -269,13 +270,19 @@ def create_combined_flowchart(data):
 # Function to save the flowchart as a PNG file
 def save_flowchart_as_png(dot, filename):
     try:
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        # Render the combined flowchart as a PNG file
-        dot.render(filename, format='png', cleanup=True)
-        print(f"[DEBUG] Combined flowchart image generated and saved as {filename}.png\n")  # Debug print
+        # Ensure the 'flowcharts' directory exists under 'media'
+        flowcharts_dir = os.path.join(settings.MEDIA_ROOT, 'flowcharts')
+        os.makedirs(flowcharts_dir, exist_ok=True)
+
+        # Construct the correct full filename (avoid double nesting)
+        full_filename = os.path.join(flowcharts_dir, filename)
+
+        # Render the flowchart and save it as a PNG file
+        dot.render(full_filename, format='png', cleanup=True)
+        logger.debug(f"[DEBUG] Combined flowchart image generated and saved as {full_filename}.png")
     except Exception as e:
-        print(f"[DEBUG] Error saving flowchart as PNG: {e}\n")  # Debug print
+        logger.error(f"[DEBUG] Error saving flowchart as PNG: {e}")
+
 
 
 
@@ -359,7 +366,7 @@ async def run_analysis_async(analysis_data):
 
         for idx, phase in enumerate(phases):
             # Add delay before each phase starts
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(0.5)
 
             # Send phase update through WebSocket
             await channel_layer.group_send(
@@ -412,10 +419,11 @@ async def run_analysis_async(analysis_data):
                     logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
                     if flowchart:
-                        flowchart_path = f"static/flowcharts/flowchart_{int(time.time())}"
+                        # Modify the path to avoid double nesting
+                        flowchart_path = f"flowchart_{int(time.time())}"
                         save_flowchart_as_png(flowchart, flowchart_path)
-                        flowchart_path = '/' + flowchart_path + ".png"
-                        logger.debug(f"Flowchart path: {flowchart_path}\n")
+                        flowchart_path = f"{settings.MEDIA_URL}flowcharts/{flowchart_path}.png"
+                        logger.debug(f"Flowchart path updated: {flowchart_path}")
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse response JSON: {e}\n")
                 except Exception as e:
