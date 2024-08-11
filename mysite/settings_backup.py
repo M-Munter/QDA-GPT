@@ -26,6 +26,24 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-+^3va&8@w%(og5gl596
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'qda-gpt-11509cd6d17d.herokuapp.com']
 
+# Check if running on Heroku
+ON_HEROKU = os.getenv('HEROKU', False)
+
+if ON_HEROKU:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(default='postgres://localhost')
+    }
+else:  # Local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -131,11 +149,13 @@ if os.getenv('HEROKU', False):  # Only load these settings if on Heroku
 
 ASGI_APPLICATION = 'mysite.asgi.application'
 
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [REDIS_URL],
         },
     },
 }
@@ -188,5 +208,6 @@ logger = logging.getLogger(__name__)
 CSRF_TRUSTED_ORIGINS = [
     'https://qda-gpt-11509cd6d17d.herokuapp.com',
 ]
+
 
 

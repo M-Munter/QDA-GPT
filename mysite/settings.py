@@ -151,14 +151,24 @@ ASGI_APPLICATION = 'mysite.asgi.application'
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 
+import os
+
+# Determine if the environment is Heroku
+ON_HEROKU = os.getenv('ON_HEROKU', False)
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [REDIS_URL],
+            "hosts": [{
+                "address": os.getenv('REDIS_URL', 'redis://127.0.0.1:6379'),
+                # Only set ssl_cert_reqs if running on Heroku
+                **({"ssl_cert_reqs": None} if ON_HEROKU else {}),
+            }],
         },
     },
 }
+
 
 
 LOGGING = {
