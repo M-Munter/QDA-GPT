@@ -157,7 +157,6 @@ def download_xlsx(request):
 
     instructions = instructions_template.format(user_prompt=user_prompt)
 
-    logger.debug(f"[DEBUG] Session prompt_table_pairs: {request.session.get('prompt_table_pairs', [])}")
     prompt_table_pairs = request.session.get('prompt_table_pairs', [])
 
     # Sanitize the filename for use in Content-Disposition
@@ -223,8 +222,6 @@ def wrap_text(text, max_length):
     return "\n".join(lines)
 
 def create_combined_flowchart(data):
-    logger.debug(f"[DEBUG] create_combined_flowchart received data: {data}\n")  # Debug print
-
     # Clean and parse JSON data
     start = data.find('{')
     end = data.rfind('}') + 1
@@ -235,7 +232,6 @@ def create_combined_flowchart(data):
 
     # Filter the data to only include tables with "visualization" in their name
     filtered_data = {k: v for k, v in json_data.items() if "visualization" in k}
-    logger.debug(f"[DEBUG] Filtered data: {filtered_data}\n")  # Debug print
 
     # Create a single Digraph instance
     dot = Digraph()

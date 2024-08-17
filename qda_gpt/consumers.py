@@ -5,9 +5,6 @@ from qda_gpt.views import run_analysis_async
 
 logger = logging.getLogger(__name__)
 
-def truncate_message(message, max_length=100):
-    return (message[:max_length] + '...') if len(message) > max_length else message
-
 
 class AnalysisConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -22,11 +19,9 @@ class AnalysisConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        logger.debug(f"WebSocket received data: {data}\n")
 
     async def run_analysis(self, event):
         analysis_data = event['analysis_data']
-        logger.debug(f"Running analysis with data: {analysis_data}\n")
 
         # Perform the analysis
         result = await run_analysis_async(analysis_data)
