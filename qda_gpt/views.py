@@ -28,6 +28,9 @@ import os
 import time
 import json
 import logging
+import boto3
+from botocore.exceptions import ClientError
+
 
 
 logger = logging.getLogger(__name__)
@@ -277,9 +280,19 @@ def save_flowchart_as_png(dot):
         # Construct the correct full filename (avoid double nesting)
         full_filename = os.path.join(flowcharts_dir, 'flowchart')
 
-        # Render the flowchart and save it as a PNG file
+        # Render the flowchart and save it as a PNG file locally
         dot.render(full_filename, format='png', cleanup=True)
         logger.debug(f"[DEBUG] Combined flowchart image generated and saved as {full_filename}.png")
+
+        # If using S3, upload the file to the S3 bucket
+        if 'HEROKU' in os.environ:
+            s3_client = boto3.client('s3')
+            try:
+                s3_client.upload_file(f'{full_filename}.png', settings.AWS_STORAGE_BUCKET_NAME,
+                                      f'media/flowcharts/flowchart.png')
+                logger.debug(f"Flowchart successfully uploaded to S3: media/flowcharts/flowchart.png")
+            except ClientError as e:
+                logger.error(f"Failed to upload flowchart to S3: {e}")
     except Exception as e:
         logger.error(f"[DEBUG] Error saving flowchart as PNG: {e}")
 

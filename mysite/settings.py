@@ -159,6 +159,12 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+import logging
+import boto3
+from botocore.exceptions import ClientError
+# Set up logging
+boto3.set_stream_logger(name='boto3', level=logging.DEBUG)
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
