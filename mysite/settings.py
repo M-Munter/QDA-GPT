@@ -26,6 +26,9 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-+^3va&8@w%(og5gl596@yrvt7l6x3scf2f0yk(7#v2ia!gy$!l')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
+# Redis URL for Django Channels
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
+
 # Hosts allowed to serve the project
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'qda-gpt-11509cd6d17d.herokuapp.com']
 
@@ -79,8 +82,8 @@ TEMPLATES = [
 ]
 
 
-# Check if the environment is Heroku
-ON_HEROKU = os.getenv('HEROKU', False)
+# Check if running on Heroku (Heroku-specific settings)
+ON_HEROKU = 'DYNO' in os.environ
 
 # Database configuration based on the environment
 if ON_HEROKU:
@@ -95,66 +98,6 @@ else:  # Local
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-# Database configuration
-if os.getenv('HEROKU', False):  # Check if running on Heroku
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(default='postgres://localhost')
-    }
-else:  # Local
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-# Password validation settings
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
-]
-
-# Internationalization settings
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
-# Media files settings (uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Redirect to the dashboard after login
-LOGIN_REDIRECT_URL = 'dashboard'
-
-# WhiteNoise configuration to compress and cache static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Django-Heroku configuration (only active if running on Heroku)
-if os.getenv('HEROKU', False):  # Only load these settings if on Heroku
-    import django_heroku
-    django_heroku.settings(locals())
-
-
-
-# Redis URL for Django Channels
-REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
-
-# Check if running on Heroku (Heroku-specific settings)
-ON_HEROKU = 'DYNO' in os.environ
-
 
 if ON_HEROKU:
     # Heroku Redis configuration for Django Channels
@@ -180,6 +123,40 @@ else:
         },
     }
 
+# Password validation settings
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+]
+
+# Internationalization settings
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media files settings (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Redirect to the dashboard after login
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# Django-Heroku configuration (only active if running on Heroku)
+if os.getenv('HEROKU', False):  # Only load these settings if on Heroku
+    import django_heroku
+    django_heroku.settings(locals())
 
 # Logging configuration for debugging and error tracking
 LOGGING = {
