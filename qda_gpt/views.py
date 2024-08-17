@@ -268,14 +268,14 @@ def create_combined_flowchart(data):
 
 
 # Function to save the flowchart as a PNG file
-def save_flowchart_as_png(dot, filename):
+def save_flowchart_as_png(dot):
     try:
         # Ensure the 'flowcharts' directory exists under 'media'
         flowcharts_dir = os.path.join(settings.MEDIA_ROOT, 'flowcharts')
         os.makedirs(flowcharts_dir, exist_ok=True)
 
         # Construct the correct full filename (avoid double nesting)
-        full_filename = os.path.join(flowcharts_dir, filename)
+        full_filename = os.path.join(flowcharts_dir, 'flowchart')
 
         # Render the flowchart and save it as a PNG file
         dot.render(full_filename, format='png', cleanup=True)
@@ -420,9 +420,8 @@ async def run_analysis_async(analysis_data):
                     flowchart = create_combined_flowchart(response_json)
                     if flowchart:
                         # Modify the path to avoid double nesting
-                        flowchart_path = f"flowchart_{int(time.time())}"
-                        save_flowchart_as_png(flowchart, flowchart_path)
-                        flowchart_path = f"{settings.MEDIA_URL}flowcharts/{flowchart_path}.png"
+                        save_flowchart_as_png(flowchart)
+                        flowchart_path = f"{settings.MEDIA_URL}flowcharts/flowchart.png"
                         logger.debug(f"Flowchart path updated: {flowchart_path}")
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse response JSON: {e}\n")
