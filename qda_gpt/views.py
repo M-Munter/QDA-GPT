@@ -433,9 +433,11 @@ async def run_analysis_async(analysis_data):
                     logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
                     if flowchart:
-                        # Modify the path to avoid double nesting
                         save_flowchart_as_png(flowchart)
-                        flowchart_path = f"{settings.MEDIA_URL}flowcharts/flowchart.png"
+                        if 'DYNO' in os.environ:  # Check if running on Heroku
+                            flowchart_path = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_S3_REGION_NAME}.amazonaws.com/media/flowcharts/flowchart.png"
+                        else:  # Local environment
+                            flowchart_path = f"{settings.MEDIA_URL}flowcharts/flowchart.png"
                         logger.debug(f"Flowchart path updated: {flowchart_path}")
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse response JSON: {e}\n")
