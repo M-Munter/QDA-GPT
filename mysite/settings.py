@@ -18,18 +18,18 @@ from pathlib import Path
 # Load environment variables from a .env file
 load_dotenv()
 
-# Base directory of the project
+# Define the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load sensitive information from environment variables
+# Load sensitive information and configurations from environment variables
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-+^3va&8@w%(og5gl596@yrvt7l6x3scf2f0yk(7#v2ia!gy$!l')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Redis URL for Django Channels
+# Redis URL for Django Channels (used for WebSockets and background tasks)
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 
-# Hosts allowed to serve the project
+# Define the hosts allowed to serve the project
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'qda-gpt-11509cd6d17d.herokuapp.com']
 
 # Application definition
@@ -55,13 +55,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URL configuration module
+# URL and WSGI/ASGI application configuration
 ROOT_URLCONF = 'mysite.urls'
-
-# WSGI application entry point
 WSGI_APPLICATION = 'mysite.wsgi.application'
-
-# ASGI application entry point
 ASGI_APPLICATION = 'mysite.asgi.application'
 
 # Template engine configuration
@@ -82,10 +78,10 @@ TEMPLATES = [
 ]
 
 
-# Check if running on Heroku (Heroku-specific settings)
+# Detect if the app is running on Heroku
 ON_HEROKU = 'DYNO' in os.environ
 
-# Database configuration based on the environment
+# Database configuration (different for Heroku and local environments)
 if ON_HEROKU:
     import dj_database_url
     DATABASES = {
@@ -99,8 +95,9 @@ else:  # Local
         }
     }
 
+# Redis configuration for Django Channels (used for WebSockets and background tasks)
 if ON_HEROKU:
-    # Heroku Redis configuration for Django Channels
+    # Heroku Redis configuration for Django Channels (disables SSL verification)
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -123,7 +120,7 @@ else:
         },
     }
 
-# Password validation settings
+# Password validation settings for user authentication
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
@@ -137,13 +134,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static and media files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files settings (uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -153,7 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect to the dashboard after login
 LOGIN_REDIRECT_URL = 'dashboard'
 
-# Django-Heroku configuration (only active if running on Heroku)
+# Django-Heroku configuration (applies additional settings when on Heroku)
 if os.getenv('HEROKU', False):  # Only load these settings if on Heroku
     import django_heroku
     django_heroku.settings(locals())
@@ -192,6 +187,7 @@ LOGGING = {
 
 import logging
 
+# Basic logging setup to output logs to the console
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(message)s',
@@ -202,7 +198,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# CSRF trusted origins (for Heroku)
+# CSRF trusted origins (add Heroku domain to trusted list)
 CSRF_TRUSTED_ORIGINS = [
     'https://qda-gpt-11509cd6d17d.herokuapp.com',
 ]
