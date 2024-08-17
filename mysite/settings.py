@@ -86,25 +86,21 @@ TEMPLATES = [
 ]
 
 
-# Custom environment variable to control specific behavior (set manually if needed)
-HEROKU_CUSTOM = os.getenv('HEROKU', False)
+# Detect if the app is running on Heroku (based on the presence of the 'DYNO' environment variable)
+ON_HEROKU = 'DYNO' in os.environ
 
-# Database configuration (different for Heroku and local environments)
-if HEROKU_CUSTOM:
-    import dj_database_url
+# Database configuration
+if ON_HEROKU:
     DATABASES = {
-        'default': dj_database_url.config(default='postgres://localhost')
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
-else:  # Local
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-# Detect if the app is running on Heroku (based on the presence of the 'DYNO' environment variable)
-ON_HEROKU = 'DYNO' in os.environ
 
 # Redis configuration for Django Channels (used for WebSockets and background tasks)
 if ON_HEROKU:
