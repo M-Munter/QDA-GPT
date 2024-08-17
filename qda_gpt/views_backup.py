@@ -28,6 +28,9 @@ import os
 import time
 import json
 import logging
+import boto3
+from botocore.exceptions import ClientError
+
 
 
 logger = logging.getLogger(__name__)
@@ -268,18 +271,29 @@ def create_combined_flowchart(data):
 
 
 # Function to save the flowchart as a PNG file
-def save_flowchart_as_png(dot, filename):
+def save_flowchart_as_png(dot):
     try:
         # Ensure the 'flowcharts' directory exists under 'media'
         flowcharts_dir = os.path.join(settings.MEDIA_ROOT, 'flowcharts')
         os.makedirs(flowcharts_dir, exist_ok=True)
 
         # Construct the correct full filename (avoid double nesting)
-        full_filename = os.path.join(flowcharts_dir, filename)
+        full_filename = os.path.join(flowcharts_dir, 'flowchart')
 
-        # Render the flowchart and save it as a PNG file
+        # Render the flowchart and save it as a PNG file locally
         dot.render(full_filename, format='png', cleanup=True)
         logger.debug(f"[DEBUG] Combined flowchart image generated and saved as {full_filename}.png")
+
+        # If using S3, upload the file to the S3 bucket
+        if 'DYNO' in os.environ:
+            logger.debug(f"Heroku environment recognized. Initializing upload to S3")
+            s3_client = boto3.client('s3')
+            try:
+                s3_client.upload_file(f'{full_filename}.png', settings.AWS_STORAGE_BUCKET_NAME,
+                                      f'media/flowcharts/flowchart.png')
+                logger.debug(f"Flowchart successfully uploaded to S3: media/flowcharts/flowchart.png")
+            except ClientError as e:
+                logger.error(f"Failed to upload flowchart to S3: {e}")
     except Exception as e:
         logger.error(f"[DEBUG] Error saving flowchart as PNG: {e}")
 
@@ -419,10 +433,11 @@ async def run_analysis_async(analysis_data):
                     logger.debug(f"Flowchart recognized\n")
                     flowchart = create_combined_flowchart(response_json)
                     if flowchart:
-                        # Modify the path to avoid double nesting
-                        flowchart_path = f"flowchart_{int(time.time())}"
-                        save_flowchart_as_png(flowchart, flowchart_path)
-                        flowchart_path = f"{settings.MEDIA_URL}flowcharts/{flowchart_path}.png"
+                        save_flowchart_as_png(flowchart)
+                        if 'DYNO' in os.environ:  # Check if running on Heroku
+                            flowchart_path = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_S3_REGION_NAME}.amazonaws.com/media/flowcharts/flowchart.png"
+                        else:  # Local environment
+                            flowchart_path = f"{settings.MEDIA_URL}flowcharts/flowchart.png"
                         logger.debug(f"Flowchart path updated: {flowchart_path}")
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse response JSON: {e}\n")
@@ -541,4 +556,3 @@ def dashboard(request):
                 context['analysis_status'] = request.session.get('analysis_status', '')
 
     return render(request, 'qda_gpt/dashboard.html', context)
-

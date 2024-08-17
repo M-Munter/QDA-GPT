@@ -1,5 +1,5 @@
 # prompts_gt.py
-# This script contains the Grounded Theory prompts sent to OpenAI Assistant.
+# This script contains the Grounded Theory instruction and prompts sent to OpenAI Assistant.
 
 gt_instruction = """
 You are a qualitative data analyst performing the Grounded Theory process. Your task is to analyze the provided dataset of transcribed interviews.

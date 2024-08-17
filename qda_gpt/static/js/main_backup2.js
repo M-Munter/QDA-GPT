@@ -1,31 +1,32 @@
 //main.js
 
-// Function to get the CSRF token from the meta tag for secure form submissions
+// Function to get the CSRF token from the meta tag
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-// Function to show the loader during data processing
+
 function showLoader() {
     const loader = document.getElementById("analyze-loader");
     if (loader) {
         loader.style.display = "block";
-        console.log("Loader should now be visible");
+        console.log("Loader should now be visible");  // Debugging statement
     } else {
-        console.error("Loader element not found or type mismatch");
+        console.error("Loader element not found or type mismatch");  // Debugging in case of issues
     }
 }
 
-// Function to hide the loader after processing is complete
+
 function hideLoader() {
     const loader = document.getElementById("analyze-loader");
     if (loader) {
         loader.style.display = "none";
-        console.log("Loader is now hidden");
+        console.log("Loader is now hidden");  // Debugging statement
     }
 }
 
-// Function to start fetching the analysis status from the server
+
+// Start fetching the analysis status
 function fetchStatus() {
     fetch('/analysis-status/', {
         method: 'GET',
@@ -39,7 +40,7 @@ function fetchStatus() {
 
         // Keep polling until the analysis is completed
         if (!data.analysis_status.includes("Analysis completed")) {
-            setTimeout(fetchStatus, 500);  // Continue polling every 500ms
+            setTimeout(fetchStatus, 500);  // Continue polling
         } else {
             hideLoader();  // Hide the loader when the analysis is complete
         }
@@ -50,7 +51,8 @@ function fetchStatus() {
     });
 }
 
-// Function to handle the form submission and validate the input
+
+
 function handleSubmit(event) {
     var action = event.submitter.value;
     if (action === 'analyze') {
@@ -58,7 +60,7 @@ function handleSubmit(event) {
         if (!fileInput.files.length) {
             alert("Please select a file.");
             event.preventDefault();
-            return false;  // Prevent submission if no file is selected
+            return false;
         }
         fetchStatus();  // Start polling for status updates
         showLoader('analyze');   // Show loader when the form is submitted
@@ -66,38 +68,51 @@ function handleSubmit(event) {
     return true;
 }
 
-// Function to handle selection of analysis type and update the UI
+
+
+
 function selectAnalysisType(type) {
     document.getElementById('analysis_type_hidden').value = type; // Update the hidden input field with the selected type
+    document.getElementById('analysis_type_hidden').value = type;
     var buttons = document.querySelectorAll('.analysis-button');
     buttons.forEach(function(button) {
         button.classList.remove('active-button');  // Remove active state from all buttons
     });
     document.getElementById(type + '-button').classList.add('active-button');  // Add active state to the selected button
-
-    // Update the display with the selected type and capitalize the first letter
     document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';  // Update the display with the selected type
     console.log("[DEBUG] selectAnalysisType called with type:", type);
 }
 
 
-// Function to clear the session data on the server
+function selectAnalysisType(type) {
+    document.getElementById('analysis_type_hidden').value = type; // Update this line to ensure the correct ID
+    var buttons = document.querySelectorAll('.analysis-button');
+    buttons.forEach(function(button) {
+        button.classList.remove('active-button');
+    });
+    document.getElementById(type + '-button').classList.add('active-button');
+    document.getElementById('selected-analysis-type').innerText = 'Selected analysis type: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' Analysis';
+    console.log("[DEBUG] selectAnalysisType called with type:", type);
+}
+
+
+
+
+
+
 function clearSessionData() {
-    // Fetch the CSRF token from the hidden input
+
+    // Fetch the CSRF token from the hidden input in the form
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    // Send a GET request to the server to clear the session data
     fetch('/clear-session/', {
         method: 'GET',
         headers: {
-            // Include the CSRF token in the request headers for security
             'X-CSRFToken': '{{ csrf_token }}'
         }
     }).then(response => {
-        // Check if the response from the server is OK (status code 200-299)
         if (response.ok) {
-            // If the session was successfully cleared, redirect the user to the dashboard (root URL "/")
-            window.location.href = "/";
+            window.location.href = "/"; // Redirect to the dashboard (root URL)
         } else {
             console.error("[DEBUG] Failed to clear session data");
         }
@@ -106,7 +121,6 @@ function clearSessionData() {
     });
 }
 
-// Function to trigger the download of the analysis results as an Excel file
 function downloadXLSX() {
     console.log("[DEBUG] downloadExcel called.");
     const now = new Date();
@@ -121,20 +135,20 @@ function downloadXLSX() {
     fetch(url)
         .then(response => response.blob())
         .then(blob => {
-            const downloadUrl = window.URL.createObjectURL(blob);  // Create a URL for the blob
-            const a = document.createElement('a');  // Create a temporary link element
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
             a.style.display = 'none';
             a.href = downloadUrl;
-            a.download = fileName;  // Set the filename for the download
-            document.body.appendChild(a);  // Append the link to the body
-            a.click();  // Simulate a click to start the download
-            window.URL.revokeObjectURL(downloadUrl);  // Clean up the URL object
-            document.body.removeChild(a);  // Remove the temporary link
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(downloadUrl);
+            document.body.removeChild(a);
         })
         .catch(error => console.error('Error downloading Excel:', error));
 }
 
-// Function to show additional information in an info box
+
 function showInfo(event, infoId) {
     event.preventDefault(); // Prevent default action
     event.stopPropagation(); // Prevent the file explorer from opening
@@ -146,29 +160,30 @@ function showInfo(event, infoId) {
     }
 }
 
-// Function to hide the info box
 function hideInfo(infoId) {
     var infoBox = document.getElementById(infoId);
     infoBox.style.display = "none";
 }
 
-// Function to validate the form before submission
+
+
 function validateForm() {
     console.log("[DEBUG] validateForm called.");
     const fileInput = document.querySelector('input[type="file"]').files.length > 0;
     const analysisType = document.getElementById('analysis_type_hidden').value !== "";
     const promptInput = document.querySelector('textarea[name="user_prompt"]').value.trim() !== "";
 
-    // Determine if the form is valid based on input presence
     const isValid = fileInput && analysisType && promptInput;
     const analyzeButton = document.getElementById('analyze-button');
 
-    analyzeButton.disabled = !isValid;  // Disable the button if the form is invalid
+    analyzeButton.disabled = !isValid;
     console.log("Analyze button disabled state:", analyzeButton.disabled);
 
 }
 
-// Event listener to initialize the script once the DOM is fully loaded
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("[DEBUG] DOMContentLoaded event triggered.");
     document.getElementById('file-input').addEventListener('change', validateForm);
@@ -202,12 +217,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Prevent form input elements from propagating click events to their parent elements
     document.querySelectorAll('.form-input').forEach(input => {
         input.addEventListener('click', function(event) {
             event.stopPropagation();
         });
     });
+
 
     // Initially disable the Analyze button
     validateForm();
@@ -230,7 +245,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// Establish WebSocket connection to the specified path for real-time updates
+
+
+// Establish WebSocket connection to the specified path
+//const socket = new WebSocket('ws://127.0.0.1:8000/ws/analysis/');
+// Establish WebSocket connection to the specified path
 let socketUrl;
 if (window.location.host.includes('localhost') || window.location.host.includes('127.0.0.1')) {
     socketUrl = 'ws://127.0.0.1:8000/ws/analysis/';
@@ -240,11 +259,14 @@ if (window.location.host.includes('localhost') || window.location.host.includes(
 
 const socket = new WebSocket(socketUrl);
 
+
 socket.onopen = function() {
     console.log('WebSocket connection opened');
     // Send a simple message to trigger the server response
     socket.send(JSON.stringify({message: 'Test message'}));
 };
+
+
 
 socket.onmessage = function(e) {
     console.log('WebSocket message received:', e.data);
@@ -302,7 +324,9 @@ socket.onerror = function(error) {
     console.error('WebSocket error:', error);
 };
 
-// Function to update the analysis results and manage the collapsible sections
+
+
+// This function will update the results and manage the collapsible sections
 function updateResults(promptTablePairs, flowchartPath) {
     const resultContainer = document.getElementById('websocket-data');
     resultContainer.innerHTML = ''; // Clear previous results
@@ -338,27 +362,20 @@ function updateResults(promptTablePairs, flowchartPath) {
 
 // Create a collapsible section with the provided title, content, and id
 function createCollapsibleSection(title, content, id) {
-    // Create a div element that will contain the entire collapsible section
     const sectionDiv = document.createElement('div');
     sectionDiv.classList.add('collapsible-section');
 
-    // Create a header div that will serve as the clickable element to toggle the content
     const headerDiv = document.createElement('div');
     headerDiv.classList.add('collapsible-header');
-
-    // Set the header's HTML to include the title and an arrow icon indicating it's collapsible
     headerDiv.innerHTML = `<span class="arrow-icon">&#9660;</span><strong>${title}</strong>`;
-    // Add a data attribute to link this header to its corresponding content section
     headerDiv.setAttribute('data-target', `#collapsible-content-${id}`);
 
-    // Create a content div that will hold the actual content of the collapsible section
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('collapsible-content');
     contentDiv.id = `collapsible-content-${id}`;
     contentDiv.style.display = 'none';
     contentDiv.innerHTML = content;
 
-    // Append the header and content divs to the main section div
     sectionDiv.appendChild(headerDiv);
     sectionDiv.appendChild(contentDiv);
 
@@ -377,46 +394,45 @@ function createCollapsibleSection(title, content, id) {
     return sectionDiv;
 }
 
-// Function to generate HTML for a table given the data
+
+
+
 function generateTableHtml(table) {
     let html = `<table class="generated-table"><thead><tr>`;
-
-    // Loop through the columns array to create each table header cell
     table.columns.forEach(column => {
-        html += `<th>${column}</th>`;  // Add each column header
+        html += `<th>${column}</th>`;
     });
-    html += `</tr></thead><tbody>`;  // Close the header row and open the table body
-
-    // Loop through the data array to create each row of the table
+    html += `</tr></thead><tbody>`;
     table.data.forEach(row => {
-        html += `<tr>`;  // Start a new row
+        html += `<tr>`;
         row.forEach(cell => {
-            html += `<td>${cell}</td>`;  // Add each cell value within the row
+            html += `<td>${cell}</td>`;
         });
-        html += `</tr>`;  // Close the current row
+        html += `</tr>`;
     });
-    html += `</tbody></table>`;  // Close the table body and the table itself
-
+    html += `</tbody></table>`;
     return html;
 }
 
-// Function to update the deletion results and enable the download button
+
+
 function updateDeletionResults(deletionResults) {
     const deletionContainer = document.getElementById('deletion-results');
     if (deletionContainer) {
         deletionContainer.innerHTML = `<strong>OpenAI API call termination status:</strong> ${deletionResults}`;
         deletionContainer.classList.add('left-align');
-        deletionContainer.setAttribute('data-results', 'true');  // Set a flag to indicate results are available
+        deletionContainer.setAttribute('data-results', 'true');
         const downloadButton = document.getElementById('download-xlsx-btn');
         downloadButton.disabled = false;
-        downloadButton.classList.remove('disabled-button');  // Enable the download button
+        downloadButton.classList.remove('disabled-button');
         console.log("[DEBUG] Deletion results displayed.");
     } else {
         console.error("[DEBUG] Element with ID 'deletion-results' not found.");
     }
 }
 
-// Function to update the flowchart display
+
+
 function updateFlowchart(flowchartPath) {
     // Ensure that we are only handling the flowchart inside a collapsible section
     const resultContainer = document.getElementById('websocket-data');
@@ -434,7 +450,7 @@ function updateFlowchart(flowchartPath) {
     }
 }
 
-// Function to update the analysis status display
+
 function updateAnalysisStatus(status) {
     const statusContainer = document.getElementById('analysis-status');
     if (statusContainer) {

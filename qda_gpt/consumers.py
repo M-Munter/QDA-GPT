@@ -5,43 +5,41 @@ from qda_gpt.views import run_analysis_async
 
 logger = logging.getLogger(__name__)
 
-def truncate_message(message, max_length=100):
-    return (message[:max_length] + '...') if len(message) > max_length else message
-
-
 class AnalysisConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Join the group
+        # Handle the WebSocket connection and join the analysis group
         await self.channel_layer.group_add("analysis_group", self.channel_name)
         await self.accept()
         logger.debug("WebSocket connection accepted\n")
 
     async def disconnect(self, close_code):
-        # Leave the group
+        # Handle WebSocket disconnection and leave the analysis group
         await self.channel_layer.group_discard("analysis_group", self.channel_name)
 
     async def receive(self, text_data):
+        # Handle incoming data from WebSocket and log the received data
         data = json.loads(text_data)
-        logger.debug(f"WebSocket received data: {data}\n")
+
 
     async def run_analysis(self, event):
+        # Triggered by an event to run the analysis
         analysis_data = event['analysis_data']
-        logger.debug(f"Running analysis with data: {analysis_data}\n")
 
-        # Perform the analysis
+        # Perform the asynchronous analysis task
         result = await run_analysis_async(analysis_data)
 
-        # Send the result back to the group
+        # Send the analysis result back to the WebSocket group
         await self.channel_layer.group_send(
             "analysis_group",
             {
                 "type": "send_analysis_result",
-                "content": result,
+                "content": result,  # Include the analysis result in the event content
             }
         )
 
     async def send_analysis_result(self, event):
+        # Send the analysis result to the WebSocket client
         content = event['content']
-        # Send the content as JSON over WebSocket
+        # Send the content as JSON over the WebSocket connection
         await self.send(text_data=json.dumps(content))
 

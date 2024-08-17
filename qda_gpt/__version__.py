@@ -1,5 +1,5 @@
 # qda_gpt/__version__.py
-__version__ = '0.8.14 (The Lord of the Prompts: The Fellowship of the Data Analysis)'
+__version__ = '0.8.15 (The Lord of the Prompts: The Fellowship of the Data Analysis)'
 
 # Into the Data-Verse
 # Byte Panther: Data Forever                                        x

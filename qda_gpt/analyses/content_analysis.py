@@ -1,13 +1,24 @@
+"""
+content_analysis.py
+
+This script handles the different phases of Content Analysis by interacting
+with OpenAI's API. It formats prompts, sends them to the API, and processes
+the responses. The script also handles the deletion of OpenAI elements after
+the analysis is complete.
+"""
+
 from qda_gpt.prompts.prompts_ca import ca_prompt1, ca_prompt2, ca_prompt3, ca_prompt4, ca_prompt5, ca_prompt6, ca_prompt7, ca_prompt8
 from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
+import logging
+
+logger = logging.getLogger(__name__)
 
 def phase1(analysis_data):
     formatted_prompt1 = ca_prompt1
     assistant_id = analysis_data.get('assistant_id')
     thread_id = analysis_data.get('thread_id')
     response1_json = get_openai_response(formatted_prompt1, assistant_id, thread_id)
-    print("response1_json:", response1_json)  # Debugging print statement
     return response1_json, formatted_prompt1
 
 def phase2(analysis_data):
@@ -36,7 +47,6 @@ def phase5(analysis_data, response1_json):
     assistant_id = analysis_data.get('assistant_id')
     thread_id = analysis_data.get('thread_id')
     response5_json = get_openai_response(formatted_prompt5, assistant_id, thread_id)
-    print(f"[DEBUG] Response number 5: {response5_json}\n")  # Debugging print statement
     return response5_json, formatted_prompt5
 
 def phase6(analysis_data):
@@ -73,6 +83,7 @@ def phase8(analysis_data):
             }
         }
 
+        # Attempt to delete OpenAI elements
         deletion_results = handle_deletion(request_data)
 
         if "Deletion successful" in deletion_results:
@@ -80,7 +91,6 @@ def phase8(analysis_data):
         else:
             analysis_status = "Analysis completed successfully. Deletion of all OpenAI elements failed."
 
-        print("response8_json:", response8_json)  # Debugging print statement
         return response8_json, formatted_prompt8, analysis_status, deletion_results
     except Exception as e:
         return None, formatted_prompt8, f"An error occurred: {str(e)}", ""

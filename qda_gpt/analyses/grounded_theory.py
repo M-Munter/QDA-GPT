@@ -1,3 +1,12 @@
+"""
+grounded_theory.py
+
+This script handles the different phases of Grounded Theory analysis by interacting
+with OpenAI's API. It formats prompts, sends them to the API, and processes
+the responses. The script also manages the deletion of OpenAI elements after
+the analysis is completed.
+"""
+
 from qda_gpt.prompts.prompts_gt import gt_prompt1, gt_prompt2, gt_prompt3, gt_prompt4, gt_prompt5, gt_prompt6, gt_prompt7
 from qda_gpt.openai_api import get_openai_response
 from qda_gpt.deletion import handle_deletion
@@ -38,7 +47,6 @@ def phase5(analysis_data):
     assistant_id = analysis_data.get('assistant_id')
     thread_id = analysis_data.get('thread_id')
     response5_json = get_openai_response(formatted_prompt5, assistant_id, thread_id)
-    logger.debug(f"response5_json: {response5_json}")  # Debugging print statement
     return response5_json, formatted_prompt5
 
 def phase6(analysis_data):
@@ -49,19 +57,14 @@ def phase6(analysis_data):
     return response6_json, formatted_prompt6
 
 def phase7(analysis_data):
-    logger.debug(f"Phase7 called")  # Debugging print statement
     formatted_prompt7 = gt_prompt7
     assistant_id = analysis_data.get('assistant_id')
     thread_id = analysis_data.get('thread_id')
     file_id = analysis_data.get('file_id')
     vector_store_id = analysis_data.get('vector_store_id')
-    logger.debug(f"Phase7 setup successful")  # Debugging print statement
 
     try:
-        logger.debug(f"Before get_openai_response phase7")
         response7_json = get_openai_response(formatted_prompt7, assistant_id, thread_id)
-        logger.debug(f"response7_json: {response7_json}")  # Debugging print statement
-        print()
 
         # Prepare the request object equivalent
         request_data = {
@@ -73,6 +76,7 @@ def phase7(analysis_data):
             }
         }
 
+        # Attempt to delete OpenAI elements
         deletion_results = handle_deletion(request_data)
 
         if "Deletion successful" in deletion_results:
