@@ -1,8 +1,8 @@
 # qda_gpt/__version__.py
-__version__ = '0.8.2 (The Prompt Knight Rises)'
+__version__ = '0.8.5 (The Lord of the Prompts: The Fellowship of the Data Analysis)'
 
 # Into the Data-Verse
-# Byte Panther: Data Forever                            x
+# Byte Panther: Data Forever                                         x
 # The Great Data Bake Off
 # Prompt Fiction
 # Prompt Patrol
@@ -19,10 +19,10 @@ __version__ = '0.8.2 (The Prompt Knight Rises)'
 # The Query Soldier
 # Ant-Man and the Data-Wasp
 # Guardians of the Data Galaxy
-# The Prompt Knight Rises                               x
+# The Prompt Knight Rises                                           x
 # Data Analysis Wars: The Prompt Awakens
 # Jurassic Prompt
-# The Lord of the Data: The Fellowship of the Query
+# The Lord of the Prompts: The Fellowship of the Data Analysis      x
 # The Queryfather
 # Promptbusters
 # Raiders of the Lost Data
