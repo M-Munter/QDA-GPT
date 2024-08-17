@@ -78,8 +78,9 @@ TEMPLATES = [
 ]
 
 # Custom environment variable to control specific behavior (set manually if needed)
-# Database configuration (different for Heroku and local environments)
 HEROKU_CUSTOM = os.getenv('HEROKU', False)
+
+# Database configuration (different for Heroku and local environments)
 if HEROKU_CUSTOM:
     import dj_database_url
     DATABASES = {
@@ -93,8 +94,9 @@ else:  # Local
         }
     }
 
-# Detect if the app is running on Heroku
+# Detect if the app is running on Heroku (based on the presence of the 'DYNO' environment variable)
 ON_HEROKU = 'DYNO' in os.environ
+
 # Redis configuration for Django Channels (used for WebSockets and background tasks)
 if ON_HEROKU:
     # Heroku Redis configuration for Django Channels (disables SSL verification)
