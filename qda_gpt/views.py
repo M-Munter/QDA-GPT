@@ -286,6 +286,7 @@ def save_flowchart_as_png(dot):
 
         # If using S3, upload the file to the S3 bucket
         if 'HEROKU' in os.environ:
+            logger.debug(f"Initializing upload to S3")
             s3_client = boto3.client('s3')
             try:
                 s3_client.upload_file(f'{full_filename}.png', settings.AWS_STORAGE_BUCKET_NAME,
