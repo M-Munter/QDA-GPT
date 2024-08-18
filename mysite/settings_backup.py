@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 """
 
 import os
+import dj_database_url
+import logging
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -34,8 +36,7 @@ AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 
 # Define the hosts allowed to serve the project
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'qda-gpt-11509cd6d17d.herokuapp.com']
@@ -86,25 +87,21 @@ TEMPLATES = [
 ]
 
 
-# Custom environment variable to control specific behavior (set manually if needed)
-HEROKU_CUSTOM = os.getenv('HEROKU', False)
+# Detect if the app is running on Heroku (based on the presence of the 'DYNO' environment variable)
+ON_HEROKU = 'DYNO' in os.environ
 
-# Database configuration (different for Heroku and local environments)
-if HEROKU_CUSTOM:
-    import dj_database_url
+# Database configuration
+if ON_HEROKU:
     DATABASES = {
-        'default': dj_database_url.config(default='postgres://localhost')
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
     }
-else:  # Local
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-# Detect if the app is running on Heroku (based on the presence of the 'DYNO' environment variable)
-ON_HEROKU = 'DYNO' in os.environ
 
 # Redis configuration for Django Channels (used for WebSockets and background tasks)
 if ON_HEROKU:
@@ -159,12 +156,6 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-import logging
-import boto3
-from botocore.exceptions import ClientError
-# Set up logging
-boto3.set_stream_logger(name='boto3', level=logging.DEBUG)
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -207,8 +198,6 @@ LOGGING = {
         },
     },
 }
-
-import logging
 
 # Basic logging setup to output logs to the console
 logging.basicConfig(

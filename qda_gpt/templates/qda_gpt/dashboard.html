@@ -1,8 +1,11 @@
-{% extends "qda_gpt/base.html" %}
+<!-- File: dashboard.html -->
+
+{% extends "qda_gpt/base.html" %} <!-- Inherit layout and structure from 'qda_gpt/base.html' -->
 
 {% block title %}Dashboard - QDA-GPT{% endblock %}
 
 {% block content %}
+    <!-- Container for the setup form, including data upload, model selection, analysis options, and controls -->
     <div class="container form-container">
         <h2>Setup and Analyze
             <svg class="info-button" data-info-id="general-info" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
@@ -35,8 +38,12 @@
             </ol>
             <p>By adopting these iterative techniques, users can enhance the depth and precision of their analyses, tailoring the language model's output to meet their specific research needs.</p>
         </div>
+
+        <!-- Form for setting up initial information for the analysis -->
         <form method="post" enctype="multipart/form-data" id="setup-form" action="{% url 'dashboard' %}" onsubmit="return handleSubmit(event)">
             {% csrf_token %}
+
+            <!-- Section for uploading a qualitative data file -->
             <div class="form-section">
                 <label class="form-label">
                     Upload Qualitative Data File
@@ -56,6 +63,8 @@
                     <p>Upload your qualitative data file here. At least, the following formats are supported: DOC, DOCX, HTML, JSON, PDF and TXT.</p>
                 </div>
             </div>
+
+            <!-- Section for selecting OpenAI language model -->
             <div class="form-section">
                 <label for="model_choice">
                     Select OpenAI Language Model
@@ -77,6 +86,8 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Section for selecting the analysis type -->
             <div class="form-section">
                 <label for="analysis_type">Select Analysis Type:</label>
                 <button type="button" id="thematic-button" class="analysis-button" onclick="selectAnalysisType('thematic')">Thematic Analysis</button>
@@ -91,6 +102,8 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Section for writing an instructional prompt -->
             <div class="form-section">
                 <label class="form-label">
                     Write prompt
@@ -110,10 +123,14 @@
                     <p>You can give information about the previous iterations. E.g. results, instructions regarding the desired outcome, etc.</p>
                 </div>
             </div>
+
+            <!-- Section for launching the analysis -->
             <div class="form-section">
                 <label>Launch Analysis</label>
                 <button type="submit" name="action" value="analyze" id="analyze-button" class="disabled-button" disabled>Analyze</button>
             </div>
+
+            <!-- Section for displaying the analysis status -->
             <div id="status-container" class="form-section">
                 <label>Analysis Status</label>
                 <div class="status-text">
@@ -126,10 +143,14 @@
                     </strong>
                 </div>
             </div>
+
+            <!-- Section for downloading results as an Excel file -->
             <div class="form-section">
                 <label>Download Excel</label>
                 <button type="button" id="download-xlsx-btn" onclick="downloadXLSX()" class="disabled-button" disabled>Download Excel</button>
             </div>
+
+            <!-- Section for clearing session data -->
             <div class="form-section">
                 <label>Clear Session Input and Data</label>
                 <button type="button" onclick="clearSessionData()">Clear Session</button>
@@ -137,15 +158,19 @@
         </form>
     </div>
 
+    <!-- Section for displaying the results -->
     <div class="container form-container">
         <h2>Results</h2>
+
+        <!-- Loader animation that indicates the analysis is in progress -->
         <div id="analyze-loader" class="loader">
             <div class="outer-ring"></div>
             <div class="outer-ring"></div>
             <div class="inner-ring"></div>
             <div class="inner-ring"></div>
         </div>
-        <div id="websocket-data" class="left-align"></div>
+
+        <div id="websocket-data" class="left-align"></div> <!-- Container to display analysis results via WebSocket -->
         <div id="deletion-results" data-results="false" class="left-align"></div>
     </div>
 {% endblock %}

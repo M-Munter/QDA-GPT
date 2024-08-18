@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 """
 
 import os
+import dj_database_url
+import logging
 from dotenv import load_dotenv
 from pathlib import Path
-import dj_database_url
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -36,7 +37,6 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-
 
 # Define the hosts allowed to serve the project
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'qda-gpt-11509cd6d17d.herokuapp.com']
@@ -156,12 +156,6 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-import logging
-import boto3
-from botocore.exceptions import ClientError
-# Set up logging
-boto3.set_stream_logger(name='boto3', level=logging.DEBUG)
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -204,8 +198,6 @@ LOGGING = {
         },
     },
 }
-
-import logging
 
 # Basic logging setup to output logs to the console
 logging.basicConfig(
